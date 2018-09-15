@@ -1,0 +1,9 @@
+RunAsDaemon 1
+
+ControlPort 9051
+CookieAuthentication 1
+CookieAuthFileGroupReadable 1
+
+HiddenServiceDir /var/lib/tor/ssh/
+HiddenServicePort 22 127.0.0.1:22
+HiddenServiceAuthorizeClient stealth ssh
