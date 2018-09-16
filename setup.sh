@@ -1,9 +1,4 @@
-#!/usr/bin/env bash
-
-# TODO: choose a set location for log
-# TODO: graceful shutdown & log copy to `/boot`
-exec > setup.log 2>&1
-set -x
+#!/bin/bash
 
 # NOTE:
 #   This script is to be run on first RBP Zero run via `pi-init2`.
@@ -13,13 +8,43 @@ set -x
 #     `/boot/wpa_supplicant.conf` - file containing WiFi credentials and WiFi coutry settings(!)
 #     `/boot/bundle.zip`
 
+exec > ~/setup.log 2>&1
+set -x
+
+function wrap_up() {
+  sudo cp ~/setup.log /boot
+  # TODO: bundle all generated secrets and save them to /boot
+
+  sleep 5
+  sudo halt
+}
+trap 'wrap_up' TERM INT HUP
+
 # set locale to `en_US.UTF-8`
 sudo raspi-config nonint do_change_locale en_US.UTF-8
 
-# set hostname to `pi-bitcoin`
+sudo apt-get update
+
+# upgrade all raspbian packages to their latest versions
+sudo apt-get -y upgrade
+
+# NOTE: need to install a fairly old-ish Tor, as the one from
+sudo apt-get install -y tor git jq tmux miniupnpc nmap ufw tree bc
+
+
+
+
+
+
+# set hostname to `pi-zero`
+# TODO: change that last
 sudo raspi-config nonint do_hostname pi-zero
 
 # TODO: other raspi-config commands?
+
+
+# TODO: check if bundle exists
+# TODO: unzip bundle
 
 # change password to `newpassword` for `pi` and `root`
 # TODO: generate better password(!)
@@ -85,6 +110,7 @@ sudo iw dev wlan0 set power_save off
 
 # TODO: hidden service ssh
 
+# TODO: install metrics
 
 # check if `blocks/` and `chainstate/` exist
 
