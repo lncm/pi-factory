@@ -65,12 +65,15 @@ tmp/bitcoind.service: bitcoind.service
 tmp/sshd_config: sshd_config
 	cp $< $@
 
+# This is the actual setup everything script
 tmp/pi-setup.sh: pi-setup.sh
 	cp $< $@
 
+# This is a systemd service that ensures that `pi-setup.sh` runs only after network is available.
 tmp/pi-setup.service: pi-setup.service
 	cp $< $@
 
+# This systemd script ensures that `pi-setup.sh` runs only once and shutsdown the device when it's done
 tmp/pi-shutdown.service: pi-shutdown.service
 	cp $< $@
 
@@ -96,7 +99,7 @@ boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.servic
 boot/ssh:
 	touch $@
 
-# This is a script that will run on pi and bootstrap everything necessary
+# This is a script that will run on pi and bootstrap all the necessary basics
 boot/run-once.sh: run-once.sh
 	cp $< $@
 
