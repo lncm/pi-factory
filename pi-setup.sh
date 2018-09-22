@@ -12,8 +12,6 @@ function wrap_up() {
   fi
 
   sudo cp ~/setup.log "/boot/setup-logs/${file_name}"
-
-  echo 1 | sudo tee /sys/class/leds/led0/brightness
 }
 trap 'wrap_up' TERM INT HUP
 
