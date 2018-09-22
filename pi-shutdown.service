@@ -4,8 +4,8 @@ After=pi-setup.service
 
 [Service]
 Type=oneshot
-ExecStartPre=/bin/systemctl disable pi-setup
 ExecStartPre=/bin/systemctl disable pi-shutdown
+ExecStartPre=/bin/systemctl disable pi-setup
 ExecStart=/sbin/shutdown -P now
 
 [Install]
