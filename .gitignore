@@ -1,4 +1,4 @@
-/boot
+/boot/*
 /tmp
 
 /wpa_supplicant.private.conf
