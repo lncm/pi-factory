@@ -17,7 +17,7 @@ PI_INIT2_FILES=pi-init2/boot/cmdline.txt pi-init2/boot/pi-init2
 		echo; \
 		echo "To interrupt current download press control+c (^c)"; \
 		echo; \
-		wget -qN http://director.downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2018-06-29/2018-06-27-raspbian-stretch-lite.zip; \
+		{ curl -OJs "http://director.downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2018-06-29/$@" || rm -f $@; }; \
 	}
 
 # unzip raspbian image into an .img file
