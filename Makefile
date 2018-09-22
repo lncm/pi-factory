@@ -25,6 +25,9 @@ PI_INIT2_FILES=pi-init2/boot/cmdline.txt pi-init2/boot/pi-init2
 	@shasum -a 256 -c <<< "3271b244734286d99aeba8fa043b6634cad488d211583814a2018fc14fdca313  $<"
 	@unzip -n $<
 
+pi-init2:
+	git submodule update --init --recursive
+
 clean:
 	rm -f boot/*
 
@@ -208,7 +211,7 @@ write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
 			exit 1; \
 		}
 
-write_stuff_to_boot: boot /Volumes/boot
+write_stuff_to_boot: pi-init2 boot /Volumes/boot
 	cp boot/* /Volumes/boot/
 
 all: clean write_image_to_sd_card write_stuff_to_boot
