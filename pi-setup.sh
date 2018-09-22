@@ -25,10 +25,17 @@ sudo rm -f /boot/bundle.zip
 
 sudo apt-get update
 
-sudo apt-get -y upgrade
-
 sudo apt-get install -y   git jq tmux miniupnpc nmap ufw tree bc
 
+### UFW
+
+sudo ufw allow ssh comment "Allow SSH on firewall"
+sudo ufw allow 8333 comment "Allow connections to/from Bitcoind"
+sudo ufw enable
+sudo ufw status verbose
+
+# upgrade AFTER UFW
+sudo apt-get -y upgrade
 
 ### Bitcoin (from sources)
 
@@ -56,14 +63,6 @@ sudo make install
 
 sudo /bin/cp /home/pi/bundle/bitcoind.service /etc/systemd/system/
 sudo systemctl enable bitcoind
-
-
-### UFW
-
-sudo ufw allow ssh comment "Allow SSH on firewall"
-sudo ufw allow 8333 comment "Allow connections to/from Bitcoind"
-sudo ufw enable
-sudo ufw status verbose
 
 
 ### Tor
