@@ -4,14 +4,14 @@ exec > ~/setup.log 2>&1
 set -x
 
 function wrap_up() {
-  mkdir -p /boot/setup-logs/
+  sudo mkdir -p /boot/setup-logs/
 
   file_name="setup.log"
   if [ -s "/boot/setup-logs/${file_name}" ]; then
     file_name="$(/bin/date +%s)-${file_name}"
   fi
 
-  cp ~/setup.log "/boot/setup-logs/${file_name}"
+  sudo cp ~/setup.log "/boot/setup-logs/${file_name}"
 
   echo 1 | sudo tee /sys/class/leds/led0/brightness
 }
@@ -91,7 +91,6 @@ while [ ! -f /var/lib/tor/ssh/hostname ]; do
     break
   fi
 done
-
 
 sudo zip   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 
