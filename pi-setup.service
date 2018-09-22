@@ -1,0 +1,12 @@
+[Unit]
+Description=Setup Pi upon first _normal_ boot
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=oneshot
+User=pi
+ExecStart=/home/pi/bin/pi-setup.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -6,22 +6,23 @@ PI_INIT2_FILES=pi-init2/boot/cmdline.txt pi-init2/boot/pi-init2
 		echo; \
 		echo "PROTIP: Downloading it from Raspberry Pi Foundation can take a"; \
 		echo "        very long time… To speed it up, consider downloading it"; \
-		echo "        directly using torrent from the official website:"; \
+		echo "        using torrent from the official website:"; \
 		echo "        https://www.raspberrypi.org/downloads/raspbian/ ."; \
 		echo; \
-		echo "Make sure this is the version you're downloading: "; \
-		echo "	$@"; \
+		echo "  Make sure the version you're downloading is: "; \
+		echo "  	$@"; \
 		echo; \
-		echo "After the download completes, copy it into the same directory as Makefile, "; \
-		echo "and run the script again."; \
+		echo "  After the download completes, copy it into the same directory as Makefile, "; \
+		echo "  and run the script again."; \
 		echo; \
-		echo "To interrupt current download press control+c"; \
+		echo "To interrupt current download press control+c (^c)"; \
 		echo; \
 		wget -qN http://director.downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2018-06-29/2018-06-27-raspbian-stretch-lite.zip; \
 	}
 
 # unzip raspbian image into an .img file
 2018-06-27-raspbian-stretch-lite.img: 2018-06-27-raspbian-stretch-lite.zip
+	@shasum -a 256 -c <<< "3271b244734286d99aeba8fa043b6634cad488d211583814a2018fc14fdca313  $<"
 	@unzip -n $<
 
 clean:
@@ -61,17 +62,32 @@ tmp/bitcoind.service: bitcoind.service
 tmp/sshd_config: sshd_config
 	cp $< $@
 
+tmp/pi-setup.sh: pi-setup.sh
+	cp $< $@
+
+tmp/pi-setup.service: pi-setup.service
+	cp $< $@
+
+tmp/pi-shutdown.service: pi-shutdown.service
+	cp $< $@
+
 tmp/torrc: torrc
 	cp $< $@
 
-boot/bundle.zip: tmp tmp/password tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind_version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc
+tmp/bt-reconnect.sh: bt-reconnect.sh
+	cp $< $@
+
+tmp/bluetooth-MACs: bluetooth-MACs
+	cp $< $@
+
+boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind_version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bt-reconnect.sh tmp/bluetooth-MACs
 	@ # These are needed because Makefile doesn't like prerequisites that don't exist…
-	@ [ ! -s tmp/password ] && rm -f tmp/password
-	@ [ ! -s tmp/id_rsa.pub ] && rm -f tmp/id_rsa.pub
-	@ [ ! -s tmp/id_ed25519.pub ] && rm -f tmp/id_ed25519.pub
-
+	@ [ ! -s tmp/password ] && rm -f tmp/password || exit 0
+	@ [ ! -s tmp/id_rsa.pub ] && rm -f tmp/id_rsa.pub || exit 0
+	@ [ ! -s tmp/id_ed25519.pub ] && rm -f tmp/id_ed25519.pub || exit 0
+	@
 	zip -j $@ tmp/*
-
+	@
 	rm -rf tmp
 
 boot/ssh:
@@ -84,10 +100,13 @@ boot/run-once.sh: run-once.sh
 boot/cmdline.txt.orig: pi-init2/boot/cmdline.txt.stretch
 	cp $< $@
 
-boot/wpa_supplicant.conf: wpa_supplicant.conf
-	[ -f wpa_supplicant.private.conf ] && cp wpa_supplicant.private.conf $@
+tmp/wpa_supplicant.conf: wpa_supplicant.conf
 	@# TODO: verify $< contains necessary info and create $@
-	@# cp $< $@
+
+boot/wpa_supplicant.conf: tmp/wpa_supplicant.conf
+	[ -f wpa_supplicant.private.conf ] && \
+		cp wpa_supplicant.private.conf $@ || \
+		cp $< $@
 
 boot: $(PI_INIT2_FILES) boot/ssh boot/run-once.sh boot/cmdline.txt.orig boot/bundle.zip boot/wpa_supplicant.conf
 	cp $(PI_INIT2_FILES) $@
@@ -131,18 +150,20 @@ write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
 	@ sudo -K
 	@
 	@ echo
-	@ echo "  Chosen device: ${SD}"
+	@ echo "  Chosen device:"
+	@ diskutil list ${SD} | awk '{print "    " $$0}'
 	@ echo
 	@ echo "  Your Raspberry Pi Zero will be bootstrapped on the"
-	@ echo "  device named above. Everything currently stored on it"
+	@ echo "  device specified above. Everything currently stored on it"
 	@ echo "  will be deleted permanently. If you have verified that"
 	@ echo "  it is the correct device, proceed by providing your"
 	@ echo "  user account password below:"
 	@ echo
 	@ echo "  PROTIP: To see the progress of image copying, use key combo:"
 	@ echo "  	 control+shift+t"
-
-	sudo dd bs=1m if=$< of=${SD}
+	@ echo
+	@
+	sudo dd bs=64m if=$< of=${SD}
 
 /Volumes/boot:
 	@ [ -d /Volumes/boot ] && exit 0 || \
@@ -202,7 +223,7 @@ all: clean write_image_to_sd_card write_stuff_to_boot
 	@ echo
 	@ echo "  When the setup process is complete the device will automatically"
 	@ echo "  turn off. You'll know it's off when the on-board LED is no longer lit."
-
+	@
 	@ # TODO: protip about password or ssh keys
 	@ # TODO: change sshd_config depending on the existance of `password`
 

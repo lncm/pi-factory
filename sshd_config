@@ -14,7 +14,7 @@ Match LocalAddress 192.168.1.*,192.168.0.*,127.0.0.1,fe80::*
 	PermitRootLogin without-password
 Match All # terminates the Match block above
 
-PasswordAuthentication no
+PasswordAuthentication yes
 ChallengeResponseAuthentication no
 UsePAM yes
 X11Forwarding yes
