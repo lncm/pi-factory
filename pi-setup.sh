@@ -22,7 +22,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 sudo raspi-config nonint do_change_locale en_US.UTF-8
 
-unzip   -d /home/pi/bundle   /boot/bundle.zip   bitcoin.conf bitcoind_version bitcoind.service bluetooth-MACs bt-reconnect.sh  2> /dev/null
+unzip   -d /home/pi/bundle   /boot/bundle.zip   bitcoin.conf bitcoind_version bitcoind.service torrc bluetooth-MACs bt-reconnect.sh  2> /dev/null
 sudo rm -f /boot/bundle.zip
 
 sudo apt-get update
@@ -73,7 +73,7 @@ sudo ufw status verbose
 
 sudo apt-get install -y tor tor-arm
 
-sudo /bin/cp /root/bundle/torrc /etc/tor/
+sudo /bin/cp /home/pi/bundle/torrc /etc/tor/
 
 # allow user pi (and Bitcoind) to communicate with Tor
 sudo usermod -a -G debian-tor pi
