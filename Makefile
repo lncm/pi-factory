@@ -106,13 +106,12 @@ boot/run-once.sh: run-once.sh
 boot/cmdline.txt.orig: pi-init2/boot/cmdline.txt.stretch
 	cp $< $@
 
-tmp/wpa_supplicant.conf: wpa_supplicant.conf
-	@# TODO: verify $< contains necessary info and create $@
-
-boot/wpa_supplicant.conf: tmp/wpa_supplicant.conf
-	[ -f wpa_supplicant.private.conf ] && \
+boot/wpa_supplicant.conf: wpa_supplicant.conf
+	@[ -f wpa_supplicant.private.conf ] && \
 		cp wpa_supplicant.private.conf $@ || \
-		cp $< $@
+		{ grep -q 'COUNTRY\|SSID\|PASSWORD' $< && \
+			{ echo "Please make sure you've set COUNTRY, SSID and PASSWORD in $< correctly"; exit 1; } || \
+			{ cp $< $@; exit 0; }; }
 
 boot: $(PI_INIT2_FILES) boot/ssh boot/run-once.sh boot/cmdline.txt.orig boot/bundle.zip boot/wpa_supplicant.conf
 	cp $(PI_INIT2_FILES) $@
