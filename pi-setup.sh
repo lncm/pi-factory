@@ -3,15 +3,22 @@
 exec > ~/setup.log 2>&1
 set -x
 
-function wrap_up() {
+# $1 - file path
+# $2 - file name
+function save_log() {
   sudo mkdir -p /boot/setup-logs/
 
-  file_name="setup.log"
+  file_name="$2"
   if [ -s "/boot/setup-logs/${file_name}" ]; then
     file_name="$(/bin/date +%s)-${file_name}"
   fi
 
-  sudo cp ~/setup.log "/boot/setup-logs/${file_name}"
+  sudo cp "$1/$2" "/boot/setup-logs/${file_name}"
+}
+
+function wrap_up() {
+  save_log /home/pi setup.log
+  save_log /var/log syslog
 }
 trap 'wrap_up' TERM INT HUP
 
