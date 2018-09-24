@@ -89,7 +89,7 @@ while sudo test ! -f /var/lib/tor/ssh/hostname; do
   fi
 done
 
-sudo zip   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
+sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 
 
 # TODO: BT reconnection
