@@ -87,11 +87,11 @@ This is a list of scripts that will be run on your Pi. If you're not sure what y
 
 | File name                   | Description
 |:---------------------------:|-------------
-| `bt&#8209;reconnect.sh`     | [TODO] Runs periodically from cron and ensures that Bluetooth internet connection is still available and working
-| `pi&#8209;setup.service`    | This is a systemd service that will spawn `pi-setup.sh` upon first boot
-| `pi&#8209;setup.sh`         | This script runs as user `pi` and sets-up most of the necessary things. It will run for long hours, and during its run it records its work into `/home/pi/setup.log`
-| `pi&#8209;shutdown.service` | This systemd service ensures that `pi-setup.service` & `pi-shutdown.service` run only once, and that RBP is powered off upon successful completion
-| `run&#8209;once.sh`         | This is a barebones setup script that only creates the very minimal required environment, and reboots your Pi into `pi-setup.sh`. During its run it records its work into `/root/pre-setup.log`
+| `bt-reconnect.sh`     | [TODO] Runs periodically from cron and ensures that Bluetooth internet connection is still available and working
+| `pi-setup.service`    | This is a systemd service that will spawn `pi-setup.sh` upon first boot
+| `pi-setup.sh`         | This script runs as user `pi` and sets-up most of the necessary things. It will run for long hours, and during its run it records its work into `/home/pi/setup.log`
+| `pi-shutdown.service` | This systemd service ensures that `pi-setup.service` & `pi-shutdown.service` run only once, and that RBP is powered off upon successful completion
+| `run-once.sh`         | This is a barebones setup script that only creates the very minimal required environment, and reboots your Pi into `pi-setup.sh`. During its run it records its work into `/root/pre-setup.log`
 
 ## [Very Optional] Run_2
 
@@ -121,7 +121,7 @@ There are two locations there that might be of special interest:
 | Location                           | Description
 |:----------------------------------:|-------------
 | `/Volumes/boot/secrets.zip`        | Contains all secrets related with the pi: `password`, `ssh` key (if not provided one will be generated for you there), and a special ssh over Tor string (TODO: document & explain `HidServAuth`)
-| `/Volumes/boot/setup&#8209;logs/*` | Contains at least two files: `pre-setup.log` and `setup.log`. In case any of the scrips was run/terminated more than once there might be more files with the same names, but unix timestamp-prefixed.
+| `/Volumes/boot/setup-logs/*` | Contains at least two files: `pre-setup.log` and `setup.log`. In case any of the scrips was run/terminated more than once there might be more files with the same names, but unix timestamp-prefixed.
 
 
 # Step Four: Enjoy
