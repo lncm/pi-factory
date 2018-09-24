@@ -6,7 +6,7 @@ PI_INIT2_FILES=pi-init2/boot/cmdline.txt pi-init2/boot/pi-init2
 		echo; \
 		echo "PROTIP: Downloading it from Raspberry Pi Foundation can take a"; \
 		echo "        very long time… To speed it up, consider downloading it"; \
-		echo "        using torrent from the official website:"; \
+		echo "        using .torrent from the official website:"; \
 		echo "        https://www.raspberrypi.org/downloads/raspbian/ ."; \
 		echo; \
 		echo "  Make sure the version you're downloading is: "; \
@@ -108,10 +108,10 @@ boot/cmdline.txt.orig: pi-init2/boot/cmdline.txt.stretch
 
 boot/wpa_supplicant.conf: wpa_supplicant.conf
 	@[ -f wpa_supplicant.private.conf ] && \
-		cp wpa_supplicant.private.conf $@ || \
+		{ cp wpa_supplicant.private.conf $@; echo "wpa_supplicant.private.conf copied to boot/"; exit 0; } || \
 		{ grep -q 'COUNTRY\|SSID\|PASSWORD' $< && \
 			{ echo "Please make sure you've set COUNTRY, SSID and PASSWORD in $< correctly"; exit 1; } || \
-			{ cp $< $@; exit 0; }; }
+			{ cp $< $@; echo "$< copied to boot/"; exit 0; }; }
 
 boot: $(PI_INIT2_FILES) boot/ssh boot/run-once.sh boot/cmdline.txt.orig boot/bundle.zip boot/wpa_supplicant.conf
 	cp $(PI_INIT2_FILES) $@
