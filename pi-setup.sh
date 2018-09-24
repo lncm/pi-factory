@@ -79,7 +79,7 @@ sudo systemctl restart tor@default
 
 # Wait until Tor starts and creates `hostname` with info about the hidden ssh service
 max_wait=55
-while [ ! -f /var/lib/tor/ssh/hostname ]; do
+while sudo test ! -f /var/lib/tor/ssh/hostname; do
   sleep 1
 
   max_wait=$((max_wait-1))
