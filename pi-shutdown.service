@@ -6,7 +6,7 @@ After=pi-setup.service
 Type=oneshot
 ExecStartPre=/bin/systemctl disable pi-shutdown
 ExecStartPre=/bin/systemctl disable pi-setup
-ExecStart=/sbin/shutdown -P now
+ExecStart=/bin/systemctl -f poweroff
 
 [Install]
 WantedBy=multi-user.target
