@@ -59,7 +59,7 @@ rm -f -v /etc/ssh/ssh_host_*_key*
 
 
 # unzip files that will be used now to /root/bundle/
-unzip   -d /root/bundle   /boot/bundle.zip   password id_rsa.pub id_ed25519.pub pi-setup.sh pi-setup.service pi-shutdown.service sshd_config    2> /dev/null
+unzip   -d /root/bundle   /boot/bundle.zip   password hostname id_rsa.pub id_ed25519.pub pi-setup.sh pi-setup.service pi-shutdown.service sshd_config    2> /dev/null
 
 # copy pi-setup script to home directory of the `pi` user
 mkdir -p /home/pi/bin
@@ -123,19 +123,23 @@ fi
 /bin/cp -f /root/bundle/sshd_config /etc/ssh/
 
 
-# all unzipped files from bundle are placed where necessary, so clean-up
-rm -rf /root/bundle/
-
 # pack all secrets into a single `secrets.zip` archive
 zip -r -m /boot/secrets.zip /boot/secrets
+
 
 # disable HDMI, if not disabled already
 [ -z "$(grep "usr/bin/tvservice" /etc/rc.local)" ] && \
     sed -i "s|exit 0|\# Disable HDMI\n/usr/bin/tvservice -o\n\nexit 0|g" /etc/rc.local
 
+
 ### Update hostname
 #  See https://raspberrypi.stackexchange.com/a/66939/8375 for a list of all the raspi-config magic you may want ot automate.
-raspi-config nonint do_hostname pi-zero-2
+raspi-config nonint do_hostname "$(cat /root/bundle/hostname)"
+
+
+# all unzipped files from bundle are placed where necessary, so clean-up
+rm -rf /root/bundle/
+
 
 # Move self to completed
 mkdir -p /boot/run-once.d/completed

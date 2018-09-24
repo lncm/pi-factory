@@ -36,7 +36,13 @@ tmp:
 
 # If set, the contents of this file will be set as password for users `pi` & `root` on the Pi
 tmp/password: password
-	[ -f $< ] && grep "^[^#]" $< > $@ || { : > $@; }
+	grep "^[^#]" $< > $@ || { : > $@; }
+
+# If set, the uncommented contents of this file are set as a hostname for the RBP being bootstrapped
+#         otherwise `pi-the-box` is used
+tmp/hostname: hostname
+	@ grep "^[^#]" $< > $@ || { echo "pi-the-box" > $@; }
+	@ LC_ALL=C grep "^[a-z0-9_-]*$$" $@ > /dev/null || { echo "hostname can only contain lowercase alphanumeric characters, - and _."; exit 1; }
 
 # If present, this key will be placed in `.ssh/authorized_keys` on Pi's first boot
 tmp/id_rsa.pub:
@@ -86,7 +92,7 @@ tmp/bt-reconnect.sh: bt-reconnect.sh
 tmp/bluetooth-MACs: bluetooth-MACs
 	cp $< $@
 
-boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind_version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bt-reconnect.sh tmp/bluetooth-MACs
+boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind_version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bt-reconnect.sh tmp/bluetooth-MACs
 	@ # These are needed because Makefile doesn't like prerequisites that don't exist…
 	@ [ ! -s tmp/password ] && rm -f tmp/password || exit 0
 	@ [ ! -s tmp/id_rsa.pub ] && rm -f tmp/id_rsa.pub || exit 0
@@ -223,6 +229,7 @@ write_stuff_to_boot: pi-init2 boot /Volumes/boot
 	@ echo
 	@ echo "  Next step is detaching the card from your computer an inserting it into"
 	@ echo "  your Raspberry Pi Zero. The setup process there will take long hours"
+	@ echo
 	@ echo "  WRITE MOAR HERE"
 	@ echo
 	@ echo "  When the setup process is complete the device will automatically"
