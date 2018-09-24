@@ -213,8 +213,10 @@ write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
 			exit 1; \
 		}
 
-conclude:
-	[ ! -z "${SD}" ] && diskutil eject ${SD}
+write_stuff_to_boot: pi-init2 boot /Volumes/boot
+	cp boot/* /Volumes/boot/
+	@
+	@ [ ! -z "${SD}" ] && diskutil eject ${SD} || { echo "\n  NOTE: Manual eject is necessary, because device to unmount unknown ('SD=' not set)"; exit 0; }
 	@
 	@ echo
 	@ echo "  All done :)"
@@ -227,9 +229,6 @@ conclude:
 	@ echo "  turn off. You'll know it's off when the on-board LED is no longer lit."
 	@
 	@ # TODO: protip about password or ssh keys
-
-write_stuff_to_boot: pi-init2 boot /Volumes/boot conclude
-	cp boot/* /Volumes/boot/
 
 all: clean write_image_to_sd_card write_stuff_to_boot
 
