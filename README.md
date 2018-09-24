@@ -55,6 +55,16 @@ If you have a `id_ed25519.pub` or `id_rsa.pub` ssh key, just drop it into the ro
 
 If you do not provide an ssh key, `id_ed25519` keypair will be generated, and made available as part of the backup in step 3.
 
+## Run
+
+After you've set up WiFi and perhaps granted ourself access, just run:
+
+```
+make all SD=/dev/disk2
+```
+
+Where `/dev/disk2` is the SD card you want to burn your image onto.
+
 ## [OPTIONAL] Other configs
 
 You can also inspect, and change the config files before running the script preparing the microSD card:
@@ -83,6 +93,15 @@ This is a list of scripts that will be run on your Pi. If you're not sure what y
 | `pi&#8209;shutdown.service` | This systemd service ensures that `pi-setup.service` & `pi-shutdown.service` run only once, and that RBP is powered off upon successful completion
 | `run&#8209;once.sh`         | This is a barebones setup script that only creates the very minimal required environment, and reboots your Pi into `pi-setup.sh`. During its run it records its work into `/root/pre-setup.log`
 
+## [Very Optional] Run_2
+
+If you've decided to change some configs after you've already started `make all` - despair not, just let it finish and then run (before ever putting it into the RBP):
+
+```bash
+make write_stuff_to_boot SD=/dev/disk2
+```
+
+Where `/dev/disk2` is your SD card. **Note** that you might need to manually reinsert the SD card into your computer.
 
 # Step Two: Let RBP setup itself
 
