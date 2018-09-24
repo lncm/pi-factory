@@ -213,10 +213,7 @@ write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
 			exit 1; \
 		}
 
-write_stuff_to_boot: pi-init2 boot /Volumes/boot
-	cp boot/* /Volumes/boot/
-
-all: clean write_image_to_sd_card write_stuff_to_boot
+conclude:
 	[ ! -z "${SD}" ] && diskutil eject ${SD}
 	@
 	@ echo
@@ -231,5 +228,10 @@ all: clean write_image_to_sd_card write_stuff_to_boot
 	@
 	@ # TODO: protip about password or ssh keys
 
+write_stuff_to_boot: pi-init2 boot /Volumes/boot conclude
+	cp boot/* /Volumes/boot/
+
+all: clean write_image_to_sd_card write_stuff_to_boot
+
 # NOTE: `pi-init2` needs to be here, otherwise Makefile things everything's done
-.PHONY: clean all pi-init2 write_image_to_sd_card write_stuff_to_boot
+.PHONY: clean all pi-init2 write_image_to_sd_card write_stuff_to_boot conclude
