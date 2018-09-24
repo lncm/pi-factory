@@ -25,6 +25,18 @@ export LC_ALL=en_US.UTF-8
 update-locale LANG='en_US.UTF-8'
 update-locale LANGUAGE='en_US:en'
 
+### Wifi Setup (WPA Supplicant)
+#  Replaces the magic of https://github.com/RPi-Distro/raspberrypi-net-mods/blob/master/debian/raspberrypi-net-mods.service
+#  See: https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md
+if [ ! -f /etc/wpa_supplicant/wpa_supplicant.conf ] && [ -f /boot/wpa_supplicant.conf ]; then
+  mv /boot/wpa_supplicant.conf /etc/wpa_supplicant/
+  chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf
+  wpa_cli -i wlan0 reconfigure
+else
+  cat /etc/wpa_supplicant/wpa_supplicant.conf
+  cat /boot/wpa_supplicant.conf
+fi
+
 apt-get update
 
 # Install things required to unzip bundle.zip with necessary config files, and dictionary to generate password
