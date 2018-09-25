@@ -34,6 +34,24 @@ sudo apt-get update
 
 sudo apt-get install -y   git jq tmux miniupnpc nmap ufw tree bc
 
+
+# TODO: only do BT if `bluetooth-MACs` exists
+# Bluetooth
+sudo apt-get install -y python-dbus
+
+# TODO: do that AWFUL thing with bluetoothctl…
+
+cd ~
+git clone https://github.com/mk-fg/fgtk.git
+
+cp /home/pi/bundle/bluetooth-MACs /home/pi/bin/
+cp /home/pi/bundle/bt-reconnect.sh /home/pi/bin/
+chmod +x /home/pi/bin/bt-reconnect.sh
+
+# NOTE: we assume here that cron is still empty
+echo '* * * * * /home/pi/bin/bt-reconnect.sh' | crontab -
+
+
 ### UFW
 
 sudo ufw allow ssh comment "Allow SSH on firewall"
@@ -105,23 +123,13 @@ done
 sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 
 
-# TODO: WiFi hotspot
 # TODO: disable SWAP(?)
-
 
 
 # Install metrics
 wget -qO- https://gist.githubusercontent.com/meeDamian/fec388a943e0d4e64c876e6196a8d18f/raw/15117a1b58cbe4fe0896840517dd87e7eadaf8e0/install.sh | sudo sh
 
-
-# Bluetooth
-sudo apt-get install -y python-dbus
-
-cd ~
-git clone https://github.com/mk-fg/fgtk.git
-
-# TODO: BT reconnection
-
+# TODO: WiFi hotspot
 
 rm -rf /home/pi/bundle/
 
