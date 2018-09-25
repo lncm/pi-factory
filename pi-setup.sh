@@ -105,8 +105,7 @@ sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 # TODO: WiFi hotspot
 # TODO: disable SWAP(?)
 
-# Disable HDMI
-sudo /usr/bin/tvservice -o
+
 
 # Install metrics
 wget -qO- https://gist.githubusercontent.com/meeDamian/fec388a943e0d4e64c876e6196a8d18f/raw/15117a1b58cbe4fe0896840517dd87e7eadaf8e0/install.sh | sudo sh
@@ -123,5 +122,8 @@ git clone https://github.com/mk-fg/fgtk.git
 
 
 rm -rf /home/pi/bundle/
+
+# Disable HDMI (do this last)
+sudo /usr/bin/tvservice -o
 
 wrap_up
