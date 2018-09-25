@@ -74,6 +74,9 @@ sudo systemctl enable bitcoind
 mkdir -p /home/pi/.bitcoin
 cp /home/pi/bundle/bitcoin.conf /home/pi/.bitcoin/
 
+# TODO: "check if `blocks/` and `chainstate/` exist"-service
+
+
 
 ### Tor
 # NOTE: The tor installed here is old-ish, but still it's good enough for the usecase here
@@ -110,7 +113,6 @@ sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 # Install metrics
 wget -qO- https://gist.githubusercontent.com/meeDamian/fec388a943e0d4e64c876e6196a8d18f/raw/15117a1b58cbe4fe0896840517dd87e7eadaf8e0/install.sh | sudo sh
 
-# TODO: "check if `blocks/` and `chainstate/` exist"-service
 
 # Bluetooth
 sudo apt-get install -y python-dbus
