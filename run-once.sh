@@ -123,6 +123,11 @@ fi
 /bin/cp -f /root/bundle/sshd_config /etc/ssh/
 
 
+# Allow user pi to interact with Bluetooth stuff w/o sudo.
+# NOTE: Done here instead of `pi-setup.sh`, because changing group needs re-login
+usermod -G bluetooth -a pi
+
+
 # pack all secrets into a single `secrets.zip` archive
 zip -r -m /boot/secrets.zip /boot/secrets
 

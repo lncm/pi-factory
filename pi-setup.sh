@@ -102,7 +102,6 @@ done
 sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 
 
-# TODO: BT reconnection
 # TODO: WiFi hotspot
 # TODO: disable SWAP(?)
 
@@ -114,7 +113,14 @@ wget -qO- https://gist.githubusercontent.com/meeDamian/fec388a943e0d4e64c876e619
 
 # TODO: "check if `blocks/` and `chainstate/` exist"-service
 
-# TODO: https://github.com/mk-fg/fgtk.git
+# Bluetooth
+sudo apt-get install -y python-dbus
+
+cd ~
+git clone https://github.com/mk-fg/fgtk.git
+
+# TODO: BT reconnection
+
 
 rm -rf /home/pi/bundle/
 
