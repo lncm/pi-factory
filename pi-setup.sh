@@ -71,6 +71,9 @@ sudo make install
 sudo /bin/cp /home/pi/bundle/bitcoind.service /etc/systemd/system/
 sudo systemctl enable bitcoind
 
+mkdir -p /home/pi/.bitcoin
+cp /home/pi/bundle/bitcoin.conf /home/pi/.bitcoin/
+
 
 ### Tor
 # NOTE: The tor installed here is old-ish, but still it's good enough for the usecase here
