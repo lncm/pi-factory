@@ -112,13 +112,13 @@ sudo usermod -a -G debian-tor pi
 sudo systemctl restart tor@default
 
 # Wait until Tor starts and creates `hostname` with info about the hidden ssh service
-max_wait=55
+max_wait=10 # in seconds
 while sudo test ! -f /var/lib/tor/ssh/hostname; do
   sleep 1
 
   max_wait=$((max_wait-1))
   if [ ${max_wait} -eq "0" ]; then
-    echo "55s passed to no avail… giving up and continuing…"
+    echo "10s passed to no avail… giving up and continuing…"
     break
   fi
 done
