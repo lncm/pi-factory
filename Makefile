@@ -90,9 +90,7 @@ tmp/bt-reconnect.sh: bt-reconnect.sh
 	cp $< $@
 
 tmp/bluetooth-MACs: bluetooth-MACs
-	@ # TODO: remove all comments
-	@ # TODO: remove extra new lines
-	cp $< $@
+	grep "^[^#]" $< > $@ || { : > $@; }
 
 boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind_version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bt-reconnect.sh tmp/bluetooth-MACs
 	@ # These are needed because Makefile doesn't like prerequisites that don't exist…
