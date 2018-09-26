@@ -112,6 +112,11 @@ boot/run-once.sh: run-once.sh
 boot/cmdline.txt.orig: pi-init2/boot/cmdline.txt.stretch
 	cp $< $@
 
+# TODO: automatically get wifi credentials:
+#  * `networksetup -getairportnetwork en0 | awk -F": " '{print $2}'`
+#  * `/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | grep ' SSID:' | cut -d ":" -f 2`
+# 
+# use `.gitignore`d `wpa_supplicant.private.conf`, if available, otherwise use `wpa_supplicant.conf`, if valid
 boot/wpa_supplicant.conf: wpa_supplicant.conf
 	@[ -f wpa_supplicant.private.conf ] && \
 		{ cp wpa_supplicant.private.conf $@; echo "wpa_supplicant.private.conf copied to boot/"; exit 0; } || \
@@ -119,6 +124,7 @@ boot/wpa_supplicant.conf: wpa_supplicant.conf
 			{ echo "Please make sure you've set COUNTRY, SSID and PASSWORD in $< correctly"; exit 1; } || \
 			{ cp $< $@; echo "$< copied to boot/"; exit 0; }; }
 
+# ensure `boot/` contains everything that will be copied to the card
 boot: $(PI_INIT2_FILES) boot/ssh boot/run-once.sh boot/cmdline.txt.orig boot/bundle.zip boot/wpa_supplicant.conf
 	cp $(PI_INIT2_FILES) $@
 
@@ -176,6 +182,7 @@ write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
 	@
 	sudo dd bs=64m if=$< of=${SD}
 
+# Ensure `/Volumes/boot` already exists or try to mount it if `SD` is provided & contains a block device
 /Volumes/boot:
 	@ [ -d /Volumes/boot ] && exit 0 || \
 		{ \
@@ -219,6 +226,7 @@ write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
 			exit 1; \
 		}
 
+# do everything except writing the raspbian image. Can be run multiple times as long as card wasn't run in RBP yet
 write_stuff_to_boot: pi-init2 boot /Volumes/boot
 	cp boot/* /Volumes/boot/
 	@
