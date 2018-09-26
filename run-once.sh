@@ -46,10 +46,13 @@ fi
 
 apt-get update
 
-# Install things required to unzip bundle.zip with necessary config files, and dictionary to generate password
+# Install `unzip` (extract config files necessary in this stoep from `bundle.zip`) and `wamerican-small` dictionary to generate password
 apt-get install -y zip unzip wamerican-small
 
+
+#
 ### SSH Daemon Setup
+#
 #  Replaces the magic of https://github.com/RPi-Distro/raspberrypi-sys-mods/blob/master/debian/raspberrypi-sys-mods.sshswitch.service
 #  See also: https://github.com/RPi-Distro/raspberrypi-sys-mods/blob/master/debian/raspberrypi-sys-mods.regenerate_ssh_host_keys.service
 update-rc.d ssh enable && invoke-rc.d ssh start
@@ -68,18 +71,19 @@ chown -R $(id -u pi):$(id -g pi) /home/pi/bin
 chmod +x /home/pi/bin/pi-setup.sh
 
 
-# make sure that pi-setup script runs on the next boot
+# make sure that right scripts are run on the next boot
 cp /root/bundle/pi-setup.service /etc/systemd/system/
-systemctl enable pi-setup
-
 cp /root/bundle/pi-shutdown.service /etc/systemd/system/
+systemctl enable pi-setup
 systemctl enable pi-shutdown
 
 
 # create temporary directory to store secrets in
 mkdir /boot/secrets
 
-
+#
+### Password
+#
 # Generate password, if not provided
 if [ ! -s /root/bundle/password ]; then
   LC_ALL=C grep -x '[a-z]*' /usr/share/dict/words | shuf --random-source=/dev/urandom -n 12 | paste -sd "-" > /boot/secrets/password
@@ -89,11 +93,14 @@ fi
 
 password="$(cat /boot/secrets/password)"
 
-# set either provided or generated password for `pi` and `root`
+# set either the provided or the generated password for `pi` and `root`
 echo   "pi:${password}" | chpasswd
 echo "root:${password}" | chpasswd
 
 
+#
+### SSH key
+#
 # generate key, if not provided
 if [ ! -s /root/bundle/id_ed25519.pub ] && [ ! -s /root/bundle/id_rsa.pub ]; then
   ssh-keygen -N "" -o -a 100 -t ed25519 -f /boot/secrets/id_ed25519
@@ -102,13 +109,12 @@ else
   # only copy known keys, ignore missing ones
   cp /root/bundle/id_{rsa,ed25519}.pub /boot/secrets/ 2>/dev/null
 
-  # disable password for ssh ONLY if a key was provided by user
+  # disable password for ssh ONLY if a key was **provided by user**
   sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
 fi
 
 (umask 077; mkdir -p /home/pi/.ssh; touch /home/pi/.ssh/authorized_keys)
 chown -R $(id -u pi):$(id -g pi) /home/pi/.ssh
-
 
 # enable SSH access wither via the provided or generated key(s)
 if [ -s /boot/secrets/id_ed25519.pub ]; then
@@ -118,11 +124,13 @@ if [ -s /boot/secrets/id_rsa.pub ]; then
   cat /boot/secrets/id_rsa.pub >> /home/pi/.ssh/authorized_keys
 fi
 
-
 # make SSH access more secure
 /bin/cp -f /root/bundle/sshd_config /etc/ssh/
 
 
+#
+### Bluetooth (part 1)
+#
 # Allow user pi to interact with Bluetooth stuff w/o sudo.
 # NOTE: Done here instead of `pi-setup.sh`, because changing group needs re-login
 usermod -G bluetooth -a pi
@@ -132,23 +140,30 @@ usermod -G bluetooth -a pi
 zip -r -m /boot/secrets.zip /boot/secrets
 
 
-# disable HDMI, if not disabled already
+#
+### HDMI
+#
+# disable, if not disabled already
 [ -z "$(grep "usr/bin/tvservice" /etc/rc.local)" ] && \
     sed -i "s|exit 0|\# Disable HDMI\n/usr/bin/tvservice -o\n\nexit 0|g" /etc/rc.local
 
-
-### Update hostname
-#  See https://raspberrypi.stackexchange.com/a/66939/8375 for a list of all the raspi-config magic you may want ot automate.
+#
+### hostname
+#
+# See https://raspberrypi.stackexchange.com/a/66939/8375 for a list of all the raspi-config magic you may want ot automate.
 raspi-config nonint do_hostname "$(cat /root/bundle/hostname)"
 
 
+#
+### Cleanup
+#
 # all unzipped files from bundle are placed where necessary, so clean-up
 rm -rf /root/bundle/
-
 
 # Move self to completed
 mkdir -p /boot/run-once.d/completed
 mv /boot/run-once.sh /boot/run-once.d/completed
+
 
 wrap_up
 

@@ -34,9 +34,10 @@ sudo apt-get update
 
 sudo apt-get install -y   git jq tmux miniupnpc nmap ufw tree bc
 
-
+#
+### Bluetooth
+#
 # TODO: only do BT if `bluetooth-MACs` exists
-# Bluetooth
 sudo apt-get install -y python-dbus
 
 # TODO: do that AWFUL thing with bluetoothctl…
@@ -52,8 +53,9 @@ chmod +x /home/pi/bin/bt-reconnect.sh
 echo '* * * * * /home/pi/bin/bt-reconnect.sh' | crontab -
 
 
+#
 ### UFW
-
+#
 sudo ufw allow ssh comment "Allow SSH on firewall"
 sudo ufw allow 8333 comment "Allow connections to/from Bitcoind"
 sudo ufw enable
@@ -62,8 +64,10 @@ sudo ufw status verbose
 # upgrade AFTER UFW
 sudo apt-get -y upgrade
 
-### Bitcoin (from sources)
 
+#
+### Bitcoin (from sources)
+#
 # install all dependencies needed to build Bitcoind
 sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config libssl-dev libevent-dev bsdmainutils libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev libminiupnpc-dev libzmq3-dev
 
@@ -95,10 +99,9 @@ cp /home/pi/bundle/bitcoin.conf /home/pi/.bitcoin/
 # TODO: "check if `blocks/` and `chainstate/` exist"-service
 
 
-
-### Tor
-# NOTE: The tor installed here is old-ish, but still it's good enough for the usecase here
-
+#
+### Tor (old-ish, but good 'nuff)
+#
 sudo apt-get install -y tor tor-arm
 
 sudo /bin/cp /home/pi/bundle/torrc /etc/tor/
@@ -124,14 +127,16 @@ sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 
 
 # TODO: disable SWAP(?)
-
-
-# Install metrics
-wget -qO- https://gist.githubusercontent.com/meeDamian/fec388a943e0d4e64c876e6196a8d18f/raw/15117a1b58cbe4fe0896840517dd87e7eadaf8e0/install.sh | sudo sh
-
 # TODO: WiFi hotspot
 
+
+#
+### Install metrics
+#
+wget -qO- https://gist.githubusercontent.com/meeDamian/fec388a943e0d4e64c876e6196a8d18f/raw/15117a1b58cbe4fe0896840517dd87e7eadaf8e0/install.sh | sudo sh
+
 rm -rf /home/pi/bundle/
+
 
 # Disable HDMI (do this last)
 sudo /usr/bin/tvservice -o
