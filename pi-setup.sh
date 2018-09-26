@@ -27,31 +27,36 @@ export DEBIAN_FRONTEND=noninteractive
 
 sudo raspi-config nonint do_change_locale en_US.UTF-8
 
-unzip   -d /home/pi/bundle   /boot/bundle.zip   bitcoin.conf bitcoind_version bitcoind.service torrc bluetooth-MACs bt-reconnect.sh  2> /dev/null
+unzip   -d /home/pi/bundle   /boot/bundle.zip   bitcoin.conf bitcoind_version bitcoind.service torrc bluetooth-MACs bt-pair.sh bt-reconnect.sh  2> /dev/null
 sudo rm -f /boot/bundle.zip
 
 sudo apt-get update
 
 sudo apt-get install -y   git jq tmux miniupnpc nmap ufw tree bc
 
+
 #
 ### Bluetooth
 #
-# TODO: only do BT if `bluetooth-MACs` exists
-sudo apt-get install -y python-dbus
+if [ -s /home/pi/bundle/bluetooth-MACs ]; then
+  sudo apt-get install -y python-dbus
 
-# TODO: do that AWFUL thing with bluetoothctl…
+  # TODO: do that awfully AWFUL thing with bluetoothctl…
 
-cd ~
-git clone https://github.com/mk-fg/fgtk.git
+  cd ~
+  git clone https://github.com/mk-fg/fgtk.git
 
-cp /home/pi/bundle/bluetooth-MACs /home/pi/bin/
-cp /home/pi/bundle/bt-reconnect.sh /home/pi/bin/
-chmod +x /home/pi/bin/bt-reconnect.sh
+  cp /home/pi/bundle/bluetooth-MACs /home/pi/bin/
 
-# NOTE: we assume here that cron is still empty
-echo '* * * * * /home/pi/bin/bt-reconnect.sh' | crontab -
+  cp /home/pi/bundle/bt-pair.sh /home/pi/bin/
+  chmod +x /home/pi/bin/bt-pair.sh
 
+  cp /home/pi/bundle/bt-reconnect.sh /home/pi/bin/
+  chmod +x /home/pi/bin/bt-reconnect.sh
+
+  # NOTE: we assume here that cron is still empty
+  echo '* * * * * /home/pi/bin/bt-reconnect.sh' | crontab -
+fi
 
 #
 ### UFW
