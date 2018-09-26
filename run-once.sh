@@ -133,7 +133,7 @@ zip -r -m /boot/secrets.zip /boot/secrets
 #
 # disable, if not disabled already
 [ -z "$(grep "usr/bin/tvservice" /etc/rc.local)" ] && \
-    sed -i "s|exit 0|\# Disable HDMI\n/usr/bin/tvservice -o\n\nexit 0|g" /etc/rc.local
+    sed -i "s|^exit 0$|\# Disable HDMI\n/usr/bin/tvservice -o\n\nexit 0|g" /etc/rc.local
 
 #
 ### hostname
