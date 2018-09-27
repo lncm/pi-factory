@@ -86,13 +86,16 @@ tmp/pi-shutdown.service: pi-shutdown.service
 tmp/torrc: torrc
 	cp $< $@
 
+tmp/bt-pair.sh: bt-pair.sh
+	cp $< $@
+
 tmp/bt-reconnect.sh: bt-reconnect.sh
 	cp $< $@
 
 tmp/bluetooth-MACs: bluetooth-MACs
 	grep "^[^#]" $< > $@ || { : > $@; }
 
-boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind_version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bt-reconnect.sh tmp/bluetooth-MACs
+boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind_version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bluetooth-MACs tmp/bt-pair.sh tmp/bt-reconnect.sh
 	@ # These are needed because Makefile doesn't like prerequisites that don't exist…
 	@ [ ! -s tmp/password ] && rm -f tmp/password || exit 0
 	@ [ ! -s tmp/id_rsa.pub ] && rm -f tmp/id_rsa.pub || exit 0
@@ -115,7 +118,7 @@ boot/cmdline.txt.orig: pi-init2/boot/cmdline.txt.stretch
 # TODO: automatically get wifi credentials:
 #  * `networksetup -getairportnetwork en0 | awk -F": " '{print $2}'`
 #  * `/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | grep ' SSID:' | cut -d ":" -f 2`
-# 
+#
 # use `.gitignore`d `wpa_supplicant.private.conf`, if available, otherwise use `wpa_supplicant.conf`, if valid
 boot/wpa_supplicant.conf: wpa_supplicant.conf
 	@[ -f wpa_supplicant.private.conf ] && \

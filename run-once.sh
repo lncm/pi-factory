@@ -131,7 +131,10 @@ zip -r -m /boot/secrets.zip /boot/secrets
 #
 ### HDMI
 #
-# disable, if not disabled already
+# disable for this run
+sudo /usr/bin/tvservice -o
+
+# disable permanently, if not disabled already
 [ -z "$(grep "usr/bin/tvservice" /etc/rc.local)" ] && \
     sed -i "s|^exit 0$|\# Disable HDMI\n/usr/bin/tvservice -o\n\nexit 0|g" /etc/rc.local
 

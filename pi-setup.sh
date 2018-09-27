@@ -39,9 +39,7 @@ sudo apt-get install -y   git jq tmux miniupnpc nmap ufw tree bc
 ### Bluetooth
 #
 if [ -s /home/pi/bundle/bluetooth-MACs ]; then
-  sudo apt-get install -y python-dbus
-
-  # TODO: do that awfully AWFUL thing with bluetoothctl…
+  sudo apt-get install -y python3-dbus
 
   cd ~
   git clone https://github.com/mk-fg/fgtk.git
@@ -50,6 +48,7 @@ if [ -s /home/pi/bundle/bluetooth-MACs ]; then
 
   cp /home/pi/bundle/bt-pair.sh /home/pi/bin/
   chmod +x /home/pi/bin/bt-pair.sh
+  /home/pi/bin/bt-pair.sh &
 
   cp /home/pi/bundle/bt-reconnect.sh /home/pi/bin/
   chmod +x /home/pi/bin/bt-reconnect.sh
@@ -141,9 +140,5 @@ sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 wget -qO- https://gist.githubusercontent.com/meeDamian/fec388a943e0d4e64c876e6196a8d18f/raw/15117a1b58cbe4fe0896840517dd87e7eadaf8e0/install.sh | sudo sh
 
 rm -rf /home/pi/bundle/
-
-
-# Disable HDMI (do this last)
-sudo /usr/bin/tvservice -o
 
 wrap_up
