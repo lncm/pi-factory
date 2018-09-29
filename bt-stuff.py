@@ -123,8 +123,43 @@ def connect(net, dev_remote):
                   dev_remote.object_path, prop_get(dev_remote, 'Address'), i_face)
 
 
-def device_found(address, properties):
-    print(address, properties)
+def nearby_devices(known_devices):
+    for path, device in get_manager().GetManagedObjects().items():
+        adapter = device.get(iface_dev)
+        if adapter is None:
+            continue
+
+        if adapter['Address'] in known_devices:
+            yield device
+    else:
+        return None
+
+
+def attempt_discovery(local_bluetooth_devices):
+    #
+    # METHOD #1: user pairs their PHONE with RBP
+    #
+    # put all BT devices into a discoverable & pairable mode for 4 hours
+    available_for_timeout = dbus.UInt32(4 * 60 * 60)
+    for mac, device in local_bluetooth_devices.items():
+        prop_set(device, 'Powered', True)
+        prop_set(device, 'Discoverable', True)
+        prop_set(device, 'DiscoverableTimeout', available_for_timeout)
+        prop_set(device, 'Pairable', True)
+        prop_set(device, 'PairableTimeout', available_for_timeout)
+
+        log.debug('Putting local device into a discoverable mode (addr: %s): %s', mac, device.object_path)
+
+    #
+    # METHOD #2: RBP attempts to pair to a phone, if any MACs are provided
+    #
+    for device in local_bluetooth_devices.values():
+        device.StartDiscovery()
+
+    time.sleep(10)
+
+    for device in local_bluetooth_devices.values():
+        device.StopDiscovery()
 
 
 def main():
@@ -145,7 +180,7 @@ def main():
     # @another_droog - you know what that is?
     signal.signal(signal.SIGTERM, lambda sig, frm: sys.exit(0))
 
-    # discover all local BT devices
+    # find all local BT devices
     local_bluetooth_devices = {}
     bus = dbus.SystemBus()
     for path, ifaces in get_manager().GetManagedObjects().items():
@@ -156,65 +191,37 @@ def main():
         device = dbus.Interface(bus.get_object(iface_base, path), iface_adapter)
         local_bluetooth_devices[prop_get(device, 'Address')] = device
 
-    #
-    # METHOD #1: user pairs their PHONE with RBP
-    #
-    # put all BT devices into a discoverable & pairable mode for 4 hours
-    # TODO: should only happen if no devices are paired/available…
-    available_for_timeout = dbus.UInt32(4 * 60 * 60)
-    for mac, device in local_bluetooth_devices.items():
-        prop_set(device, 'Powered', True)
-        prop_set(device, 'Discoverable', True)
-        prop_set(device, 'DiscoverableTimeout', available_for_timeout)
-        prop_set(device, 'Pairable', True)
-        prop_set(device, 'PairableTimeout', available_for_timeout)
+    # ensure there's at least one _known_ device nearby
+    nearby = nearby_devices(['40:4E:36:A6:F8:18', opts.remote_addr])
+    if nearby is None:
+        attempt_discovery(local_bluetooth_devices)
 
-        log.debug('Putting local device into a discoverable mode (addr: %s): %s', mac, device.object_path)
-
-    #
-    # METHOD #2: RBP attempts to pair to a phone, if any MACs are provided
-    #
-    for mac, device in local_bluetooth_devices.items():
-        # print(opts.remote_addr)
-        device.StartDiscovery()
-        device.connect_to_signal('DeviceFound', device_found)
-
-        print(dir(device))
-        # print(get_manager().GetManagedObjects())
-        for a, b in get_manager().GetManagedObjects().items():
-            print(a)
-            print("")
-            print(b)
-            print("")
-            print("")
-
-    time.sleep(10)
-
-    return
+        nearby = nearby_devices(['40:4E:36:A6:F8:18', opts.remote_addr])
+        if nearby is None:
+            # TODO: no devices avail and no devices added
+            return
 
 
 
 
+    for device in nearby:
+        adapter = device.get(iface_dev)
 
+        log.debug('Using remote device: (addr: %s, name: %s)', adapter['Address'], adapter['Name'])
 
+        try:
+            device.ConnectProfile('nap')
 
+        except:
+            pass  # no idea why it fails sometimes, but still creates dbus interface
 
-    dev_remote = find_device(opts.remote_addr, list(devs.values())[0])
-    log.debug('Using remote device (addr: %s): %s', prop_get(dev_remote, 'Address'), dev_remote.object_path)
+        net = dbus.Interface(device, 'org.bluez.Network1')
 
-    try:
-        dev_remote.ConnectProfile('nap')
+        if opts.disconnect or opts.reconnect:
+            disconnect(net, device, opts.reconnect)
 
-    except:
-        pass  # no idea why it fails sometimes, but still creates dbus interface
-
-    net = dbus.Interface(dev_remote, 'org.bluez.Network1')
-
-    if opts.disconnect or opts.reconnect:
-        disconnect(net, dev_remote, opts.reconnect)
-
-    if not opts.disconnect:
-        connect(net, dev_remote)
+        if not opts.disconnect:
+            connect(net, device)
 
     log.debug('Finished')
 
