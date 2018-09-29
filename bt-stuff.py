@@ -4,6 +4,7 @@ import signal
 import sys
 import dbus
 import time
+import pprint
 
 from dbus.mainloop.glib import DBusGMainLoop
 
@@ -13,6 +14,8 @@ iface_base = 'org.bluez'
 iface_dev = '{}.Device1'.format(iface_base)
 iface_adapter = '{}.Adapter1'.format(iface_base)
 iface_props = 'org.freedesktop.DBus.Properties'
+
+pp = pprint.PrettyPrinter(indent=2, depth=5)
 
 
 class BTError(Exception):
@@ -39,49 +42,6 @@ def prop_set(obj, k, v, iface=None):
         iface = obj.dbus_interface
 
     return obj.Set(iface, k, v, dbus_interface=iface_props)
-
-
-def find_adapter(pattern=None):
-    return find_adapter_in_objects(get_manager().GetManagedObjects(), pattern)
-
-
-def find_adapter_in_objects(objects, pattern=None):
-    bus, obj = get_bus(), None
-    for path, ifaces in objects.items():
-        adapter = ifaces.get(iface_adapter)
-        if adapter is None:
-            continue
-
-        if not pattern or pattern == adapter['Address'] or path.endswith(pattern):
-            obj = bus.get_object(iface_base, path)
-            yield dbus.Interface(obj, iface_adapter)
-
-    if obj is None:
-        raise BTError('Bluetooth adapter not found')
-
-
-def find_device(device_address, adapter_pattern=None):
-    return find_device_in_objects(get_manager().GetManagedObjects(), device_address, adapter_pattern)
-
-
-def find_device_in_objects(objects, device_address, adapter_pattern=None):
-    bus = get_bus()
-    path_prefix = ''
-    if adapter_pattern:
-        if not isinstance(adapter_pattern, str):
-            adapter = adapter_pattern
-        else:
-            adapter = find_adapter_in_objects(objects, adapter_pattern)
-        path_prefix = adapter.object_path
-
-    for path, ifaces in objects.items():
-        device = ifaces.get(iface_dev)
-        if device is None: continue
-        if device['Address'] == device_address and path.startswith(path_prefix):
-            obj = bus.get_object(iface_base, path)
-            return dbus.Interface(obj, iface_dev)
-
-    raise BTError('Bluetooth device not found')
 
 
 def disconnect(net, dev_remote, is_reconnect):
@@ -124,15 +84,16 @@ def connect(net, dev_remote):
 
 
 def nearby_devices(known_devices):
+    devices = []
     for path, device in get_manager().GetManagedObjects().items():
         adapter = device.get(iface_dev)
         if adapter is None:
             continue
 
         if adapter['Address'] in known_devices:
-            yield device
-    else:
-        return None
+            devices.append(dbus.Interface(get_bus().get_object(iface_base, path), iface_dev))
+
+    return devices if devices else None
 
 
 def attempt_discovery(local_bluetooth_devices):
@@ -166,7 +127,7 @@ def main():
     # Help screen and some params passing
     import argparse
     p = argparse.ArgumentParser(description='BlueZ bluetooth PAN network server/client.')
-    p.add_argument('remote_addr', help='BT MAC of a remote device to connect to')
+    p.add_argument('remote_addr', nargs='+', help='BT MACs of all possible remote devices to connect to')
     p.add_argument('-d', '--disconnect', action='store_true', help='Disconnect, if connected, and exit.')
     p.add_argument('-r', '--reconnect', action='store_true', help='Reconnect, if connected, otherwise just connect')
     opts = p.parse_args()
@@ -192,22 +153,17 @@ def main():
         local_bluetooth_devices[prop_get(device, 'Address')] = device
 
     # ensure there's at least one _known_ device nearby
-    nearby = nearby_devices(['40:4E:36:A6:F8:18', opts.remote_addr])
+    nearby = nearby_devices(opts.remote_addr)
     if nearby is None:
         attempt_discovery(local_bluetooth_devices)
 
-        nearby = nearby_devices(['40:4E:36:A6:F8:18', opts.remote_addr])
+        nearby = nearby_devices(opts.remote_addr)
         if nearby is None:
             # TODO: no devices avail and no devices added
             return
 
-
-
-
     for device in nearby:
-        adapter = device.get(iface_dev)
-
-        log.debug('Using remote device: (addr: %s, name: %s)', adapter['Address'], adapter['Name'])
+        log.debug('Using remote device: (addr: %s, name: %s)', prop_get(device, 'Address'), prop_get(device, 'Name'))
 
         try:
             device.ConnectProfile('nap')
