@@ -27,7 +27,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 sudo raspi-config nonint do_change_locale en_US.UTF-8
 
-unzip   -d /home/pi/bundle   /boot/bundle.zip   bitcoin.conf bitcoind_version bitcoind.service torrc bluetooth-MACs bt-pair.sh bt-reconnect.sh  2> /dev/null
+unzip   -d /home/pi/bundle   /boot/bundle.zip   bitcoin.conf bitcoind_version bitcoind.service torrc bluetooth-MACs bt-stuff.py bt-reconnect.sh  2> /dev/null
 sudo rm -f /boot/bundle.zip
 
 sudo apt-get update
@@ -41,14 +41,10 @@ sudo apt-get install -y   git jq tmux miniupnpc nmap ufw tree bc
 if [ -s /home/pi/bundle/bluetooth-MACs ]; then
   sudo apt-get install -y python3-dbus
 
-  cd ~
-  git clone https://github.com/mk-fg/fgtk.git
-
   cp /home/pi/bundle/bluetooth-MACs /home/pi/bin/
 
-  cp /home/pi/bundle/bt-pair.sh /home/pi/bin/
-  chmod +x /home/pi/bin/bt-pair.sh
-  /home/pi/bin/bt-pair.sh &
+  cp /home/pi/bundle/bt-stuff.py /home/pi/bin/
+  chmod +x /home/pi/bin/bt-stuff.py
 
   cp /home/pi/bundle/bt-reconnect.sh /home/pi/bin/
   chmod +x /home/pi/bin/bt-reconnect.sh

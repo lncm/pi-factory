@@ -86,7 +86,7 @@ tmp/pi-shutdown.service: pi-shutdown.service
 tmp/torrc: torrc
 	cp $< $@
 
-tmp/bt-pair.sh: bt-pair.sh
+tmp/bt-stuff.py: bt-stuff.py
 	cp $< $@
 
 tmp/bt-reconnect.sh: bt-reconnect.sh
@@ -95,7 +95,7 @@ tmp/bt-reconnect.sh: bt-reconnect.sh
 tmp/bluetooth-MACs: bluetooth-MACs
 	grep "^[^#]" $< > $@ || { : > $@; }
 
-boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind_version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bluetooth-MACs tmp/bt-pair.sh tmp/bt-reconnect.sh
+boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind_version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bluetooth-MACs tmp/bt-stuff.py tmp/bt-reconnect.sh
 	@ # These are needed because Makefile doesn't like prerequisites that don't exist…
 	@ [ ! -s tmp/password ] && rm -f tmp/password || exit 0
 	@ [ ! -s tmp/id_rsa.pub ] && rm -f tmp/id_rsa.pub || exit 0
