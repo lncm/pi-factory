@@ -3,6 +3,11 @@
 import signal
 import sys
 import dbus
+import time
+
+from dbus.mainloop.glib import DBusGMainLoop
+
+DBusGMainLoop(set_as_default=True)
 
 iface_base = 'org.bluez'
 iface_dev = '{}.Device1'.format(iface_base)
@@ -118,6 +123,10 @@ def connect(net, dev_remote):
                   dev_remote.object_path, prop_get(dev_remote, 'Address'), i_face)
 
 
+def device_found(address, properties):
+    print(address, properties)
+
+
 def main():
     # Help screen and some params passing
     import argparse
@@ -159,16 +168,18 @@ def main():
         prop_set(device, 'DiscoverableTimeout', available_for_timeout)
         prop_set(device, 'Pairable', True)
         prop_set(device, 'PairableTimeout', available_for_timeout)
-        device.StartDiscovery()
 
         log.debug('Putting local device into a discoverable mode (addr: %s): %s', mac, device.object_path)
 
     #
-    # METHOD #2: RBP attempts to pair to a phone, if MAC is provided
+    # METHOD #2: RBP attempts to pair to a phone, if any MACs are provided
     #
     for mac, device in local_bluetooth_devices.items():
-        device.ConnectDevice(dbus.Dictionary({"Address": "40:4E:36:A6:F8:18"}, signature="ss"))
+        # print(opts.remote_addr)
+        device.StartDiscovery()
+        device.connect_to_signal('DeviceFound', device_found)
 
+    time.sleep(30)
 
     return
 
