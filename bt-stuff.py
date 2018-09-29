@@ -179,7 +179,16 @@ def main():
         device.StartDiscovery()
         device.connect_to_signal('DeviceFound', device_found)
 
-    time.sleep(30)
+        print(dir(device))
+        # print(get_manager().GetManagedObjects())
+        for a, b in get_manager().GetManagedObjects().items():
+            print(a)
+            print("")
+            print(b)
+            print("")
+            print("")
+
+    time.sleep(10)
 
     return
 
