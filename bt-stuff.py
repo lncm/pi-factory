@@ -119,6 +119,7 @@ def connect(net, dev_remote):
 
 
 def main():
+    # Help screen and some params passing
     import argparse
     p = argparse.ArgumentParser(description='BlueZ bluetooth PAN network server/client.')
     p.add_argument('remote_addr', help='BT MAC of a remote device to connect to')
@@ -126,24 +127,57 @@ def main():
     p.add_argument('-r', '--reconnect', action='store_true', help='Reconnect, if connected, otherwise just connect')
     opts = p.parse_args()
 
+    # setup logging
     global log
     import logging
     logging.basicConfig(level=logging.DEBUG)
     log = logging.getLogger()
 
-    devs = dict((prop_get(dev, 'Address'), dev) for dev in list(find_adapter()))
-
-    for dev_addr, dev in devs.items():
-        prop_set(dev, 'Powered', True)
-        prop_set(dev, 'Discoverable', True)
-        prop_set(dev, 'DiscoverableTimeout', 24*60*60)
-        prop_set(dev, 'Pairable', True)
-        prop_set(dev, 'PairableTimeout', 24*60*60)
-        dev.StartDiscovery()
-
-        log.debug('Using local device (addr: %s): %s', dev_addr, dev.object_path)
-
+    # @another_droog - you know what that is?
     signal.signal(signal.SIGTERM, lambda sig, frm: sys.exit(0))
+
+    # discover all local BT devices
+    local_bluetooth_devices = {}
+    bus = dbus.SystemBus()
+    for path, ifaces in get_manager().GetManagedObjects().items():
+        adapter = ifaces.get(iface_adapter)
+        if adapter is None:
+            continue
+
+        device = dbus.Interface(bus.get_object(iface_base, path), iface_adapter)
+        local_bluetooth_devices[prop_get(device, 'Address')] = device
+
+    #
+    # METHOD #1: user pairs their PHONE with RBP
+    #
+    # put all BT devices into a discoverable & pairable mode for 4 hours
+    # TODO: should only happen if no devices are paired/available…
+    available_for_timeout = dbus.UInt32(4 * 60 * 60)
+    for mac, device in local_bluetooth_devices.items():
+        prop_set(device, 'Powered', True)
+        prop_set(device, 'Discoverable', True)
+        prop_set(device, 'DiscoverableTimeout', available_for_timeout)
+        prop_set(device, 'Pairable', True)
+        prop_set(device, 'PairableTimeout', available_for_timeout)
+        device.StartDiscovery()
+
+        log.debug('Putting local device into a discoverable mode (addr: %s): %s', mac, device.object_path)
+
+    #
+    # METHOD #2: RBP attempts to pair to a phone, if MAC is provided
+    #
+    for mac, device in local_bluetooth_devices.items():
+        device.ConnectDevice(dbus.Dictionary({"Address": "40:4E:36:A6:F8:18"}, signature="ss"))
+
+
+    return
+
+
+
+
+
+
+
 
     dev_remote = find_device(opts.remote_addr, list(devs.values())[0])
     log.debug('Using remote device (addr: %s): %s', prop_get(dev_remote, 'Address'), dev_remote.object_path)
