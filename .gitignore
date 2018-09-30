@@ -3,7 +3,7 @@
 /boot/*
 /tmp
 
-/wpa_supplicant.private.conf
+/wpa_supplicant.automatic.conf
 /id_rsa.pub
 /id_ed25519.pub
 /2018-06-27-raspbian-stretch-lite.zip

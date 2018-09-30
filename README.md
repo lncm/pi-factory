@@ -35,9 +35,9 @@ This step _can_ take a very long time, depending on your internet connection and
 
 This is **the only required** thing to do in this step. Open `./wpa_supplicant.conf` from the root of this directory and replace:
 
-* `${COUNTRY}` with a two-letter code of the country you will be using this RBP in (regulatory reasons ¯\\\_(ツ)\_/¯)
-* `${SSID}` with the name of the WiFi network
-* `${PASSWORD}` with a password to it
+* `<COUNTRY>` with a two-letter code of the country you will be using this RBP in (regulatory reasons ¯\\\_(ツ)\_/¯)
+* `<SSID>` with the name of the WiFi network
+* `<PASSWORD>` with a password to it
 
 ## [OPTIONAL] Grant yourself access
 

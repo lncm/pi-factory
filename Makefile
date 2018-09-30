@@ -1,5 +1,18 @@
 PI_INIT2_FILES=pi-init2/boot/cmdline.txt pi-init2/boot/pi-init2
 
+define WPA_SUPPLICANT
+country=<COUNTRY>
+ctrl_interface=/var/run/wpa_supplicant
+update_config=1
+
+network={
+    ssid="<SSID>"
+    psk="<PASSWORD>"
+}
+
+endef
+export WPA_SUPPLICANT
+
 2018-06-27-raspbian-stretch-lite.zip:
 	@[ ! -f $@ ] && { \
 		echo "Downloading $@…"; \
@@ -115,16 +128,33 @@ boot/run-once.sh: run-once.sh
 boot/cmdline.txt.orig: pi-init2/boot/cmdline.txt.stretch
 	cp $< $@
 
-# TODO: automatically get wifi credentials:
-#  * `networksetup -getairportnetwork en0 | awk -F": " '{print $2}'`
-#  * `/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | grep ' SSID:' | cut -d ":" -f 2`
-#
-# use `.gitignore`d `wpa_supplicant.private.conf`, if available, otherwise use `wpa_supplicant.conf`, if valid
+# Acquire WiFi credentials automatically
+wpa_supplicant.automatic.conf:
+	$(eval SSID := $(shell /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport --getinfo | sed -n 's/^ *SSID: //p'))
+	@ echo "$$WPA_SUPPLICANT" | \
+		sed -e "s/<COUNTRY>/$(shell system_profiler -detailLevel mini SPAirPortDataType | grep -i "country code" | awk '{print $$3}')/" | \
+		sed -e "s/<SSID>/$(SSID)/" | \
+		sed -e "s/<PASSWORD>/$(shell security find-generic-password -wa '$(SSID)')/" > $@
+
+# use `.gitignore`d `wpa_supplicant.automatic.conf`, if available, otherwise use `wpa_supplicant.conf`, if valid
 boot/wpa_supplicant.conf: wpa_supplicant.conf
-	@[ -f wpa_supplicant.private.conf ] && \
-		{ cp wpa_supplicant.private.conf $@; echo "wpa_supplicant.private.conf copied to boot/"; exit 0; } || \
+	@[ -f wpa_supplicant.automatic.conf ] && \
+		{ cp wpa_supplicant.automatic.conf $@; echo "wpa_supplicant.automatic.conf copied to boot/"; exit 0; } || \
 		{ grep -q 'COUNTRY\|SSID\|PASSWORD' $< && \
-			{ echo "Please make sure you've set COUNTRY, SSID and PASSWORD in $< correctly"; exit 1; } || \
+			{ \
+				echo "ERROR: WiFi configuration is required"; \
+				echo; \
+				echo "Run below to get WiFi credentials for your current network used automatically:"; \
+				echo "  make wpa_supplicant.automatic.conf"; \
+				echo; \
+				echo "NOTE: the command above will ask you for your username and password."; \
+				echo "	hint: your username is $(shell whoami)"; \
+				echo; \
+				echo "Alternatively, open and edit '$<' file and replace:"; \
+				echo "  <COUNTRY>, <SSID> and <PASSWORD> to match your network configuration"; \
+				echo; \
+				exit 1; \
+			} || \
 			{ cp $< $@; echo "$< copied to boot/"; exit 0; }; }
 
 # ensure `boot/` contains everything that will be copied to the card
