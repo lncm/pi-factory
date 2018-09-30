@@ -1,9 +1,10 @@
 [Unit]
 Description=Bitcoin daemon
 After=network.target
+ConditionPathExists=/home/pi/.bitcoin/blocks
+ConditionPathExists=/home/pi/.bitcoin/chainstate
 
 [Service]
-# TODO: add ExecStartPre that fails if `blocks/` or `chainstate/` doesn't exist
 ExecStart=/usr/local/bin/bitcoind -conf=/home/pi/.bitcoin/bitcoin.conf -pid=/home/pi/.bitcoin/bitcoind.pid
 
 # Creates /run/bitcoind owned by pi
