@@ -139,7 +139,7 @@ wpa_supplicant.automatic.conf:
 # use `.gitignore`d `wpa_supplicant.automatic.conf`, if available, otherwise use `wpa_supplicant.conf`, if valid
 boot/wpa_supplicant.conf: wpa_supplicant.conf
 	@[ -f wpa_supplicant.automatic.conf ] && \
-		{ cp wpa_supplicant.automatic.conf $@; echo "wpa_supplicant.automatic.conf copied to boot/"; exit 0; } || \
+		{ cp wpa_supplicant.automatic.conf $@; echo "Using wpa_supplicant.automatic.conf"; exit 0; } || \
 		{ grep -q 'COUNTRY\|SSID\|PASSWORD' $< && \
 			{ \
 				echo "ERROR: WiFi configuration is required"; \
@@ -148,14 +148,14 @@ boot/wpa_supplicant.conf: wpa_supplicant.conf
 				echo "  make wpa_supplicant.automatic.conf"; \
 				echo; \
 				echo "NOTE: the command above will ask you for your username and password."; \
-				echo "	hint: your username is $(shell whoami)"; \
+				echo "  hint: your username is $(shell whoami)"; \
 				echo; \
 				echo "Alternatively, open and edit '$<' file and replace:"; \
 				echo "  <COUNTRY>, <SSID> and <PASSWORD> to match your network configuration"; \
 				echo; \
 				exit 1; \
 			} || \
-			{ cp $< $@; echo "$< copied to boot/"; exit 0; }; }
+			{ cp $< $@; echo "Using $<"; exit 0; }; }
 
 # ensure `boot/` contains everything that will be copied to the card
 boot: $(PI_INIT2_FILES) boot/ssh boot/run-once.sh boot/cmdline.txt.orig boot/bundle.zip boot/wpa_supplicant.conf
