@@ -128,7 +128,8 @@ def main():
     import argparse
     p = argparse.ArgumentParser(description='BlueZ bluetooth PAN network server/client.')
     p.add_argument('remote_addr', nargs='+', help='BT MACs of all possible remote devices to connect to')
-    p.add_argument('-d', '--disconnect', action='store_true', help='Disconnect, if connected, and exit.')
+    p.add_argument('--pair', action='store_true', help='Launch in a pair mode')
+    p.add_argument('-d', '--disconnect', action='store_true', help='Disconnect, if connected, and exit')
     p.add_argument('-r', '--reconnect', action='store_true', help='Reconnect, if connected, otherwise just connect')
     opts = p.parse_args()
 

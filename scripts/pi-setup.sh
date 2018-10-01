@@ -27,7 +27,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 sudo raspi-config nonint do_change_locale en_US.UTF-8
 
-unzip   -d /home/pi/bundle   /boot/bundle.zip   bitcoin.conf bitcoind_version bitcoind.service torrc bluetooth-MACs bt-stuff.py bt-reconnect.sh  2> /dev/null
+unzip   -d /home/pi/bundle   /boot/bundle.zip   bitcoin.conf bitcoind-version bitcoind.service torrc bluetooth-MACs bt-stuff.py bt-reconnect.sh  2> /dev/null
 sudo rm -f /boot/bundle.zip
 
 sudo apt-get update
@@ -83,7 +83,7 @@ else
   git fetch --tags
 fi
 
-git checkout "$(cat /home/pi/bundle/bitcoind_version)"
+git checkout "$(cat /home/pi/bundle/bitcoind-version)"
 
 ./autogen.sh
 ./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" --enable-cxx  --disable-shared --with-pic --disable-tests --disable-bench --enable-upnp-default --without-gui --disable-wallet
@@ -96,7 +96,6 @@ sudo systemctl enable bitcoind
 mkdir -p /home/pi/.bitcoin
 cp /home/pi/bundle/bitcoin.conf /home/pi/.bitcoin/
 
-# TODO: "check if `blocks/` and `chainstate/` exist"-service
 
 
 #
@@ -127,7 +126,8 @@ sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 
 
 # TODO: disable SWAP(?)
-# TODO: WiFi hotspot
+
+
 
 
 #

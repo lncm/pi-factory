@@ -65,9 +65,9 @@ tmp/id_rsa.pub:
 tmp/id_ed25519.pub:
 	[ -f id_ed25519.pub ] && cp id_ed25519.pub $@ || { : > $@; }
 
-# verifies if version specified in `bitcoind_version` is available.
+# verifies if version specified in `bitcoind-version` is available.
 # If so, copies the file to `boot/`, otherwise errors.
-tmp/bitcoind_version: bitcoind_version
+tmp/bitcoind-version: bitcoind-version
 	@curl -s https://api.github.com/repos/bitcoin/bitcoin/releases | jq -r '.[].tag_name' | grep -qx "$(shell cat $^)" && \
 		{ echo "Bitcoin Core '$(shell cat $^)' found as a release"; exit 0; } || \
 		curl -s https://api.github.com/repos/bitcoin/bitcoin/branches | jq -r '.[].name' | grep -qx "$(shell cat $^)" && \
@@ -75,40 +75,40 @@ tmp/bitcoind_version: bitcoind_version
 
 	cp $< $@
 
-tmp/bitcoin.conf: bitcoin.conf
+tmp/bitcoin.conf: configs/bitcoin.conf
 	cp $< $@
 
-tmp/bitcoind.service: bitcoind.service
+tmp/bitcoind.service: configs/bitcoind.service
 	cp $< $@
 
-tmp/sshd_config: sshd_config
+tmp/sshd_config: configs/sshd_config
 	cp $< $@
 
 # This is the actual setup everything script
-tmp/pi-setup.sh: pi-setup.sh
+tmp/pi-setup.sh: scripts/pi-setup.sh
 	cp $< $@
 
 # This is a systemd service that ensures that `pi-setup.sh` runs only after network is available.
-tmp/pi-setup.service: pi-setup.service
+tmp/pi-setup.service: configs/pi-setup.service
 	cp $< $@
 
 # This systemd script ensures that `pi-setup.sh` runs only once and shutsdown the device when it's done
-tmp/pi-shutdown.service: pi-shutdown.service
+tmp/pi-shutdown.service: configs/pi-shutdown.service
 	cp $< $@
 
-tmp/torrc: torrc
+tmp/torrc: configs/torrc
 	cp $< $@
 
-tmp/bt-stuff.py: bt-stuff.py
+tmp/bt-stuff.py: scripts/bt-stuff.py
 	cp $< $@
 
-tmp/bt-reconnect.sh: bt-reconnect.sh
+tmp/bt-reconnect.sh: scripts/bt-reconnect.sh
 	cp $< $@
 
 tmp/bluetooth-MACs: bluetooth-MACs
 	grep "^[^#]" $< > $@ || { : > $@; }
 
-boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind_version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bluetooth-MACs tmp/bt-stuff.py tmp/bt-reconnect.sh
+boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind-version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bluetooth-MACs tmp/bt-stuff.py tmp/bt-reconnect.sh
 	@ # These are needed because Makefile doesn't like prerequisites that don't exist…
 	@ [ ! -s tmp/password ] && rm -f tmp/password || exit 0
 	@ [ ! -s tmp/id_rsa.pub ] && rm -f tmp/id_rsa.pub || exit 0
@@ -122,7 +122,7 @@ boot/ssh:
 	touch $@
 
 # This is a script that will run on pi and bootstrap all the necessary basics
-boot/run-once.sh: run-once.sh
+boot/run-once.sh: scripts/run-once.sh
 	cp $< $@
 
 boot/cmdline.txt.orig: pi-init2/boot/cmdline.txt.stretch
