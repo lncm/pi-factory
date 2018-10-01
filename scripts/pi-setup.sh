@@ -50,7 +50,8 @@ if [ -s /home/pi/bundle/bluetooth-MACs ]; then
   chmod +x /home/pi/bin/bt-reconnect.sh
 
   # NOTE: we assume here that cron is still empty
-  echo '* * * * * /home/pi/bin/bt-reconnect.sh' | crontab -
+#  echo '* * * * * /home/pi/bin/bt-reconnect.sh' | crontab -
+  sudo sh -c "echo '* * * * * pi /home/pi/bin/bt-reconnect.sh' > /etc/cron.d/bluetooth-pan"
 fi
 
 #
@@ -127,7 +128,20 @@ sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 
 # TODO: disable SWAP(?)
 
+# hotspot
+sudo apt install -y dnsmasq hostapd
 
+# backup needed(?)
+mv /etc/dnsmasq.conf /etc/dnsmasq.conf.original
+mv /etc/dhcpcd.conf  /etc/dhcpcd.conf.original
+
+# actual setup
+cp /home/pi/bundle/dnsmasq.conf /etc/
+cp /home/pi/bundle/hostapd.conf /etc/hostapd/
+cp /home/pi/bundle/dhcpcd.conf  /etc/
+
+# TODO: change to systemd
+sudo sh -c "echo '@reboot root hostapd -dd -B /etc/hostapd/hostapd.conf' > /etc/cron.d/hotspot"
 
 
 #
