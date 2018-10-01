@@ -108,7 +108,16 @@ tmp/bt-reconnect.sh: scripts/bt-reconnect.sh
 tmp/bluetooth-MACs: bluetooth-MACs
 	grep "^[^#]" $< > $@ || { : > $@; }
 
-boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind-version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bluetooth-MACs tmp/bt-stuff.py tmp/bt-reconnect.sh
+tmp/dhcpcd.conf: configs/dhcpcd.conf
+	cp $< $@
+
+tmp/dnsmasq.conf: configs/dnsmasq.conf
+	cp $< $@
+
+tmp/hostapd.conf: configs/hostapd.conf
+	cp $< $@
+
+boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind-version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bluetooth-MACs tmp/bt-stuff.py tmp/bt-reconnect.sh tmp/dhcpcd.conf tmp/dnsmasq.conf tmp/hostapd.conf
 	@ # These are needed because Makefile doesn't like prerequisites that don't exist…
 	@ [ ! -s tmp/password ] && rm -f tmp/password || exit 0
 	@ [ ! -s tmp/id_rsa.pub ] && rm -f tmp/id_rsa.pub || exit 0

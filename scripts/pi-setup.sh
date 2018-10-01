@@ -27,7 +27,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 sudo raspi-config nonint do_change_locale en_US.UTF-8
 
-unzip   -d /home/pi/bundle   /boot/bundle.zip   bitcoin.conf bitcoind-version bitcoind.service torrc bluetooth-MACs bt-stuff.py bt-reconnect.sh  2> /dev/null
+unzip   -d /home/pi/bundle   /boot/bundle.zip   bitcoin.conf bitcoind-version bitcoind.service torrc bluetooth-MACs bt-stuff.py bt-reconnect.sh dhcpcd.conf dnsmasq.conf hostapd.conf 2> /dev/null
 sudo rm -f /boot/bundle.zip
 
 sudo apt-get update
