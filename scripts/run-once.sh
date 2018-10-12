@@ -32,6 +32,17 @@ export LC_ALL=en_US.UTF-8
 update-locale LANG='en_US.UTF-8'
 update-locale LANGUAGE='en_US:en'
 
+# Setup Swap
+fallocate -l 2G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+
+echo \
+"
+/swapfile none swap sw 0 0" | tee --append /etc/fstab
+
+# Update packages
 apt-get update
 
 # Install `unzip` (extract config files necessary in this stoep from `bundle.zip`) and `wamerican-small` dictionary to generate password
