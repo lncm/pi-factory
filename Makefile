@@ -1,4 +1,4 @@
-PI_INIT2_FILES=pi-init2/boot/cmdline.txt pi-init2/boot/pi-init2
+PI_INIT3_FILES=pi-init3/boot/cmdline.txt pi-init3/boot/pi-init3
 
 # That's a template for the WiFi file that can be generated from your OS keystore by using:
 #		make wpa_supplicant.automatic.conf
@@ -57,7 +57,7 @@ VARIANT_DEPS := $(filter-out tmp/README.md,$(VARIANT_DEPS))
 
 
 # TODO: change to pi-init3
-pi-init2:
+pi-init3:
 	git submodule update --init --recursive
 
 
@@ -170,7 +170,7 @@ boot/ssh:
 boot/run-once.sh: scripts/run-once.sh
 	cp $< $@
 
-boot/cmdline.txt.orig: pi-init2/boot/cmdline.txt.stretch
+boot/cmdline.txt.orig: pi-init3/boot/cmdline.txt.orig
 	cp $< $@
 
 # Acquire WiFi credentials automatically
@@ -204,8 +204,8 @@ boot/wpa_supplicant.conf: wpa_supplicant.conf
 
 
 # ensure `boot/` contains everything that will be copied to the card
-boot: $(PI_INIT2_FILES) boot/ssh boot/run-once.sh boot/cmdline.txt.orig boot/bundle.zip boot/wpa_supplicant.conf
-	cp $(PI_INIT2_FILES) $@
+boot: $(PI_INIT3_FILES) boot/ssh boot/run-once.sh boot/cmdline.txt.orig boot/bundle.zip boot/wpa_supplicant.conf
+	cp $(PI_INIT3_FILES) $@
 
 
 write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
@@ -309,7 +309,7 @@ write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
 
 
 # do everything except writing the raspbian image. Can be run multiple times as long as card wasn't run in RBP yet
-write_stuff_to_boot: pi-init2 boot /Volumes/boot
+write_stuff_to_boot: pi-init3 boot /Volumes/boot
 	cp boot/* /Volumes/boot/
 	@
 	@ [ ! -z "${SD}" ] && diskutil eject ${SD} || { echo "\n  NOTE: Manual eject is necessary, because device to unmount unknown ('SD=' not set)"; exit 0; }
@@ -337,5 +337,5 @@ rsync: tmp tmp/hostname
 	rsync -r ~/Library/Application\ Support/Bitcoin/{blocks,chainstate} "pi@$(shell cat tmp/hostname).local:/home/pi/.bitcoin/"
 
 
-# NOTE: `pi-init2` needs to be here, otherwise Makefile thinks everything's done
-.PHONY: clean all pi-init2 write_image_to_sd_card write_stuff_to_boot rsync
+# NOTE: `pi-init3` needs to be here, otherwise Makefile thinks everything's done
+.PHONY: clean all pi-init3 write_image_to_sd_card write_stuff_to_boot rsync
