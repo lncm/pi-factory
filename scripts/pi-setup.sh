@@ -67,6 +67,33 @@ sudo apt-get -y upgrade
 
 
 #
+### Tor (old-ish, but good 'nuff)
+#
+sudo apt-get install -y tor tor-arm
+
+sudo /bin/cp /home/pi/bundle/torrc /etc/tor/
+
+# allow user pi (and Bitcoind) to communicate with Tor
+sudo usermod -a -G debian-tor pi
+
+sudo systemctl restart tor@default
+
+# Wait until Tor starts and creates `hostname` with info about the hidden ssh service
+max_wait=10 # in seconds
+while sudo test ! -f /var/lib/tor/ssh/hostname; do
+  sleep 1
+
+  max_wait=$((max_wait-1))
+  if [ ${max_wait} -eq "0" ]; then
+    echo "10s passed to no avail… giving up and continuing…"
+    break
+  fi
+done
+
+sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
+
+
+#
 ### Bitcoin (from sources)
 #
 # install all dependencies needed to build Bitcoind
@@ -99,46 +126,19 @@ cp /home/pi/bundle/bitcoin.conf /home/pi/.bitcoin/
 
 
 
-#
-### Tor (old-ish, but good 'nuff)
-#
-sudo apt-get install -y tor tor-arm
-
-sudo /bin/cp /home/pi/bundle/torrc /etc/tor/
-
-# allow user pi (and Bitcoind) to communicate with Tor
-sudo usermod -a -G debian-tor pi
-
-sudo systemctl restart tor@default
-
-# Wait until Tor starts and creates `hostname` with info about the hidden ssh service
-max_wait=10 # in seconds
-while sudo test ! -f /var/lib/tor/ssh/hostname; do
-  sleep 1
-
-  max_wait=$((max_wait-1))
-  if [ ${max_wait} -eq "0" ]; then
-    echo "10s passed to no avail… giving up and continuing…"
-    break
-  fi
-done
-
-sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
-
-
 # TODO: disable SWAP(?)
 
 # hotspot
 sudo apt install -y dnsmasq hostapd
 
 # backup needed(?)
-mv /etc/dnsmasq.conf /etc/dnsmasq.conf.original
-mv /etc/dhcpcd.conf  /etc/dhcpcd.conf.original
+sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.original
+sudo mv /etc/dhcpcd.conf  /etc/dhcpcd.conf.original
 
 # actual setup
-cp /home/pi/bundle/dnsmasq.conf /etc/
-cp /home/pi/bundle/hostapd.conf /etc/hostapd/
-cp /home/pi/bundle/dhcpcd.conf  /etc/
+sudo cp /home/pi/bundle/dnsmasq.conf /etc/
+sudo cp /home/pi/bundle/hostapd.conf /etc/hostapd/
+sudo cp /home/pi/bundle/dhcpcd.conf  /etc/
 
 # TODO: change to systemd
 sudo sh -c "echo '@reboot root hostapd -dd -B /etc/hostapd/hostapd.conf' > /etc/cron.d/hotspot"

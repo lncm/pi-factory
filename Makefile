@@ -1,5 +1,7 @@
 PI_INIT2_FILES=pi-init2/boot/cmdline.txt pi-init2/boot/pi-init2
 
+# That's a template for the WiFi file that can be generated from your OS keystore by using:
+#		make wpa_supplicant.automatic.conf
 define WPA_SUPPLICANT
 country=<COUNTRY>
 ctrl_interface=/var/run/wpa_supplicant
@@ -12,6 +14,21 @@ network={
 
 endef
 export WPA_SUPPLICANT
+
+
+# TODO: should there be a default VARIANT?
+# TODO: describe what the below does
+# TODO: split below into steps
+VARIANT ?= zero
+ifeq ($(VARIANT),zero)
+	VARIANT_DEPS = $(patsubst variant-zero/%,tmp/%,$(filter-out variant-zero/dbus,$(wildcard variant-zero/*)))
+else ifeq ($(VARIANT),box)
+	VARIANT_DEPS = $(wildcard variant-box/*)
+else ifeq ($(VARIANT),blank)
+	VARIANT_DEPS = $(wildcard variant-blank/*)
+endif
+
+VARIANT_DEPS := $(filter-out tmp/README.md,$(VARIANT_DEPS))
 
 2018-06-27-raspbian-stretch-lite.zip:
 	@[ ! -f $@ ] && { \
@@ -38,8 +55,11 @@ export WPA_SUPPLICANT
 	@shasum -a 256 -c <<< "3271b244734286d99aeba8fa043b6634cad488d211583814a2018fc14fdca313  $<"
 	@unzip -n $<
 
+
+# TODO: change to pi-init3
 pi-init2:
 	git submodule update --init --recursive
+
 
 clean:
 	rm -f boot/*
@@ -47,6 +67,10 @@ clean:
 tmp:
 	mkdir -p tmp
 
+
+##
+## common (used in at least 2 variants) files (to be zipped into bundle.zip)
+##
 # If set, the contents of this file will be set as password for users `pi` & `root` on the Pi
 tmp/password: password
 	grep "^[^#]" $< > $@ || { : > $@; }
@@ -99,25 +123,33 @@ tmp/pi-shutdown.service: configs/pi-shutdown.service
 tmp/torrc: configs/torrc
 	cp $< $@
 
-tmp/bt-stuff.py: scripts/bt-stuff.py
+
+##
+## Files specific to `VARIANT = zero`
+##
+tmp/bt-stuff.py: variant-zero/bt-stuff.py
 	cp $< $@
 
-tmp/bt-reconnect.sh: scripts/bt-reconnect.sh
+tmp/bt-reconnect.sh: variant-zero/bt-reconnect.sh
 	cp $< $@
 
-tmp/bluetooth-MACs: bluetooth-MACs
+tmp/bluetooth-MACs: variant-zero/bluetooth-MACs
 	grep "^[^#]" $< > $@ || { : > $@; }
 
-tmp/dhcpcd.conf: configs/dhcpcd.conf
+tmp/dhcpcd.conf: variant-zero/dhcpcd.conf
 	cp $< $@
 
-tmp/dnsmasq.conf: configs/dnsmasq.conf
+tmp/dnsmasq.conf: variant-zero/dnsmasq.conf
 	cp $< $@
 
-tmp/hostapd.conf: configs/hostapd.conf
+tmp/hostapd.conf: variant-zero/hostapd.conf
 	cp $< $@
 
-boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind-version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc tmp/bluetooth-MACs tmp/bt-stuff.py tmp/bt-reconnect.sh tmp/dhcpcd.conf tmp/dnsmasq.conf tmp/hostapd.conf
+
+##
+## Aggregate all files, including the variant-specific ones
+##
+boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.service tmp/password tmp/hostname tmp/id_rsa.pub tmp/id_ed25519.pub tmp/bitcoind-version tmp/bitcoin.conf tmp/bitcoind.service tmp/sshd_config tmp/torrc $(VARIANT_DEPS)
 	@ # These are needed because Makefile doesn't like prerequisites that don't exist…
 	@ [ ! -s tmp/password ] && rm -f tmp/password || exit 0
 	@ [ ! -s tmp/id_rsa.pub ] && rm -f tmp/id_rsa.pub || exit 0
@@ -127,6 +159,10 @@ boot/bundle.zip: tmp tmp/pi-setup.sh tmp/pi-setup.service tmp/pi-shutdown.servic
 	@
 	rm -rf tmp
 
+
+##
+## common files (to be placed in SD root)
+##
 boot/ssh:
 	touch $@
 
@@ -166,9 +202,11 @@ boot/wpa_supplicant.conf: wpa_supplicant.conf
 			} || \
 			{ cp $< $@; echo "Using $<"; exit 0; }; }
 
+
 # ensure `boot/` contains everything that will be copied to the card
 boot: $(PI_INIT2_FILES) boot/ssh boot/run-once.sh boot/cmdline.txt.orig boot/bundle.zip boot/wpa_supplicant.conf
 	cp $(PI_INIT2_FILES) $@
+
 
 write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
 	@ # Ensure that user passed correct `SD=<device>` parameter
@@ -224,6 +262,7 @@ write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
 	@
 	sudo dd bs=64m if=$< of=${SD}
 
+
 # Ensure `/Volumes/boot` already exists or try to mount it if `SD` is provided & contains a block device
 /Volumes/boot:
 	@ [ -d /Volumes/boot ] && exit 0 || \
@@ -268,6 +307,7 @@ write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
 			exit 1; \
 		}
 
+
 # do everything except writing the raspbian image. Can be run multiple times as long as card wasn't run in RBP yet
 write_stuff_to_boot: pi-init2 boot /Volumes/boot
 	cp boot/* /Volumes/boot/
@@ -280,14 +320,22 @@ write_stuff_to_boot: pi-init2 boot /Volumes/boot
 	@ echo "  Next step is detaching the card from your computer an inserting it into"
 	@ echo "  your Raspberry Pi Zero. The setup process there will take long hours"
 	@ echo
-	@ echo "  WRITE MOAR HERE"
+	@ echo "  TODO: WRITE MOAR HERE"
 	@ echo
 	@ echo "  When the setup process is complete the device will automatically"
 	@ echo "  turn off. You'll know it's off when the on-board LED is no longer lit."
 	@
 	@ # TODO: protip about password or ssh keys
 
+
 all: clean write_image_to_sd_card write_stuff_to_boot
 
+
+# Copy the Bitcoin blocks and chainstate directories from the computer to the raspberry pi
+rsync: tmp tmp/hostname
+	ssh "pi@$(shell cat tmp/hostname).local" 'mkdir -p /home/pi/.bitcoin'
+	rsync -r ~/Library/Application\ Support/Bitcoin/{blocks,chainstate} "pi@$(shell cat tmp/hostname).local:/home/pi/.bitcoin/"
+
+
 # NOTE: `pi-init2` needs to be here, otherwise Makefile thinks everything's done
-.PHONY: clean all pi-init2 write_image_to_sd_card write_stuff_to_boot conclude
+.PHONY: clean all pi-init2 write_image_to_sd_card write_stuff_to_boot rsync
