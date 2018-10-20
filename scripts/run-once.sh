@@ -121,17 +121,19 @@ fi
 #
 # Allow user pi to interact with Bluetooth stuff w/o sudo.
 # NOTE: Done here instead of `pi-setup.sh`, because changing group needs re-login
+# TODO: make this optional and happen only for variant-zero; perhaps a `.patch` file
 usermod -G bluetooth -a pi
 
 
 # pack all secrets into a single `secrets.zip` archive
-zip -r -m /boot/secrets.zip /boot/secrets
+zip -j -r -m /boot/secrets.zip /boot/secrets
 
 
 #
 ### HDMI
 #
 # disable for this run
+# TODO: when to do that?
 sudo /usr/bin/tvservice -o
 
 # disable permanently, if not disabled already
