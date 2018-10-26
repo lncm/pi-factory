@@ -109,7 +109,7 @@ tmp/sshd_config: configs/sshd_config
 	cp $< $@
 
 # This is the actual setup everything script
-tmp/pi-setup.sh: scripts/pi-setup.sh
+tmp/pi-setup.sh: variant-$(VARIANT)/pi-setup.sh
 	cp $< $@
 
 # This is a systemd service that ensures that `pi-setup.sh` runs only after network is available.
