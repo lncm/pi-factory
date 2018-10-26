@@ -75,7 +75,65 @@ sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 
 
 # TODO: detect `-source` suffix in `bitcoind-version`; if present build from source, if not build from binaries
-# TODO: how to detect arch for binaries?
+BITCOINVER=`cat bundle/bitcoind-version`
+if [[ $BITCOINVER == *"source"* ]]; then 
+    echo "Building bitcoin from source"
+else
+    echo "Using pre-built binary"
+    # Double check if its actually a supported platform
+    # TODO: use my detect arch script as fallback
+    if [ $(uname -m) == "armv7l" ]; then
+        sudo apt-get install -y \
+            apt-transport-https \
+            ca-certificates \
+            curl \
+            software-properties-common
+
+        # verify key
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo apt-key fingerprint 0EBFCD88
+
+        echo "deb [arch=armhf] https://download.docker.com/linux/debian \
+            $(lsb_release -cs) stable" | \
+            sudo tee /etc/apt/sources.list.d/docker.list
+
+        # update sources
+        sudo apt-get update
+
+        # install docker
+        sudo apt-get install -y docker-ce
+
+        # setup docker containers
+        sudo usermod -G docker pi # Make sure the permissions are set
+        sudo systemctl start docker # Make sure docker is started
+
+        # create folder structure
+        mkdir -p /home/pi/data/btc
+        mkdir -p /home/pi/data/lightningd
+ 
+        # TODO: actually generate a bitcoin.conf instead so lightning
+        # connects to bitcoind with no configuration.
+        cp /home/pi/bundle/bitcoin.conf /home/pi/data/btc
+        # TODO: generate a lightning config
+        touch /home/pi/data/lightningd/config
+
+        # grab docker containers
+        # TODO: Make the bitcoinver more integrated
+        if ! docker images | grep 0.17.0-arm7; then
+            docker pull lncm/bitcoind:0.17.0-arm7
+        fi
+        # TODO: make a lightningver too
+        if ! docker images | grep 0.6.1-arm7; then
+            docker pull lncm/clightning:0.6.1-arm7
+        fi
+        cat <<EOF >/home/pi/data/ln.sh
+#!/bin/bash
+/usr/local/bin/lightningd --lightning-dir=/data/lightningd
+EOF
+        chmod 755 /home/pi/data/ln.sh
+    fi
+fi
+
 #
 #### Bitcoin (from sources)
 ##
