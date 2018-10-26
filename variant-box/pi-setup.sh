@@ -32,14 +32,14 @@ sudo rm -f /boot/bundle.zip
 
 sudo apt-get update
 
-sudo apt-get install -y   git jq tmux miniupnpc nmap ufw tree bc
-
+sudo apt-get install -y   git jq tmux miniupnpc nmap ufw tree bc screen vim
 
 #
 ### UFW
 #
 sudo ufw allow ssh comment "Allow SSH on firewall"
 sudo ufw allow 8333 comment "Allow connections to/from Bitcoind"
+sudo ufw allow 9735 comment "Allow people to actually open a channel to the box"
 sudo ufw enable
 sudo ufw status verbose
 
