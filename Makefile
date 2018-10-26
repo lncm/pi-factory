@@ -76,9 +76,9 @@ tmp/password: password
 	grep "^[^#]" $< > $@ || { : > $@; }
 
 # If set, the uncommented contents of this file are set as a hostname for the RBP being bootstrapped
-#         otherwise `pi-the-box` is used
+#         otherwise variant prefixed with `pi-` is used
 tmp/hostname: hostname
-	@ grep "^[^#]" $< > $@ || { echo "pi-the-box" > $@; }
+	@ grep "^[^#]" $< > $@ || { echo "pi-$(VARIANT)" > $@; }
 	@ LC_ALL=C grep "^[a-z0-9_-]*$$" $@ > /dev/null || { echo "hostname can only contain lowercase alphanumeric characters, - and _."; exit 1; }
 
 # If present, this key will be placed in `.ssh/authorized_keys` on Pi's first boot
