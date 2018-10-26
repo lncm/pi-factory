@@ -59,6 +59,7 @@ fi
 #
 sudo ufw allow ssh comment "Allow SSH on firewall"
 sudo ufw allow 8333 comment "Allow connections to/from Bitcoind"
+# TODO: allow DHCP(?)
 sudo ufw enable
 sudo ufw status verbose
 
