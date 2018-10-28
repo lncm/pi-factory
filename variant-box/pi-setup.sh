@@ -76,8 +76,39 @@ sudo zip -j   -u /boot/secrets.zip   /var/lib/tor/ssh/hostname
 
 # TODO: detect `-source` suffix in `bitcoind-version`; if present build from source, if not build from binaries
 BITCOINVER=`cat bundle/bitcoind-version`
-if [[ $BITCOINVER == *"source"* ]]; then 
+if [[ $BITCOINVER == *"source"* ]]; then
     echo "Building bitcoin from source"
+    #
+    #### Bitcoin (from sources)
+    ##
+    ## install all dependencies needed to build Bitcoind
+    sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config libssl-dev libevent-dev bsdmainutils libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev libminiupnpc-dev libzmq3-dev
+    #
+    cd ~
+    #
+    ## get/update bitcoind source code
+    if [ ! -d ~/bitcoin ]; then
+      git clone https://github.com/bitcoin/bitcoin.git
+      cd bitcoin
+    else
+      cd bitcoin
+      git pull origin master
+      git fetch --tags
+    fi
+    #
+    git checkout "$(cat /home/pi/bundle/bitcoind-version)"
+    #
+    ./autogen.sh
+    ./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" --enable-cxx  --disable-shared --with-pic --disable-tests --disable-bench --enable-upnp-default --without-gui --disable-wallet
+    make
+    sudo make install
+    #
+    #sudo /bin/cp /home/pi/bundle/bitcoind.service /etc/systemd/system/
+    #sudo systemctl enable bitcoind
+    #
+    mkdir -p /home/pi/.bitcoin
+    # TODO: actually generate a bitcoin.conf we can use
+    cp /home/pi/bundle/bitcoin.conf /home/pi/.bitcoin/
 else
     echo "Using pre-built binary"
     # Double check if its actually a supported platform
@@ -110,7 +141,7 @@ else
         # create folder structure
         mkdir -p /home/pi/data/btc
         mkdir -p /home/pi/data/lightningd
- 
+
         # TODO: actually generate a bitcoin.conf instead so lightning
         # connects to bitcoind with no configuration.
         cp /home/pi/bundle/bitcoin.conf /home/pi/data/btc
@@ -133,37 +164,6 @@ EOF
         chmod 755 /home/pi/data/ln.sh
     fi
 fi
-
-#
-#### Bitcoin (from sources)
-##
-## install all dependencies needed to build Bitcoind
-#sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config libssl-dev libevent-dev bsdmainutils libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev libminiupnpc-dev libzmq3-dev
-#
-#cd ~
-#
-## get/update bitcoind source code
-#if [ ! -d ~/bitcoin ]; then
-#  git clone https://github.com/bitcoin/bitcoin.git
-#  cd bitcoin
-#else
-#  cd bitcoin
-#  git pull origin master
-#  git fetch --tags
-#fi
-#
-#git checkout "$(cat /home/pi/bundle/bitcoind-version)"
-#
-#./autogen.sh
-#./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" --enable-cxx  --disable-shared --with-pic --disable-tests --disable-bench --enable-upnp-default --without-gui --disable-wallet
-#make
-#sudo make install
-#
-#sudo /bin/cp /home/pi/bundle/bitcoind.service /etc/systemd/system/
-#sudo systemctl enable bitcoind
-#
-#mkdir -p /home/pi/.bitcoin
-#cp /home/pi/bundle/bitcoin.conf /home/pi/.bitcoin/
 
 
 
