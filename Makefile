@@ -1,5 +1,10 @@
 PI_INIT3_FILES=pi-init3/boot/cmdline.txt pi-init3/boot/pi-init3
 
+SUPPORTED_IMAGES=2018-06-27 2018-10-09
+
+# if no IMAGE= specified choose the newest
+IMAGE ?= $(lastword $(SUPPORTED_IMAGES))
+
 # That's a template for the WiFi file that can be generated from your OS keystore by using:
 #		make wpa_supplicant.automatic.conf
 define WPA_SUPPLICANT
@@ -32,7 +37,8 @@ endif
 
 VARIANT_DEPS := $(filter-out tmp/README.md,$(VARIANT_DEPS))
 
-2018-06-27-raspbian-stretch-lite.zip:
+
+%-raspbian-stretch-lite.zip:
 	@[ ! -f $@ ] && { \
 		echo "Downloading $@…"; \
 		echo; \
@@ -49,12 +55,25 @@ VARIANT_DEPS := $(filter-out tmp/README.md,$(VARIANT_DEPS))
 		echo; \
 		echo "To interrupt current download press control+c (^c)"; \
 		echo; \
-		{ curl -OJs "http://director.downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2018-06-29/$@" || rm -f $@; }; \
+		{ \
+			$(eval IMAGE_DATE := $(shell echo $@ | cut -d- -f-3)) \
+			{ \
+				$(eval UPLOAD_DATE := $(shell [ "$(IMAGE_DATE)" = "2018-10-09" ] && echo "2018-10-11" || \
+					{ [ "$(IMAGE_DATE)" = "2018-06-27" ] && echo "2018-06-29"; } || \
+					echo "$(IMAGE_DATE)" )) \
+				curl -OJs "http://director.downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-$(UPLOAD_DATE)/$@"; \
+			} || rm -f $@; \
+		}; \
 	}
 
-# unzip raspbian image into an .img file
+
+## verify raspbian image and unzip it into an .img file
 2018-06-27-raspbian-stretch-lite.img: 2018-06-27-raspbian-stretch-lite.zip
 	@shasum -a 256 -c <<< "3271b244734286d99aeba8fa043b6634cad488d211583814a2018fc14fdca313  $<"
+	@unzip -n $<
+
+2018-10-09-raspbian-stretch-lite.img: 2018-10-09-raspbian-stretch-lite.zip
+	@shasum -a 256 -c <<< "98444134e98cbb27e112f68422f9b1a42020b64a6fd29e2f6e941a3358d171b4  $<"
 	@unzip -n $<
 
 
@@ -209,7 +228,7 @@ boot: $(PI_INIT3_FILES) boot/ssh boot/run-once.sh boot/cmdline.txt.orig boot/bun
 	cp $(PI_INIT3_FILES) $@
 
 
-write_image_to_sd_card: 2018-06-27-raspbian-stretch-lite.img
+write_image_to_sd_card: $(IMAGE)-raspbian-stretch-lite.img
 	@ # Ensure that user passed correct `SD=<device>` parameter
 	@[ ! -z "${SD}" ] || { \
 		echo; \
