@@ -58,7 +58,6 @@ VARIANT_DEPS := $(filter-out tmp/README.md,$(VARIANT_DEPS))
 	@unzip -n $<
 
 
-# TODO: change to pi-init3
 pi-init3:
 	git submodule update --init --recursive
 
