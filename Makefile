@@ -190,7 +190,7 @@ boot/ssh:
 boot/run-once.sh: scripts/run-once.sh
 	cp $< $@
 
-boot/cmdline.txt.orig: pi-init3/boot/cmdline.txt.orig
+boot/cmdline.txt.orig: /Volumes/boot/cmdline.txt
 	cp $< $@
 
 # Acquire WiFi credentials automatically
