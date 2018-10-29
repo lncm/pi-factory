@@ -23,7 +23,7 @@ export WPA_SUPPLICANT
 
 # TODO: should there be a default VARIANT?
 # TODO: describe in more detail what the below does
-VARIANT ?= zero
+VARIANT ?= box
 ifeq ($(VARIANT),zero)
 	# TODO: split this into steps
 	VARIANT_DEPS = $(patsubst variant-zero/%,tmp/%,$(filter-out variant-zero/dbus,$(wildcard variant-zero/*)))
