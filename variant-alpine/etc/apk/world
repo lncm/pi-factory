@@ -1,0 +1,7 @@
+alpine-base
+avahi
+dbus
+docker
+openssh
+wireless-tools
+wpa_supplicant

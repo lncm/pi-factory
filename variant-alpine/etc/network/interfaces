@@ -1,0 +1,11 @@
+auto lo
+iface lo inet loopback
+
+auto wlan0
+iface wlan0 inet dhcp
+	hostname alpine
+
+auto eth0
+iface eth0 inet dhcp
+	hostname alpine
+

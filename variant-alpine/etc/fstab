@@ -1,0 +1,3 @@
+/dev/cdrom	/media/cdrom	iso9660	noauto,ro 0 0
+#/dev/sda	/media/usb	vfat	noauto,ro 0 0
+/dev/mmcblk0p1 /media/mmcblk0p1 vfat ro,relatime,fmask=0022,dmask=0022,errors=remount-ro 0 0

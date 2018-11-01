@@ -1,0 +1,28 @@
+#!/sbin/openrc-run
+# Copyright 2018 LNCM, distributed under the terms of the GNU General Public License v2
+
+depend() {
+        need net
+}
+
+start() {
+        ebegin "Starting LNCM install"
+	
+        # Persist apks to SD card
+        /sbin/setup-apkcache /media/mmcblk0p1/cache		
+
+	# Add apks listed in /etc/apk/world
+	/sbin/apk update
+	/sbin/apk upgrade
+
+	/etc/init.d/dbus start
+	/etc/init.d/avahi-daemon start
+
+	# Persist config to SD card
+	/sbin/lbu commit
+
+	# Backup apkovl.tar.gz to USB storage
+	#/sbin/lbu pkg /media/usb
+
+        eend $?
+}
