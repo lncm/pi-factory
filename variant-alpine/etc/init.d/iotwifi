@@ -1,0 +1,12 @@
+#!/sbin/openrc-run
+
+depend() {
+	net
+}
+
+start() {
+	docker run -d --restart=unless-stopped --privileged --net host \
+		-v /etc/iotwifi/wificfg.json:/cfg/wificfg.json \
+	        -v /etc/wpa_supplicant/wpa_supplicant.conf:/etc/wpa_supplicant/wpa_supplicant.conf \
+		cjimti/iotwifi
+}
