@@ -1,5 +1,8 @@
-# Readme for variant-alpine
+# variant-alpine
 
+This repository contains everything necessary to bootstrap a LNCM box for Raspberry Pi versions 0-3B+ based on Alpine Linux.
+
+*Alpine is a security-oriented, lightweight Linux distribution based on musl libc and Busybox.*
 
 ## Usage
 
@@ -7,28 +10,68 @@
 
 1. (if not already present) Create FAT32L partition on SD card (fdisk type 0x0C).
 
-3. Extract tarball to SD card, e.g. `tar xvzpf alpine-rpi-3.8.1-armhf.tar.gz -C /Volumes/PI`
+1. Extract tarball to SD card, e.g. `tar xvzpf alpine-rpi-3.8.1-armhf.tar.gz -C /Volumes/PI`
 
-4. Copy box.apkovl.tar.gz from this repo to SD card, or modify and re-compress one to suit your needs.
+1. **Copy** box.apkovl.tar.gz from this repo to SD card, or modify and re-create one to suit your needs.
+
 ## Access
 
-First boot will take some time as ssh host keys are generated.
+**Note:** First boot will take some time as ssh host keys are generated.
 
-If the box has working internet it can be accessed using `ssh box.local`, if no internet is available at boot it can only be reached by IP address.
-
+### Authentication
 - **username**: lncm
 - **password**: chiangmai
 - **root password**: chiangmai
 
+**Note:** `sudo` is not installed, use `su` instead
+
+### Using ssh
+`ssh lncm@box.local`
+
+**Note:** if no internet is available at boot, `cache` directory with avahi-daemon and dbus must be provided to enable `box.local` access. Alternatively, the IP address can be used. MAC addresses have a distinct Raspberry Pi Foundation prefix.
+
+### Using serial 
+(serial TTY via TTL on uart)
+
+Connect cable to *GND*, *RX*, *TX* pins, make sure you are using 3.3V and **not** 5V to prevent damage! With some devices RX & TX may have to be crossed.
+
+Add `enable_uart=1` to `config.txt` on SD card FAT partition. (may not be necessary on older models)
+
 ## Customizations
+
+### Settings
 
 #### Networking
 - Change your WiFi settings in `etc/wpa_supplicant/wpa_supplicant.conf` and re-create apkovl.
 - Alternatively, run `setup-interfaces` if you have access to a running box.
 
+#### Package management
+
+- `apk update` Update repositories 
+- `apk upgrade` Upgrade packages
+- `apk add` Install package 
+- `apk del` Uninstall package 
+
+**Note:** Remember to commit changes with `lbu commit`.
+
 #### Misc
 
-- Run `setup-hostname` `setup-timezone` `setup-keymap` `setup-dns` to customize to your needs.
+There are various configuration tools included to help you customize to your needs:
+
+- `setup-hostname` 
+- `setup-timezone` 
+- `setup-keymap` 
+- `setup-dns`
+
+### Committing changes to SD card
+
+**Important!** **Note:** By default Alpine will not persist user changes upon reboot. *The system is mounted read-only!*
+
+Use `lbu commit` to persist changes. Add `-v` to see what is being committed.
+
+`lbu status` will show changes to be committed.
+
+**Note:** By default `lbu committ` only applies to *some* directories.
 
 ### Re-creating apkovl.tar.gz from source
 
@@ -41,11 +84,11 @@ If the box has working internet it can be accessed using `ssh box.local`, if no 
 
 ## Creating new apkovl
 
-1. `lbu pkg /path/to/tar.gz`
+`lbu pkg /path/to/tar.gz` will produce a tarball of current system state.
 
- *Important notes for distributing fresh apkovl*
+*Important notes for distributing fresh apkovl*
  
- **Remove unique and security sensitive files**
+**Remove unique and security sensitive files**
  
 `rm etc/machine-id`
 
