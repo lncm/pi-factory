@@ -4,6 +4,8 @@ This repository contains everything necessary to bootstrap a LNCM box for [Raspb
 
 *[Alpine](https://alpinelinux.org) is a security-oriented, lightweight Linux distribution based on musl libc and Busybox.*
 
+Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related to system administration.
+
 ## Usage
 
 1. Fetch official Alpine armhf [tar.gz](http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/armhf/alpine-rpi-3.8.1-armhf.tar.gz) for Raspberry Pi.
