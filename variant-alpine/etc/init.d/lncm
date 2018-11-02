@@ -18,11 +18,16 @@ start() {
 	/etc/init.d/dbus start
 	/etc/init.d/avahi-daemon start
 
+	# Install docker-compose
+	#/sbin/apk add py3-pip
+	#/usr/bin/pip3 install --upgrade pip
+	#/usr/bin/pip3 install docker-compose
+
 	# Persist config to SD card
 	/sbin/lbu commit
 
 	# Backup apkovl.tar.gz to USB storage
 	#/sbin/lbu pkg /media/usb
-
+	
         eend $?
 }
