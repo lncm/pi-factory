@@ -66,6 +66,8 @@ e.g. `screen /dev/tty.usbserial-XYZ 115200`
 
 Installation of LNCM specific components belongs in `etc/init.d/lncm`. The script is [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) compatible and must be executable, without a file name extension.
 
+`etc/apk/world` contains all apk packages to be installed by LNCM's install script.
+
 - `service -l` list available services
 - `service docker start` start docker now
 - `service docker stop` stop docker now
