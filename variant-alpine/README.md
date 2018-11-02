@@ -62,7 +62,7 @@ e.g. `screen /dev/tty.usbserial-XYZ 115200`
 - `rc-update del docker boot` Remove docker from boot
 - `rc-update` show startup services
 
-Installation of LNCM specific components belongs in `etc/init.d/lncm`. The script is OpenRC compatible and must be executable, without a file name extension.
+Installation of LNCM specific components belongs in `etc/init.d/lncm`. The script is [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) compatible and must be executable, without a file name extension.
 
 - `service -l` list available services
 - `service docker start` start docker now
