@@ -3,9 +3,9 @@ iface lo inet loopback
 
 auto wlan0
 iface wlan0 inet dhcp
-	hostname alpine
+	hostname box
 
 auto eth0
 iface eth0 inet dhcp
-	hostname alpine
+	hostname box
 
