@@ -1,8 +1,8 @@
 # variant-alpine
 
-This repository contains everything necessary to bootstrap a LNCM box for Raspberry Pi versions 0-3B+ based on Alpine Linux.
+This repository contains everything necessary to bootstrap a LNCM box for [Raspberry Pi](https://www.raspberrypi.org) versions 0-3B+ based on Alpine Linux.
 
-*Alpine is a security-oriented, lightweight Linux distribution based on musl libc and Busybox.*
+*[Alpine](https://alpinelinux.org) is a security-oriented, lightweight Linux distribution based on musl libc and Busybox.*
 
 ## Usage
 
@@ -37,9 +37,13 @@ Connect cable to *GND*, *RX*, *TX* pins, make sure you are using 3.3V and **not*
 
 Add `enable_uart=1` to `config.txt` on SD card FAT partition. (may not be necessary on older models)
 
+e.g. `screen /dev/tty.usbserial-XYZ 115200`
+
 ## Customizations
 
 ### Settings
+
+**Note:** By default Alpine will not persist user changes upon reboot. Remember to commit all changes with `lbu commit`.
 
 #### Networking
 - Change your WiFi settings in `etc/wpa_supplicant/wpa_supplicant.conf` and re-create apkovl.
@@ -52,7 +56,17 @@ Add `enable_uart=1` to `config.txt` on SD card FAT partition. (may not be necess
 - `apk add` Install package 
 - `apk del` Uninstall package 
 
-**Note:** Remember to commit changes with `lbu commit`.
+#### Init system
+
+- `rc-update add docker boot` Start docker at boot
+- `rc-update del docker boot` Remove docker from boot
+- `rc-update` show startup services
+
+Installation of LNCM specific components belongs in `etc/init.d/lncm`. The script is OpenRC compatible and must be executable, without a file name extension.
+
+- `service -l` list available services
+- `service docker start` start docker now
+- `service docker stop` stop docker now
 
 #### Misc
 
@@ -71,7 +85,7 @@ Use `lbu commit` to persist changes. Add `-v` to see what is being committed.
 
 `lbu status` will show changes to be committed.
 
-**Note:** By default `lbu committ` only applies to *some* directories.
+**Note:** By default `lbu commit` only applies to *some* directories.
 
 ### Re-creating apkovl.tar.gz from source
 
