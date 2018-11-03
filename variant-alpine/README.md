@@ -41,6 +41,13 @@ Add `enable_uart=1` to `config.txt` on SD card FAT partition. (may not be necess
 
 e.g. `screen /dev/tty.usbserial-XYZ 115200`
 
+### WiFi hotspot
+
+The box can provide it's own WiFi hotspot to ease access and configuration.
+
+**WiFi name** (SSID): "LNCM-Box"
+**WiFi password**: "lncm box"
+
 ## Customizations
 
 ### Settings
