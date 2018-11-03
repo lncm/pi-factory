@@ -45,8 +45,8 @@ e.g. `screen /dev/tty.usbserial-XYZ 115200`
 
 The box can provide it's own WiFi hotspot to ease access and configuration.
 
-**WiFi name** (SSID): "LNCM-Box"
-**WiFi password**: "lncm box"
+- **WiFi name** (SSID): "LNCM-Box"
+- **WiFi password**: "lncm box"
 
 ## Customizations
 
