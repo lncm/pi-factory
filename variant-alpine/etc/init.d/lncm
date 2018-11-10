@@ -6,17 +6,17 @@ depend() {
 }
 
 start() {
-        ebegin "Starting LNCM install"
+        ebegin "Starting LNCM script"
 	
         # Persist apks to SD card
-        /sbin/setup-apkcache /media/mmcblk0p1/cache		
+        #/sbin/setup-apkcache /media/mmcblk0p1/cache		
 
 	# Add apks listed in /etc/apk/world
-	/sbin/apk update
-	/sbin/apk upgrade
+	#/sbin/apk update
+	#/sbin/apk upgrade
 
-	/etc/init.d/dbus start
-	/etc/init.d/avahi-daemon start
+	#/etc/init.d/dbus start
+	#/etc/init.d/avahi-daemon start
 
 	# Install docker-compose
 	#/sbin/apk add py3-pip
@@ -24,10 +24,10 @@ start() {
 	#/usr/bin/pip3 install docker-compose
 
 	# Persist config to SD card
-	/sbin/lbu commit
+	#/sbin/lbu commit
 
 	# Backup apkovl.tar.gz to USB storage
 	#/sbin/lbu pkg /media/usb
-	
+
         eend $?
 }
