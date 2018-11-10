@@ -14,7 +14,9 @@ Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related t
 
 1. Extract tarball to SD card, e.g. `tar xvzpf alpine-rpi-3.8.1-armhf.tar.gz -C /Volumes/PI`
 
-1. **Copy** box.apkovl.tar.gz from this repo to SD card, or modify and re-create one to suit your needs.
+1. Extract lncm-box.tar.gz from releases page to SD card.
+
+1. Optionally, create box.apkovl.tar.gz from source and place in SD card root, to ship changes before first boot.
 
 ## Access
 
@@ -100,9 +102,11 @@ Use `lbu commit` to persist changes. Add `-v` to see what is being committed.
 
 ### Re-creating apkovl.tar.gz from source
 
-`cd variant-alpine`
+Make sure you are in variant-alpine directory, e.g. `cd variant-alpine`
 
-`tar cvzpf box.apkovl.tar.gz etc home`
+Set `export COPYFILE_DISABLE=true` to prevent MacOS from adding resource forks to tarballs.
+
+`tar cvzpf box.apkovl.tar.gz --exclude ‘.DS_Store’ etc home`
 
 ### Unpacking apkovl from tar.gz
 `tar xvzpf box.apkovl.tar.gz`
