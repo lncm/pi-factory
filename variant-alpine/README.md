@@ -10,13 +10,15 @@ Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related t
 
 1. Fetch official Alpine armhf [tar.gz](http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/armhf/alpine-rpi-3.8.1-armhf.tar.gz) for Raspberry Pi.
 
-1. (if not already present) Create FAT32L partition on SD card (fdisk type 0x0C).
+2. (if not already present) Create FAT32L partition on SD card (fdisk type 0x0C).
 
-1. Extract tarball to SD card, e.g. `tar xvzpf alpine-rpi-3.8.1-armhf.tar.gz -C /Volumes/PI`
+3. Extract tarball to SD card, e.g. `tar xvzpf alpine-rpi-3.8.1-armhf.tar.gz -C /Volumes/PI`
 
-1. Extract lncm-box.tar.gz from releases page to SD card.
+4. Extract lncm-box.tar.gz from releases page to SD card.
 
-1. Optionally, create box.apkovl.tar.gz from source and place in SD card root, to ship changes before first boot.
+5. Optionally, create box.apkovl.tar.gz from source and place in SD card root, to ship changes before first boot.
+
+6a. If you have a Raspberry PI 3b+ then fetch this patch. [tar.gz](https://github.com/lncm/pi-factory/files/2569132/modloop-rpi2.zip)
 
 ## Access
 
