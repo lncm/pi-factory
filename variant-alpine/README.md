@@ -108,8 +108,9 @@ Set `export COPYFILE_DISABLE=true` to prevent MacOS from adding resource forks t
 
 `tar cvzpf lncm-box.apkovl.tar.gz --exclude ‘.DS_Store’ etc home`
 
-### Unpacking apkovl from tar.gz
-`tar xvzpf lncm-box.apkovl.tar.gz`
+### Unpacking apkovl from lncm-box.tar.gz
+
+`tar xvzpf box.apkovl.tar.gz`
 
 ## Creating new apkovl
 
