@@ -18,7 +18,7 @@ Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related t
 
 5. Optionally, create box.apkovl.tar.gz from source and place in SD card root, to ship changes before first boot.
 
-6a. If you have a Raspberry PI 3b+ then fetch this patch. [tar.gz](https://github.com/lncm/pi-factory/files/2569132/modloop-rpi2.zip)
+6. If you have a Raspberry PI 3b+ then fetch this patch if you installed 3.8.1 or lower and put it in **/boot**. [tar.gz](https://github.com/lncm/pi-factory/files/2569132/modloop-rpi2.zip)
 
 ## Access
 
