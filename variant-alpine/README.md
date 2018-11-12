@@ -106,10 +106,10 @@ Make sure you are in variant-alpine directory, e.g. `cd variant-alpine`
 
 Set `export COPYFILE_DISABLE=true` to prevent MacOS from adding resource forks to tarballs.
 
-`tar cvzpf box.apkovl.tar.gz --exclude ‘.DS_Store’ etc home`
+`tar cvzpf lncm-box.apkovl.tar.gz --exclude ‘.DS_Store’ etc home`
 
 ### Unpacking apkovl from tar.gz
-`tar xvzpf box.apkovl.tar.gz`
+`tar xvzpf lncm-box.apkovl.tar.gz`
 
 ## Creating new apkovl
 
