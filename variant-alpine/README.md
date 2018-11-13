@@ -10,15 +10,50 @@ Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related t
 
 1. Fetch official Alpine armhf [tar.gz](http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/armhf/alpine-rpi-3.8.1-armhf.tar.gz) for Raspberry Pi.
 
+```bash
+wget "http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/armhf/alpine-rpi-3.8.1-armhf.tar.gz"
+```
+
 2. (if not already present) Create FAT32L partition on SD card (fdisk type 0x0C).
 
-3. Extract tarball to SD card, e.g. `tar xvzpf alpine-rpi-3.8.1-armhf.tar.gz -C /Volumes/PI`
+3. Extract tarball to SD card.
+
+```bash
+tar xvzpf alpine-rpi-3.8.1-armhf.tar.gz -C /path/to/sdcard
+```
 
 4. Extract lncm-box.tar.gz from releases page to SD card.
 
-5. Optionally, create box.apkovl.tar.gz from source and place in SD card root, to ship changes before first boot.
+5. Optionally if you like building your own stuff, create box.apkovl.tar.gz from source and place in SD card root, to ship changes before first boot.
 
-6. If you have a Raspberry PI 3b+ then fetch this patch if you installed 3.8.1 or lower and put it in **/boot**. [zip](https://github.com/lncm/pi-factory/files/2569132/modloop-rpi2.zip)
+```bash
+# If you are using a MAC
+export COPYFILE_DISABLE=true
+
+# You may omit .DS_Store if you aren't using a Mac, but you can keep it in
+tar cvzpf box.apkovl.tar.gz --exclude '.DS_Store' etc home
+```
+
+6. Ensure that your SD Card is bootable. For Linux/OS X you can use [Etcher](https://etcher.io/), for Windows use Rufus if you like GUI or diskpart if you are comfortable with command line. Instructions for [Linux is found here],, (https://www.lifewire.com/create-a-linux-bootable-usb-drive-from-linux-4117072), furthermore instructions for [Windows can be found here](https://mspoweruser.com/how-to-create-a-bootable-usb-drive-for-windows-10/)
+
+7. If you have a Raspberry PI 3b+ then fetch this patch if you installed 3.8.1 or lower and put it in **/boot**. [zip](https://github.com/lncm/pi-factory/files/2569132/modloop-rpi2.zip)
+
+```bash
+wget "https://github.com/lncm/pi-factory/files/2569132/modloop-rpi2.zip"
+
+# If zip not installed
+apt install unzip
+
+# Extract
+unzip modloop-rpi2.zip
+# take out the trash
+rm -fr __MACOSX
+
+# Copy (or move) to boot folder in SD Card
+cp modloop-rpi2 /path/to/sdcard/boot
+```
+
+8. Put card into RPI and Pray that it all works
 
 ## Access
 
