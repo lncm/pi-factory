@@ -6,19 +6,34 @@ This repository contains everything necessary to bootstrap a LNCM box for [Raspb
 
 Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related to system administration.
 
-## Usage
+## Instructions
+
+1. Download [Etcher](https://www.balena.io/etcher/).
+2. Download latest [lncm-box.img.zip](
+https://github.com/lncm/pi-factory/releases/download/v0.2.1/lncm-box-v0.2.1.img.zip)
+3. Run Etcher and follow instructions to burn lncm-box.img.zip to SD card
+
+**Experienced users:** Alternatively, use `dd` to burn the lncm-box.img to SD card
+
+## Advanced usage
+
+For manual installation and auditing:
 
 1. Fetch official Alpine armhf [tar.gz](http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/armhf/alpine-rpi-3.8.1-armhf.tar.gz) for Raspberry Pi.
 
-2. (if not already present) Create FAT32L partition on SD card (fdisk type 0x0C).
+1. (if not already present) Create FAT32L partition on SD card (fdisk type 0x0C), make partition bootable.
 
-3. Extract tarball to SD card, e.g. `tar xvzpf alpine-rpi-3.8.1-armhf.tar.gz -C /Volumes/PI`
+1. Create FAT32 volume using `dosfstools` package, e.g. `mkfs.vfat -F 32`
 
-4. Extract lncm-box.tar.gz from releases page to SD card.
+1. Extract tarball to SD card, e.g. `tar xvzpf alpine-rpi-3.8.1-armhf.tar.gz -C /Volumes/PI`
 
-5. Optionally, create box.apkovl.tar.gz from source and place in SD card root, to ship changes before first boot.
+1. Extract latest lncm-box.tar.gz from releases page to SD card.
 
-6. If you have a Raspberry PI 3b+ then fetch this patch if you installed 3.8.1 or lower and put it in **/boot**. [zip](https://github.com/lncm/pi-factory/files/2569132/modloop-rpi2.zip)
+1. Optionally, create box.apkovl.tar.gz from source and place in SD card root, to ship your own modifications before first boot.
+
+## Automated build
+
+Use `make_img.sh` to create lncm-box.img automatically
 
 ## Access
 
