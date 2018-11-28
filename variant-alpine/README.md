@@ -74,8 +74,19 @@ The box can provide it's own WiFi hotspot to ease access and configuration.
 **Note:** By default Alpine will not persist user changes upon reboot. Remember to commit all changes with `lbu commit`.
 
 #### Networking
+
 - Change your WiFi settings in `etc/wpa_supplicant/wpa_supplicant.conf` and re-create apkovl.
 - Alternatively, run `setup-interfaces` if you have access to a running box.
+
+##### IOTWIFI Configuration
+
+After connecting to "LNCM-BOX" you can tell the box to connect to your own home wifi network by issueing the following command from your own machine thats connected to the lncm network.
+
+```bash
+curl -w "\n" -d '{"ssid":"YOUR-SSID-NAME", "psk":"YOUR-PASSWORD"}' \
+    -H "Content-Type: application/json" \
+    -X POST http://192.168.27.1:8080/connect
+```
 
 #### Package management
 
