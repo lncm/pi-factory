@@ -12,5 +12,11 @@
 /*-raspbian-stretch-lite.zip
 /*-raspbian-stretch-lite.img
 
+# Alpine sensitive stuff: Docker key
+key.json
+
+# Alpine sensitive stuff: Machine-id
+machine-id
+
 alpine-rpi-*-armhf.tar.gz
 
