@@ -109,6 +109,8 @@ Installation of LNCM specific components belongs in `etc/init.d/lncm`. The scrip
 - `service docker start` start docker now
 - `service docker stop` stop docker now
 
+More information in OpenRC [user guide](https://github.com/OpenRC/openrc/blob/master/user-guide.md)
+
 #### Misc
 
 There are various configuration tools included to help you customize to your needs:
