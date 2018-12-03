@@ -20,3 +20,6 @@ machine-id
 
 alpine-rpi-*-armhf.tar.gz
 
+# Don't commit LNCM variant build stuff
+lncm-box-*.tar.gz
+*.img
