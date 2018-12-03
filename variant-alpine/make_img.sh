@@ -1,5 +1,16 @@
 #!/bin/bash
 
+if [ "$(id -u)" -ne "0" ]; then
+    echo "This needs to be run as root"
+    exit 1
+fi
+
+if command -v parted 2>&1 1>/dev/null; [ "$?" -ne "0" ]; then
+  echo "'parted' package needs to be installed. If you're on Debian-based system, you can install it with:"
+  echo "	sudo apt install -y parted"
+  exit 1
+fi
+
 # Creates a zipped & partitioned image file for burning onto SD cards
 # 256MB bootable FAT32L partition with official Alpine linux and lncm box
 # Make sure "parted", "dosfstools" and "zip" are installed
