@@ -80,8 +80,8 @@ start() {
         echo "Re-mount FAT partition read/write"
         /bin/mount -o remount,rw /dev/${SD}p1 /media/${SD}p1
 
-        echo "Mark SD card as installed"
-        /bin/touch /media/${SD}p1/installed
+        echo "Mark SD card with installed version"
+        /bin/echo "v0.2.1" > /media/${SD}p1/installed
 
         echo "Re-mount FAT partition read-only"
         /bin/mount -o remount,ro /dev/${SD}p1 /media/${SD}p1
