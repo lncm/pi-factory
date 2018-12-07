@@ -1,4 +1,3 @@
-+home/lncm
 +etc/init.d/lncm
 +etc/init.d/iotwifi
 +etc/init.d/avahi-daemon
