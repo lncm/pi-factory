@@ -74,6 +74,9 @@ start() {
         echo "Mount all fstab entries"
         /bin/mount -a
 
+        echo "Create lncm home dir"
+        /bin/mkdir /home/lncm
+
         echo "Disable LNCM installation script"
         /sbin/rc-update del lncm default
 
