@@ -71,6 +71,37 @@ start() {
         echo "Create /media/sd"
         /bin/mkdir /media/sd
 
+        echo "Mount /media/sd in preparation for overlays"
+        /bin/mount /media/sd
+
+        echo "Add overlay filesystems to fstab"
+        /bin/echo "overlay /usr overlay lowerdir=/usr,upperdir=/media/sd/usr,workdir=/media/sd/.work_usr 0 0" >> /etc/fstab
+        /bin/echo "overlay /bin overlay lowerdir=/bin,upperdir=/media/sd/bin,workdir=/media/sd/.work_bin 0 0" >> /etc/fstab
+        /bin/echo "overlay /lib overlay lowerdir=/lib,upperdir=/media/sd/lib,workdir=/media/sd/.work_lib 0 0" >> /etc/fstab
+        /bin/echo "overlay /srv overlay lowerdir=/srv,upperdir=/media/sd/srv,workdir=/media/sd/.work_srv 0 0" >> /etc/fstab 
+        /bin/echo "overlay /var overlay lowerdir=/var,upperdir=/media/sd/var,workdir=/media/sd/.work_var 0 0" >> /etc/fstab
+        /bin/echo "overlay /root overlay lowerdir=/root,upperdir=/media/sd/root,workdir=/media/sd/.work_root 0 0" >> /etc/fstab
+        /bin/echo "overlay /sbin overlay lowerdir=/sbin,upperdir=/media/sd/sbin,workdir=/media/sd/.work_sbin 0 0" >> /etc/fstab
+        /bin/echo "overlay /home overlay lowerdir=/home,upperdir=/media/sd/home,workdir=/media/sd/.work_home 0 0" >> /etc/fstab
+
+        echo "Create /media/sd/... mountpoints for overlays"
+        /bin/mkdir /media/sd/.work_usr
+        /bin/mkdir /media/sd/.work_bin
+        /bin/mkdir /media/sd/.work_lib
+        /bin/mkdir /media/sd/.work_srv
+        /bin/mkdir /media/sd/.work_var
+        /bin/mkdir /media/sd/.work_root
+        /bin/mkdir /media/sd/.work_sbin
+        /bin/mkdir /media/sd/.work_home
+	    /bin/mkdir /media/sd/usr
+        /bin/mkdir /media/sd/bin
+        /bin/mkdir /media/sd/lib
+        /bin/mkdir /media/sd/srv
+        /bin/mkdir /media/sd/var
+        /bin/mkdir /media/sd/root
+        /bin/mkdir /media/sd/sbin
+        /bin/mkdir /media/sd/home
+
         echo "Mount all fstab entries"
         /bin/mount -a
 
