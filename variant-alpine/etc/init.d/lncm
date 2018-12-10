@@ -93,7 +93,7 @@ start() {
         /bin/sed -i '/usbdisk/d' /media/sd/etc/fstab
 
         echo "Create lncm home dir"
-        /bin/mkdir /home/lncm
+        /bin/mkdir /media/sd/home/lncm
 
         echo "Disable LNCM installation script"
         /sbin/rc-update del lncm default
