@@ -77,9 +77,13 @@ The box can provide it's own WiFi hotspot to ease access and configuration.
 **Note:** By default Alpine will not persist user changes upon reboot. Remember to commit all changes with `lbu commit`.
 
 #### Networking
+If you have console access:
+- Use `wpa_passphrase` tool to set wifi settings
+`wpa_passphrase "WiFi Name" "Password" >> /etc/wpa_supplicant/wpa_supplicant.conf`
+- Or, run `setup-interfaces` if you have access to a running box.
 
-- Change your WiFi settings in `etc/wpa_supplicant/wpa_supplicant.conf` and re-create apkovl.
-- Alternatively, run `setup-interfaces` if you have access to a running box.
+In order to ship correct wifi configuration:
+- Edit settings in `etc/wpa_supplicant/wpa_supplicant.conf`, re-create apkovl and copy to SD-card.
 
 ##### IOTWIFI Configuration
 
