@@ -51,6 +51,9 @@ Use `make_img.sh` to create lncm-box.img automatically
 
 **Note:** if no internet is available at boot, `cache` directory with avahi-daemon and dbus must be provided to enable `box.local` access. Alternatively, the IP address can be used. MAC addresses have a distinct Raspberry Pi Foundation prefix.
 
+Using `nmap` you can find your Raspberry Pi on local subnets like so,
+`sudo nmap -v -sn 192.168.0.0/24 | grep -B 2 "Raspberry Pi Foundation"`
+
 ### Using serial 
 (serial TTY via TTL on uart)
 
