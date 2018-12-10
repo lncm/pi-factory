@@ -1,10 +1,13 @@
-# variant-alpine
+# LNCM Pi-Factory
+### _Create your own bitcoin lightning box!_
 
 This repository contains everything necessary to bootstrap a LNCM box for [Raspberry Pi](https://www.raspberrypi.org) versions 0-3B+ based on Alpine Linux.
 
 *[Alpine](https://alpinelinux.org) is a security-oriented, lightweight Linux distribution based on musl libc and Busybox.*
 
 Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related to system administration.
+
+**Warning!** This software is a **work in progress**. While stable enough for development, things change often requiring a complete reinstallation. *Do not put money at stake that you are not willing to lose!*
 
 ## Instructions
 
@@ -85,9 +88,9 @@ If you have console access:
 In order to ship correct wifi configuration:
 - Edit settings in `etc/wpa_supplicant/wpa_supplicant.conf`, re-create apkovl and copy to SD-card.
 
-##### IOTWIFI Configuration
+##### IotWiFi Configuration
 
-After connecting to "LNCM-BOX" you can tell the box to connect to your own home wifi network by issueing the following command from your own machine thats connected to the lncm network.
+After connecting to "LNCM-Box" WiFi on your computer you can tell the box to connect to your own home WiFi network by issuing the following command:
 
 ```bash
 curl -w "\n" -d '{"ssid":"YOUR-SSID-NAME", "psk":"YOUR-PASSWORD"}' \
