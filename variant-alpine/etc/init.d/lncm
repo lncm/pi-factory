@@ -84,6 +84,7 @@ start() {
 
         echo "Create lncm home dir"
         /bin/mkdir /media/sd/home/lncm
+        /bin/chown lncm:lncm /home/lncm
 
         # Boot installation
         echo "Re-mount FAT partition read/write"
