@@ -78,13 +78,14 @@ start() {
 
         echo "Remove unused devices and mountpoints"
         /bin/sed -i '/cdrom/d' /media/sd/etc/fstab && \
-        /bin/rmdir /media/cdrom
+        /bin/rmdir /media/sd/media/cdrom
         /bin/sed -i '/usbdisk/d' /media/sd/etc/fstab && \
-        /bin/rmdir /media/usbdisk
+        /bin/rmdir /media/sd/media/usb
+        /bin/rmdir /media/sd/media/floppy
 
         echo "Create lncm home dir"
         /bin/mkdir /media/sd/home/lncm
-        /bin/chown lncm:lncm /home/lncm
+        /bin/chown lncm:lncm /media/sd/home/lncm
 
         # Boot installation
         echo "Re-mount FAT partition read/write"
@@ -110,10 +111,10 @@ start() {
         /bin/mount -o remount,ro /dev/${SD}p1 /media/${SD}p1
 
         echo "Create and install swap file"
-        /bin/dd if=/dev/zero of=/var/cache/swap bs=1M count=1024 && \
-        /bin/chown 600 /var/cache/swap && \
-        /sbin/mkswap /var/cache/swap && \
-        /sbin/swapon /var/cache/swap && \
+        /bin/dd if=/dev/zero of=/media/sd/var/cache/swap bs=1M count=1024 && \
+        /bin/chown 600 /media/sd/var/cache/swap && \
+        /sbin/mkswap /media/sd/var/cache/swap && \
+        /sbin/swapon /media/sd/var/cache/swap && \
         /bin/echo "/var/cache/swap none swap sw,pri=10 0 0" >> /media/sd/etc/fstab && \
         /sbin/rc-update add swap boot
 
