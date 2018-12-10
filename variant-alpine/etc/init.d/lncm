@@ -127,6 +127,14 @@ start() {
         echo "Re-mount FAT partition read-only"
         /bin/mount -o remount,ro /dev/${SD}p1 /media/${SD}p1
 
+        echo "Create and install swap file"
+        /bin/dd if=/dev/zero of=/var/cache/swap bs=1M count=1024 && \
+        /bin/chown 600 /var/cache/swap && \
+        /sbin/mkswap /var/cache/swap && \
+        /sbin/swapon /var/cache/swap && \
+        /bin/echo "/var/cache/swap none swap sw,pri=10 0 0" >> /media/sd/etc/fstab && \
+        /sbin/rc-update add swap boot
+
         echo "Persist final state to apkovl"
         /sbin/lbu commit
         
