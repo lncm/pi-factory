@@ -56,75 +56,56 @@ start() {
     if [ $ONLINE -eq 0 ]; then
         echo "Online, proceeding with installation"
 
-        echo "Add GNU parted for partitioning"
-        /sbin/apk add parted
-
-        echo "Add ext* filesystem tools"
-        /sbin/apk add e2fsprogs
+        echo "Add partitioning and filesystem tools"
+        /sbin/apk add parted e2fsprogs
 
         echo "Create second primary partition"
         /usr/sbin/parted -s /dev/$SD mkpart p ext4 $START 100%
 
-        echo "Create ext4 filesystem"
-        /sbin/mkfs.ext4 -F /dev/${SD}p2
-
-        echo "Add ext4 partition to fstab"
-        /bin/echo "/dev/${SD}p2 /media/sd ext4 noatime 0 0" >> /etc/fstab
-
-        echo "Create /media/sd"
-        /bin/mkdir /media/sd
-
-        echo "Mount /media/sd for installation"
+        echo "Create and mount ext4 filesystem"
+        /sbin/mkfs.ext4 -F /dev/${SD}p2 && \
+        /bin/echo "/dev/${SD}p2 /media/sd ext4 noatime 0 0" >> /etc/fstab && \
+        /bin/mkdir /media/sd && \
         /bin/mount /media/sd
 
         echo "Persist state to apkovl"
-        /sbin/lbu commit
-
-        echo "Install to /media/sd and apply apkovl"
+        /sbin/lbu commit && \
+        echo "Install to /media/sd and apply apkovl" && \
         /sbin/setup-disk -o /media/mmcblk0p1/box.apkovl.tar.gz /media/sd
 
-        echo "Add FAT partition to fstab"
+        echo "Add FAT partition to new fstab"
         /bin/echo "/dev/mmcblk0p1 /media/mmcblk0p1 vfat defaults 0 0" >> /media/sd/etc/fstab
 
-        echo "Remove cdrom device from fstab"
-        /bin/sed -i '/cdrom/d' /media/sd/etc/fstab
-
-        echo "Remove usb device from fstab"
-        /bin/sed -i '/usbdisk/d' /media/sd/etc/fstab
+        echo "Remove unused devices and mountpoints"
+        /bin/sed -i '/cdrom/d' /media/sd/etc/fstab && \
+        /bin/rmdir /media/cdrom
+        /bin/sed -i '/usbdisk/d' /media/sd/etc/fstab && \
+        /bin/rmdir /media/usbdisk
 
         echo "Create lncm home dir"
         /bin/mkdir /media/sd/home/lncm
 
-        echo "Disable LNCM installation script"
-        /sbin/rc-update del lncm default
-
+        # Boot installation
         echo "Re-mount FAT partition read/write"
-        /bin/mount -o remount,rw /dev/${SD}p1 /media/${SD}p1
-
-        echo "Prepend root partition to boot command"
-        /bin/sed -e 's/^/root=\/dev\/mmcblk0p2 /' -i /media/${SD}p1/cmdline.txt
-
-        echo "Backup old boot files"
-        /bin/mkdir /media/mmcblk0p1/boot_backup
-        /bin/mv /media/mmcblk0p1/boot/* /media/mmcblk0p1/boot_backup/
-
-        echo "Remove old boot files on fat partition"
-        /bin/rm -rf /media/mmcblk0p1/boot/*
-
-        echo "Copy new boot files to fat partition"
-        /bin/cp /media/sd/boot/* /media/mmcblk0p1/boot/
-
-        echo "Delete new boot dir"
-        /bin/rm -rf /media/sd/boot
-
-        echo "Link boot to fat partition"
-        cd /media/sd
+        /bin/mount -o remount,rw /dev/${SD}p1 /media/${SD}p1 && \
+        echo "Prepend root partition to boot command" && \
+        /bin/sed -e 's/^/root=\/dev\/mmcblk0p2 /' -i /media/${SD}p1/cmdline.txt && \
+        echo "Backup old boot files" && \
+        /bin/mkdir /media/mmcblk0p1/boot_backup && \
+        /bin/mv /media/mmcblk0p1/boot/* /media/mmcblk0p1/boot_backup/ && \
+        echo "Remove old boot files on fat partition" && \
+        /bin/rm -rf /media/mmcblk0p1/boot/* && \
+        echo "Copy new boot files to fat partition" && \
+        /bin/cp /media/sd/boot/* /media/mmcblk0p1/boot/ && \
+        echo "Delete new boot dir" && \
+        /bin/rm -rf /media/sd/boot && \
+        echo "Link boot to fat partition" && \
+        cd /media/sd && \
         /bin/ln -s /media/mmcblk0p1 boot
 
         echo "Mark SD card with installed version"
-        /bin/echo "$VER" > /media/${SD}p1/installed
-
-        echo "Re-mount FAT partition read-only"
+        /bin/echo "$VER" > /media/${SD}p1/installed && \
+        echo "Re-mount FAT partition read-only" && \
         /bin/mount -o remount,ro /dev/${SD}p1 /media/${SD}p1
 
         echo "Create and install swap file"
@@ -135,7 +116,9 @@ start() {
         /bin/echo "/var/cache/swap none swap sw,pri=10 0 0" >> /media/sd/etc/fstab && \
         /sbin/rc-update add swap boot
 
-        echo "Persist final state to apkovl"
+        echo "Deactivate LNCM installation script"
+        /sbin/rc-update del lncm default && \
+        echo "Persist final state to apkovl" && \
         /sbin/lbu commit
         
         exit 0
