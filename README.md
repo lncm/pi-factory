@@ -1,129 +1,170 @@
-# Portable Bitcoin Node on Raspberry Pi Zero
+# variant-alpine
 
-> **NOTE:** WORK IN PROGRESS!
+This repository contains everything necessary to bootstrap a LNCM box for [Raspberry Pi](https://www.raspberrypi.org) versions 0-3B+ based on Alpine Linux.
 
-> **NOTE_2:** Only compatible with MacOS at the moment
+*[Alpine](https://alpinelinux.org) is a security-oriented, lightweight Linux distribution based on musl libc and Busybox.*
 
-This repo contains all setup scripts necessary to setup a portable Full Bitcoin Node.
+Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related to system administration.
 
-The final setup includes:
+## Instructions
 
-- [x] Bitcoin Full Pruned Node available through clearnet¹ and Tor
-- [x] `ssh` available via clearnet¹ and Tor
-- [ ] (figured out, but not automated yet) gets internet from your phone via Bluetooth tethering
-- [ ] creates an open hotspot called "Bitcoin"
-- [ ] has captive portal with instructions on how to connect and sync
+1. Download [Etcher](https://www.balena.io/etcher/).
+2. Download latest [lncm-box.img.zip](
+https://github.com/lncm/pi-factory/releases/download/v0.2.1/lncm-box-v0.2.1.img.zip)
+3. Run Etcher and follow instructions to burn lncm-box.img.zip to SD card
 
-> ¹ - Clearnet availability depends completely on Pi's ability to auto-configure the device giving it internet
+**Experienced users:** Alternatively, use `dd` to burn the lncm-box.img to SD card
 
+## Advanced usage
 
-# Setup process
+For manual installation and auditing:
 
-Setting Raspberry Pi Zero is 4 easy steps:
+1. Fetch official Alpine armhf [tar.gz](http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/armhf/alpine-rpi-3.8.1-armhf.tar.gz) for Raspberry Pi.
 
-1. Prepare
-2. Wait
-3. Backup
-4. Enjoy
+1. (if not already present) Create FAT32L partition on SD card (fdisk type 0x0C), make partition bootable.
 
+1. Create FAT32 volume using `dosfstools` package, e.g. `mkfs.vfat -F 32`
 
-# Step One: Prepare
+1. Extract tarball to SD card, e.g. `tar xvzpf alpine-rpi-3.8.1-armhf.tar.gz -C /Volumes/PI`
 
-This step _can_ take a very long time, depending on your internet connection and the speed of your microSD card. You can speed it up by downloading (or using already downloaded) official Raspbian Lite image - just drop it into the root of the repo directory and run the script as usual - `make all`.
+1. Extract latest lncm-box.tar.gz from releases page to SD card.
 
-## [REQUIRED] WiFi credentials
+1. Optionally, create box.apkovl.tar.gz from source and place in SD card root, to ship your own modifications before first boot.
 
-This is **the only required** thing to do in this step. Open `./wpa_supplicant.conf` from the root of this directory and replace:
+## Automated build
 
-* `<COUNTRY>` with a two-letter code of the country you will be using this RBP in (regulatory reasons ¯\\\_(ツ)\_/¯)
-* `<SSID>` with the name of the WiFi network
-* `<PASSWORD>` with a password to it
+Use `make_img.sh` to create lncm-box.img automatically
 
-## [OPTIONAL] Grant yourself access
+## Access
 
-The 2nd step, where the RBP bootstraps itself can take multiple hours, during which you will not be able to see what's going on **unless** you specify one of the below:
+**Note:** First boot will take some time as ssh host keys are generated.
 
-### password
+### Authentication
+- **username**: lncm
+- **password**: chiangmai
+- **root password**: chiangmai
 
-If you input any password into `./password` file it will be used as a `pi` and `root` user login password, and you'll be able to ssh to the Pi.
+**Note:** `sudo` is not installed, use `su` instead
 
-If you do not input the password, a random one will be generated, and made available as part of the backup in step 3.
+### Using ssh
+`ssh lncm@box.local`
 
-### `ssh` key
+**Note:** if no internet is available at boot, `cache` directory with avahi-daemon and dbus must be provided to enable `box.local` access. Alternatively, the IP address can be used. MAC addresses have a distinct Raspberry Pi Foundation prefix.
 
-If you have a `id_ed25519.pub` or `id_rsa.pub` ssh key, just drop it into the root of this repo and you'll be able to ssh to the Pi using it, while it's bootstrapping itself.
+Using `nmap` you can find your Raspberry Pi on local subnets like so,
+`sudo nmap -v -sn 192.168.0.0/24 | grep -B 2 "Raspberry Pi Foundation"`
 
-If you do not provide an ssh key, `id_ed25519` keypair will be generated, and made available as part of the backup in step 3.
+### Using serial 
+(serial TTY via TTL on uart)
 
-## Run
+Connect cable to *GND*, *RX*, *TX* pins, make sure you are using 3.3V and **not** 5V to prevent damage! With some devices RX & TX may have to be crossed.
 
-After you've set up WiFi and perhaps granted ourself access, just run:
+Add `enable_uart=1` to `config.txt` on SD card FAT partition. (may not be necessary on older models)
 
-```
-make all SD=/dev/disk2
-```
+e.g. `screen /dev/tty.usbserial-XYZ 115200`
 
-Where `/dev/disk2` is the SD card you want to burn your image onto.
+### WiFi hotspot
 
-## [OPTIONAL] Other configs
+The box can provide it's own WiFi hotspot to ease access and configuration.
 
-You can also inspect, and change the config files before running the script preparing the microSD card:
+- **WiFi name** (SSID): "LNCM-Box"
+- **WiFi password**: "lncm box"
 
-| File name          | Description
-|:------------------:|-------------
-| `bitcoin.conf`     | this is the minimal Bitcoind config that will be used
-| `bitcoind_version` | can be either a tag or a branch name of Bitcoin Core that will be build and installed
-| `bitcoind.service` | is a systemd service file that will be responsible for starting Bitcoind
-| `bluetooth-MACs`   | [TODO] This **will** be used to specify bluetooth internet tethering devices
-| `hostname`         | you can choose how your RBP will be named, default is `pi-the-box`
-| `sshd_config`      | contains a minimal, and secure sshd config that will be used. Note that `PasswordAuthentication yes` will be changed to `no` if any ssh key is provided.
-| `torrc`            | contains minimal caonfig allowing Bitcoind to communicate with Tor, and allowing ssh via Tor to your Pi later (setup instructions will be provided as part of the backup in step 3).
+## Customizations
 
-**NOTE:** Changing these files might result in step 2 failing in unpredictable ways!
+### Settings
 
-## [PLEASE DON'T CHANGE] Scripts & Services
+**Note:** By default Alpine will not persist user changes upon reboot. Remember to commit all changes with `lbu commit`.
 
-This is a list of scripts that will be run on your Pi. If you're not sure what you're doing, changing them will most definitely cause the build process to fail.
+#### Networking
+If you have console access:
+- Use `wpa_passphrase` tool to set wifi settings
+`wpa_passphrase "WiFi Name" "Password" >> /etc/wpa_supplicant/wpa_supplicant.conf`
+- Or, run `setup-interfaces` if you have access to a running box.
 
-| File name                   | Description
-|:---------------------------:|-------------
-| `bt-reconnect.sh`     | [TODO] Runs periodically from cron and ensures that Bluetooth internet connection is still available and working
-| `pi-setup.service`    | This is a systemd service that will spawn `pi-setup.sh` upon first boot
-| `pi-setup.sh`         | This script runs as user `pi` and sets-up most of the necessary things. It will run for long hours, and during its run it records its work into `/home/pi/setup.log`
-| `pi-shutdown.service` | This systemd service ensures that `pi-setup.service` & `pi-shutdown.service` run only once, and that RBP is powered off upon successful completion
-| `run-once.sh`         | This is a barebones setup script that only creates the very minimal required environment, and reboots your Pi into `pi-setup.sh`. During its run it records its work into `/root/pre-setup.log`
+In order to ship correct wifi configuration:
+- Edit settings in `etc/wpa_supplicant/wpa_supplicant.conf`, re-create apkovl and copy to SD-card.
 
-## [Very Optional] Run_2
+##### IOTWIFI Configuration
 
-If you've decided to change some configs after you've already started `make all` - despair not, just let it finish and then run (before ever putting it into the RBP):
+After connecting to "LNCM-BOX" you can tell the box to connect to your own home wifi network by issueing the following command from your own machine thats connected to the lncm network.
 
 ```bash
-make write_stuff_to_boot SD=/dev/disk2
+curl -w "\n" -d '{"ssid":"YOUR-SSID-NAME", "psk":"YOUR-PASSWORD"}' \
+    -H "Content-Type: application/json" \
+    -X POST http://192.168.27.1:8080/connect
 ```
 
-Where `/dev/disk2` is your SD card. **Note** that you might need to manually reinsert the SD card into your computer.
+#### Package management
 
-# Step Two: Let RBP setup itself
+- `apk update` Update repositories 
+- `apk upgrade` Upgrade packages
+- `apk add` Install package 
+- `apk del` Uninstall package 
 
-This step **requires a working 2.4GHz WiFi connection** and will take multiple hours, after which the RBP will power off completely. If your computer is on the same network as the RBP, you've provided your ssh pubkey or password, and you didn't customize the `hostname`, you can see logs of the progress with a simple:
+#### Init system
 
-```bash
-ssh pi@pi-the-box.local 'tail -f -n 2000 /home/pi/setup.log'
-```
+- `rc-update add docker boot` Start docker at boot
+- `rc-update del docker boot` Remove docker from boot
+- `rc-update` show startup services
 
+Installation of LNCM specific components belongs in `etc/init.d/lncm`. The script is [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) compatible and must be executable, without a file name extension.
 
-# Step Three: Backup
+`etc/apk/world` contains all apk packages to be installed by LNCM's install script.
 
-After RBP has completed the setup, move the SD card back to your computer.
+- `service -l` list available services
+- `service docker start` start docker now
+- `service docker stop` stop docker now
 
-There are two locations there that might be of special interest:
+The boot sequence is logged to `/var/log/rc.log` by default.
 
-| Location                           | Description
-|:----------------------------------:|-------------
-| `/Volumes/boot/secrets.zip`        | Contains all secrets related with the pi: `password`, `ssh` key (if not provided one will be generated for you there), and a special ssh over Tor string (TODO: document & explain `HidServAuth`)
-| `/Volumes/boot/setup-logs/*` | Contains at least two files: `pre-setup.log` and `setup.log`. In case any of the scrips was run/terminated more than once there might be more files with the same names, but unix timestamp-prefixed.
+More information in OpenRC [user guide](https://github.com/OpenRC/openrc/blob/master/user-guide.md)
 
+#### Misc
 
-# Step Four: Enjoy
+There are various configuration tools included to help you customize to your needs:
 
-[WIP] Put your card back & enjoy
+- `setup-hostname` 
+- `setup-timezone` 
+- `setup-keymap` 
+- `setup-dns`
+
+### Committing changes to SD card
+
+**Important!** **Note:** By default Alpine will not persist user changes upon reboot. *The system is mounted read-only!*
+
+Use `lbu commit` to persist changes. Add `-v` to see what is being committed.
+
+`lbu status` will show changes to be committed.
+
+**Note:** By default `lbu commit` only applies to *some* directories.
+
+### Re-creating apkovl.tar.gz from source
+
+Make sure you are in variant-alpine directory, e.g. `cd variant-alpine`
+
+Set `export COPYFILE_DISABLE=true` to prevent MacOS from adding resource forks to tarballs.
+
+`tar cvzpf box.apkovl.tar.gz --exclude ‘.DS_Store’ etc home`
+
+### Unpacking apkovl from lncm-box.tar.gz
+
+`tar xvzpf box.apkovl.tar.gz`
+
+## Creating new apkovl
+
+`lbu pkg /path/to/tar.gz` will produce a tarball of current system state.
+
+*Important notes for distributing fresh apkovl*
+ 
+**Remove unique and security sensitive files**
+ 
+`rm etc/machine-id`
+
+`rm etc/docker/key.json`
+
+`rm etc/ssh/ssh_host_*`
+
+Rewrite `/etc/resolv.conf` to be network independent.
+
+Be mindful of passwords you set.
