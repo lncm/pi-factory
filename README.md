@@ -5,44 +5,27 @@ This repository contains everything necessary to bootstrap a LNCM box for [Raspb
 
 *[Alpine](https://alpinelinux.org) is a security-oriented, lightweight Linux distribution based on musl libc and Busybox.*
 
-Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related to system administration.
+**Warning!** **Work in progress.** While stable enough for development, this software is subject to change and will require complete reinstallation periodically. 
 
-**Warning!** This software is a **work in progress**. While stable enough for development, things change often requiring a complete reinstallation. *Do not put money at stake that you are not willing to lose!*
+*Do not put money at stake that you are not willing to lose!*
 
 ## Instructions
 
 1. Download [Etcher](https://www.balena.io/etcher/).
 2. Download latest [lncm-box.img.zip](
-https://github.com/lncm/pi-factory/releases/download/v0.2.1/lncm-box-v0.2.1.img.zip)
+https://github.com/lncm/pi-factory/releases/download/v0.3.0/lncm-box-v0.3.0.img.zip)
 3. Run Etcher and follow instructions to burn lncm-box.img.zip to SD card
 
+Your box will automatically start installing itself to SD card once it has an internet connection.
+
 **Experienced users:** Alternatively, use `dd` to burn the lncm-box.img to SD card
-
-## Advanced usage
-
-For manual installation and auditing:
-
-1. Fetch official Alpine armhf [tar.gz](http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/armhf/alpine-rpi-3.8.1-armhf.tar.gz) for Raspberry Pi.
-
-1. (if not already present) Create FAT32L partition on SD card (fdisk type 0x0C), make partition bootable.
-
-1. Create FAT32 volume using `dosfstools` package, e.g. `mkfs.vfat -F 32`
-
-1. Extract tarball to SD card, e.g. `tar xvzpf alpine-rpi-3.8.1-armhf.tar.gz -C /Volumes/PI`
-
-1. Extract latest lncm-box.tar.gz from releases page to SD card.
-
-1. Optionally, create box.apkovl.tar.gz from source and place in SD card root, to ship your own modifications before first boot.
-
-## Automated build
-
-Use `make_img.sh` to create lncm-box.img automatically
 
 ## Access
 
 **Note:** First boot will take some time as ssh host keys are generated.
 
 ### Authentication
+
 - **username**: lncm
 - **password**: chiangmai
 - **root password**: chiangmai
@@ -52,51 +35,53 @@ Use `make_img.sh` to create lncm-box.img automatically
 ### Using ssh
 `ssh lncm@box.local`
 
-**Note:** if no internet is available at boot, `cache` directory with avahi-daemon and dbus must be provided to enable `box.local` access. Alternatively, the IP address can be used. MAC addresses have a distinct Raspberry Pi Foundation prefix.
-
-Using `nmap` you can find your Raspberry Pi on local subnets like so,
-`sudo nmap -v -sn 192.168.0.0/24 | grep -B 2 "Raspberry Pi Foundation"`
-
-### Using serial 
-(serial TTY via TTL on uart)
-
-Connect cable to *GND*, *RX*, *TX* pins, make sure you are using 3.3V and **not** 5V to prevent damage! With some devices RX & TX may have to be crossed.
-
-Add `enable_uart=1` to `config.txt` on SD card FAT partition. (may not be necessary on older models)
-
-e.g. `screen /dev/tty.usbserial-XYZ 115200`
-
 ### WiFi hotspot
 
-The box can provide it's own WiFi hotspot to ease access and configuration.
+The box provides it's own WiFi hotspot to ease access and configuration.
 
 - **WiFi name** (SSID): "LNCM-Box"
 - **WiFi password**: "lncm box"
+- **IP address**: 192.168.27.1
+- **hostname**: box.local
 
-## Customizations
-
-### Settings
-
-**Note:** By default Alpine will not persist user changes upon reboot. Remember to commit all changes with `lbu commit`.
+## Customization & Settings
 
 #### Networking
-If you have console access:
-- Use `wpa_passphrase` tool to set wifi settings
-`wpa_passphrase "WiFi Name" "Password" >> /etc/wpa_supplicant/wpa_supplicant.conf`
-- Or, run `setup-interfaces` if you have access to a running box.
 
-In order to ship correct wifi configuration:
-- Edit settings in `etc/wpa_supplicant/wpa_supplicant.conf`, re-create apkovl and copy to SD-card.
+If you have console access:
+
+As **root** use `wpa_passphrase` tool to set wifi settings
+
+`wpa_passphrase "WiFi Name" "Password" >> /etc/wpa_supplicant/wpa_supplicant.conf`
+
+Or, run `setup-interfaces` if you have access to a running box.
+
+In order to ship correct wifi configuration, edit settings in `etc/wpa_supplicant/wpa_supplicant.conf`, run `make_apkovl.sh` and copy to **box.apkovl.tar.gz** SD card root directory (FAT partition).
 
 ##### IotWiFi Configuration
 
-After connecting to "LNCM-Box" WiFi on your computer you can tell the box to connect to your own home WiFi network by issuing the following command:
+After connecting to _"LNCM-Box"_ WiFi on your computer you can tell the box to connect to your own home WiFi network by issuing the following command:
 
 ```bash
 curl -w "\n" -d '{"ssid":"YOUR-SSID-NAME", "psk":"YOUR-PASSWORD"}' \
     -H "Content-Type: application/json" \
     -X POST http://192.168.27.1:8080/connect
 ```
+### Alpine specific
+
+Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related to system administration.
+
+#### Committing changes to SD card
+
+*Initially the system is mounted read-only!*
+
+**Important note:** Alpine will not persist user changes upon reboot until it is installed and restarted. 
+
+Use `lbu commit` to persist changes. Add `-v` to see what is being committed.
+
+`lbu status` will show changes to be committed.
+
+**Note:** By default `lbu commit` only applies to *some* directories.
 
 #### Package management
 
@@ -132,33 +117,46 @@ There are various configuration tools included to help you customize to your nee
 - `setup-keymap` 
 - `setup-dns`
 
-### Committing changes to SD card
+## Advanced
 
-**Important!** **Note:** By default Alpine will not persist user changes upon reboot. *The system is mounted read-only!*
+#### Using nmap
 
-Use `lbu commit` to persist changes. Add `-v` to see what is being committed.
+Raspberry Pi's can be easily intentified when on the same subnet by their distinct MAC address.
 
-`lbu status` will show changes to be committed.
+Using `nmap` you can find your Raspberry Pi like so,
 
-**Note:** By default `lbu commit` only applies to *some* directories.
+`sudo nmap -v -sn 192.168.0.0/24 | grep -B 2 "Raspberry Pi Foundation"`
 
-### Re-creating apkovl.tar.gz from source
+#### Connecting to console via serial cable
+(serial TTY via TTL on uart)
 
-Make sure you are in variant-alpine directory, e.g. `cd variant-alpine`
+Connect cable to *GND*, *RX*, *TX* pins, make sure you are using 3.3V and **not** 5V to prevent damage! With some devices RX & TX may have to be crossed.
 
-Set `export COPYFILE_DISABLE=true` to prevent MacOS from adding resource forks to tarballs.
+Add `enable_uart=1` to `config.txt` on SD card FAT partition. (may not be necessary on older models)
 
-`tar cvzpf box.apkovl.tar.gz --exclude ‘.DS_Store’ etc home`
+e.g. `screen /dev/tty.usbserial-XYZ 115200`
 
-### Unpacking apkovl from lncm-box.tar.gz
+#### Automated builds
 
-`tar xvzpf box.apkovl.tar.gz`
+Use `make_img.sh` to create latest lncm-box.img
 
-## Creating new apkovl
+#### Auditing
+
+Follow the steps outlined in `make_img.sh` to create your own image or SD card.
+
+#### Re-creating apkovl.tar.gz from source
+
+`make_apkovl.sh`
+
+#### Unpacking apkovl from lncm-box.tar.gz
+
+`tar xzf box.apkovl.tar.gz`
+
+#### Creating new apkovl
 
 `lbu pkg /path/to/tar.gz` will produce a tarball of current system state.
 
-*Important notes for distributing fresh apkovl*
+#### *Important notes for distributing fresh apkovl:*
  
 **Remove unique and security sensitive files**
  
