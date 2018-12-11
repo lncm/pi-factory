@@ -105,4 +105,4 @@ umount $MNT
 losetup -d ${DEV}
 echo "Compress img as zip"
 zip -r ${IMG}.zip $IMG
-echo -e "Done!\nYou may flash your ${IMG}.zip using Etcher or dd the ${IMG}"
+echo -e "\nDone!\nYou may flash your ${IMG}.zip using Etcher or dd the ${IMG}"
