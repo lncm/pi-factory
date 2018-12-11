@@ -1,5 +1,6 @@
 LNCM welcomes you to your box!
 
-This system uses Alpine Linux.
+This system runs on Alpine Linux.
 
-See <http://wiki.alpinelinux.org> for help.
+Open README.md for help, e.g. type:
+more README.md [ENTER] (q to quit)
