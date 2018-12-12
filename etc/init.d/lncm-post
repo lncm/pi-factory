@@ -53,6 +53,9 @@ start() {
         # Backup apkovl.tar.gz to USB storage
         # /sbin/lbu pkg /media/usb
         
+        echo "Remove lncm-post from boot"
+        /sbin/rc-update del lncm-post default
+
         exit 0
     else
         echo "No internet connection. Aborting installation!"
