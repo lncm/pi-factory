@@ -55,8 +55,11 @@ start() {
         		# Backup apkovl.tar.gz to USB storage
         		# /sbin/lbu pkg /media/usb
 
+        		echo "Remove lncm-post from boot"
+        		/sbin/rc-update del lncm-post default
+			
 			touch /etc/lncm-post-installed
-
+			
 			exit 0
 		else
 			echo "Already installed"

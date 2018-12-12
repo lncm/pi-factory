@@ -45,6 +45,7 @@ start() {
     }
 
     ONLINE=1
+    INSTALLED=1
 
     while [ $ONLINE -eq 1 ]
     do
@@ -119,13 +120,23 @@ start() {
         echo "Enable swap at boot"
         cd /media/sd/etc/runlevels/boot
         /bin/ln -s /media/sd/etc/init.d/swap swap
+        echo "Enable post-installation script at boot"
+        cd /media/sd/etc/runlevels/default
+        /bin/ln -s /media/sd/etc/init.d/lncm-post lncm-post
 
         echo "Deactivate LNCM installation script"
         /sbin/rc-update del lncm default && \
         echo "Persist final state to apkovl" && \
         /sbin/lbu commit
         
-        exit 0
+        if [ -f /media/$SD}p1/installed ]; then
+        INSTALLED=0
+        echo "Installed successfully"
+        echo "Rebooting..."
+        /sbin/rc reboot
+        fi
+
+        exit ${INSTALLED}
     else
         echo "No internet connection. Aborting installation!"
         exit 1
