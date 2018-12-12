@@ -45,18 +45,30 @@ start() {
     if [ $ONLINE -eq 0 ]; then
         echo "Online, proceeding with post-installation"
 
-        echo "Install docker-compose"
-        /sbin/apk add py3-pip
-        /usr/bin/pip3 install --upgrade pip
-        /usr/bin/pip3 install docker-compose
+	if [ -f /media/mmcblk0p1/installed ]; then
+        	if ! [ -f /etc/lncm-post-installed ]; then
+			# Install docker-compose
+        		/sbin/apk add py3-pip
+        		/usr/bin/pip3 install --upgrade pip
+        		/usr/bin/pip3 install docker-compose
 
-        # Backup apkovl.tar.gz to USB storage
-        # /sbin/lbu pkg /media/usb
-        
-        echo "Remove lncm-post from boot"
-        /sbin/rc-update del lncm-post default
+        		# Backup apkovl.tar.gz to USB storage
+        		# /sbin/lbu pkg /media/usb
 
-        exit 0
+        		echo "Remove lncm-post from boot"
+        		/sbin/rc-update del lncm-post default
+			
+			touch /etc/lncm-post-installed
+			
+			exit 0
+		else
+			echo "Already installed"
+			exit 0
+		fi
+	else
+		echo "LNCM script not run yet!"
+		exit 1	
+	fi        
     else
         echo "No internet connection. Aborting installation!"
         exit 1
