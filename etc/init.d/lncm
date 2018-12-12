@@ -119,6 +119,9 @@ start() {
         echo "Enable swap at boot"
         cd /media/sd/etc/runlevels/boot
         /bin/ln -s /media/sd/etc/init.d/swap swap
+        echo "Enable post-installation script at boot"
+        cd /media/sd/etc/runlevels/default
+        /bin/ln -s /media/sd/etc/init.d/lncm-post lncm-post
 
         echo "Deactivate LNCM installation script"
         /sbin/rc-update del lncm default && \
