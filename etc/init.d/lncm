@@ -130,10 +130,10 @@ start() {
         /sbin/lbu commit
         
         if [ -f /media/$SD}p1/installed ]; then
-        INSTALLED=0
-        echo "Installed successfully"
-        echo "Rebooting..."
-        /sbin/rc reboot
+            INSTALLED=0
+            echo "Installed successfully"
+            echo "Rebooting..."
+            /sbin/rc reboot
         fi
 
         exit ${INSTALLED}
