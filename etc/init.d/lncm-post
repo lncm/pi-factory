@@ -45,7 +45,7 @@ start() {
     if [ $ONLINE -eq 0 ]; then
         echo "Online, proceeding with post-installation"
 
-        # Install docker-compose
+        echo "Install docker-compose"
         /sbin/apk add py3-pip
         /usr/bin/pip3 install --upgrade pip
         /usr/bin/pip3 install docker-compose
