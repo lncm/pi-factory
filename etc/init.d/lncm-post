@@ -35,44 +35,44 @@ start() {
 
     ONLINE=1
 
-    while [ $ONLINE -eq 1 ]
-    do
-        echo "Checking for internet connection..."
-        net_check
-        sleep 1
-    done
+    if [ -f /media/mmcblk0p1/installed ]; then
+            if ! [ -f /etc/lncm-post-installed ]; then
 
-    if [ $ONLINE -eq 0 ]; then
-        echo "Online, proceeding with post-installation"
+                while [ $ONLINE -eq 1 ]
+                do
+                    echo "Checking for internet connection..."
+                    net_check
+                    sleep 1
+                done
 
-	if [ -f /media/mmcblk0p1/installed ]; then
-        	if ! [ -f /etc/lncm-post-installed ]; then
-			# Install docker-compose
-        		/sbin/apk add py3-pip
-        		/usr/bin/pip3 install --upgrade pip
-        		/usr/bin/pip3 install docker-compose
+                if [ $ONLINE -eq 0 ]; then
+                    echo "Online, proceeding with post-installation"
 
-        		# Backup apkovl.tar.gz to USB storage
-        		# /sbin/lbu pkg /media/usb
+                    echo "Install docker-compose"
+                    /sbin/apk add py3-pip
+                    /usr/bin/pip3 install --upgrade pip
+                    /usr/bin/pip3 install docker-compose
 
-        		echo "Remove lncm-post from boot"
-        		/sbin/rc-update del lncm-post default
-			
-			touch /etc/lncm-post-installed
-			
-			exit 0
-		else
-			echo "Already installed"
-			exit 0
-		fi
-	else
-		echo "LNCM script not run yet!"
-		exit 1	
-	fi        
+                    # Backup apkovl.tar.gz to USB storage
+                    # /sbin/lbu pkg /media/usb
+
+                    echo "Remove lncm-post from boot"
+                    /sbin/rc-update del lncm-post default
+                
+                    touch /etc/lncm-post-installed
+                    
+                    exit 0
+            else
+                echo "LNCM post installation already complete"
+                exit 0
+            fi
     else
+        echo "LNCM persistent installation not found!"
+        exit 1	
+    fi
+    if [ $ONLINE -eq 1]
         echo "No internet connection. Aborting installation!"
         exit 1
     fi
-
     eend $?
 }
