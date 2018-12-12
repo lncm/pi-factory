@@ -45,6 +45,7 @@ start() {
     }
 
     ONLINE=1
+    INSTALLED=1
 
     while [ $ONLINE -eq 1 ]
     do
@@ -128,7 +129,14 @@ start() {
         echo "Persist final state to apkovl" && \
         /sbin/lbu commit
         
-        exit 0
+        if [ -f /media/$SD}p1/installed ]; then
+        INSTALLED=0
+        echo "Installed successfully"
+        echo "Rebooting..."
+        /sbin/rc reboot
+        fi
+
+        exit ${INSTALLED}
     else
         echo "No internet connection. Aborting installation!"
         exit 1
