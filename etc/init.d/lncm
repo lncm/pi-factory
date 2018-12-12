@@ -1,6 +1,6 @@
 #!/sbin/openrc-run
 #
-# Copyright 2018 LNCM
+# Copyright 2018 LNCM contributors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -130,14 +130,6 @@ start() {
         echo "No internet connection. Aborting installation!"
         exit 1
     fi
- 
-    # Install docker-compose
-    #/sbin/apk add py3-pip
-    #/usr/bin/pip3 install --upgrade pip
-    #/usr/bin/pip3 install docker-compose
-
-    # Backup apkovl.tar.gz to USB storage
-    #/sbin/lbu pkg /media/usb
 
     eend $?
 }
