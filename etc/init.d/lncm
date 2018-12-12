@@ -119,10 +119,10 @@ start() {
         /bin/echo "/var/cache/swap none swap sw,pri=10 0 0" >> /media/sd/etc/fstab && \
         echo "Enable swap at boot"
         cd /media/sd/etc/runlevels/boot
-        /bin/ln -s /media/sd/etc/init.d/swap swap
+        /bin/ln -s /etc/init.d/swap swap
         echo "Enable post-installation script at boot"
         cd /media/sd/etc/runlevels/default
-        /bin/ln -s /media/sd/etc/init.d/lncm-post lncm-post
+        /bin/ln -s /etc/init.d/lncm-post lncm-post
 
         echo "Deactivate LNCM installation script"
         /sbin/rc-update del lncm default && \
