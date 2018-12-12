@@ -56,7 +56,7 @@ As **root** use `wpa_passphrase` tool to set wifi settings
 
 Or, run `setup-interfaces` if you have access to a running box.
 
-In order to ship correct wifi configuration, edit settings in `etc/wpa_supplicant/wpa_supplicant.conf`, run `make_apkovl.sh` and copy to **box.apkovl.tar.gz** SD card root directory (FAT partition).
+In order to ship correct WiFi configuration, edit settings in `etc/wpa_supplicant/wpa_supplicant.conf`, run `make_apkovl.sh` and copy **box.apkovl.tar.gz** to SD card root directory (FAT partition).
 
 ##### IotWiFi Configuration
 
