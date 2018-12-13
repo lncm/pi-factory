@@ -48,11 +48,20 @@ start() {
                 if [ $ONLINE -eq 0 ]; then
                     echo "Online, proceeding with post-installation"
 
-                    echo "Install docker-compose"
+                    echo "Install docker-compose and dependencies for config files"
+                    # Install dependencies for docker compose and for generating config files
                     /sbin/apk add py3-pip
+                    /sbin/apk add curl
+                    /sbin/apk add pwgen
+
                     /usr/bin/pip3 install --upgrade pip
                     /usr/bin/pip3 install docker-compose
+                    
+                    cd /home/lncm
 
+                    # Execute Config generator
+                    curl "https://raw.githubusercontent.com/lncm/dockerfiles/master/contrib/lightningd-config-generator/generate-config.sh" 2>/dev/null | ash
+                    
                     # Backup apkovl.tar.gz to USB storage
                     # /sbin/lbu pkg /media/usb
 
