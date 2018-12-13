@@ -62,6 +62,20 @@ start() {
                     # Execute Config generator
                     curl "https://raw.githubusercontent.com/lncm/dockerfiles/master/contrib/lightningd-config-generator/generate-config.sh" 2>/dev/null | ash
                     
+                    # Move into folders (bitcoin, lnd, docker-compose)
+                    mkdir -p /home/lncm/.bitcoin
+                    if [ -f /home/lncm/bitcoin.conf ]; then
+                        mv /home/lncm/bitcoin.conf /home/lncm/.bitcoin
+                    fi
+                    mkdir -p /home/lncm/dockernet
+                    if [ -f /home/lncm/docker-compose.yml ]; then
+                        mv /home/lncm/docker-compose.yml /home/lncm/dockernet
+                    fi
+                    mkdir -p /home/lncm/.lnd
+                    if [ -f /home/lncm/lnd.conf ]; then
+                        mv /home/lncm/lnd.conf /home/lncm/.lnd
+                    fi
+
                     # Backup apkovl.tar.gz to USB storage
                     # /sbin/lbu pkg /media/usb
 
