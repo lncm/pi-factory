@@ -58,23 +58,43 @@ start() {
                     /usr/bin/pip3 install docker-compose
                     
                     cd /home/lncm
-
-                    # Execute Config generator
-                    /usr/bin/curl "https://raw.githubusercontent.com/lncm/dockerfiles/master/contrib/lightningd-config-generator/generate-config.sh" 2>/dev/null | ash
                     
-                    # Move into folders (bitcoin, lnd, docker-compose)
-                    /bin/mkdir -p /home/lncm/.bitcoin
-                    if [ -f /home/lncm/bitcoin.conf ]; then
-                        /bin/mv /home/lncm/bitcoin.conf /home/lncm/.bitcoin
+                    # Generate RPC USER and PASS
+                    GENERATEDUID=`pwgen -s 12 1` # This can be used in for for subsequent scripts
+                    GENERATEDPW=`pwgen -s 16 1` # This can be used in for for subsequent scripts
+                    echo "Generating RPC Auth from bitcoin repo"
+                    curl "https://raw.githubusercontent.com/bitcoin/bitcoin/master/share/rpcauth/rpcauth.py" 2>/dev/null 1>rpcauth.py
+                    if [ -f ./rpcauth.py ]; then
+                        chmod 700 rpcauth.py
+                        ./rpcauth.py $GENERATEDUID $GENERATEDPW | head -2 | tail -1 > generate.txt
+                        rm rpcauth.py
+                    else
+                        echo "rpcauth.py not generated - could not reach server"
+                        exit 1
                     fi
-                    /bin/mkdir -p /home/lncm/dockernet
-                    if [ -f /home/lncm/docker-compose.yml ]; then
-                        /bin/mv /home/lncm/docker-compose.yml /home/lncm/dockernet
+
+                    if [ $(grep -c $GENERATEDUID ./generate.txt ) == 0 ]; then
+                        echo "Can't generate credentials - exiting!"
+                        exit 1
                     fi
-                    /bin/mkdir -p /home/lncm/.lnd
-                    if [ -f /home/lncm/lnd.conf ]; then
-                        /bin/mv /home/lncm/lnd.conf /home/lncm/.lnd
+                   
+                    # Execute Config generator
+                    if [ -f ./generate.txt ]; then
+                        # Replace RPCAUTHLINE with what was generated
+                        /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/.bitcoin/bitcoin.conf                        
+                        /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/.litecoin/litecoin.conf
+                        /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/.lnd/lnd.conf
+                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPWD/g;"  /home/lncm/.lnd/lnd.conf
+                        /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/.lightning/config
+                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPWD/g;"  /home/lncm/.lightning/config                       
+
+                        # Cleanup
+                        rm ./generate.txt
+                    else
+                        echo "Error generating config files"
+                        exit 1                    
                     fi
+                    
 
                     # Backup apkovl.tar.gz to USB storage
                     # /sbin/lbu pkg /media/usb
