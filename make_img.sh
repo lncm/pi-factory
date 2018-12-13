@@ -28,7 +28,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-VER=v0.3.0
+VER=v0.3.1
 ALP=alpine-rpi-3.8.1-armhf.tar.gz
 IMG=lncm-box-${VER}.img
 IOT=iotwifi.tar.gz
