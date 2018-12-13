@@ -44,20 +44,30 @@ start() {
         done
 
         if [ $ONLINE -eq 0 ]; then
-            echo "Online, proceeding with bitcoin installation"
-            cd /home/lncm
-            mkdir -p /home/lncm/.bitcoin
-            mv /home/lncm/bitcoin.conf /home/lncm/.bitcoin/
+            if ! [ -f /etc/bitcoind-installed ]; then
+                echo "Online, proceeding with bitcoin installation, if not installed"
+                cd /home/lncm
+                mkdir -p /home/lncm/.bitcoin
+                mv /home/lncm/bitcoin.conf /home/lncm/.bitcoin/
             
-            echo "Grab docker image from docker hub"
-            docker pull lncm/bitcoind:0.17.0-alpine-arm7
+                echo "Grab docker image from docker hub - if supported"
+                if [ $(uname -m) == "armv7l" ]; then
+                    if ! docker images | grep 0.17.0-alpine-arm7; then
+                        echo "Grabbing arm7 image"
+                        docker pull lncm/bitcoind:0.17.0-alpine-arm7
+                    fi
+                fi
 
-            echo "Remove bitcoind-install from boot"
-            /sbin/rc-update del bitcoind-install default
+                echo "Remove bitcoind-install from boot"
+                /sbin/rc-update del bitcoind-install default
                 
-            touch /etc/lncm-post-installed
+                touch /etc/bitcoind-installed
                     
-            exit 0
+                exit 0
+            else
+                echo "bitcoind - already installed"
+                exit 0
+            fi
         else
             echo "LNCM post installation already complete"
             exit 0
