@@ -14,8 +14,6 @@ bitcoin-cli=/opt/bitcoin-0.17.0/bin/bitcoin-cli
 log-level=debug
 log-file=/root/.lightning/debug.log
 
-proxy=10.22.0.240:9050
-
 # Clean up 2 hours old invoices
 autocleaninvoice-cycle=7200
 autocleaninvoice-expired-by=7200
