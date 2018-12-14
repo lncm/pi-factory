@@ -126,6 +126,7 @@ start() {
 
         echo "Deactivate LNCM installation script"
         /sbin/rc-update del lncm default && \
+        /bin/rm /media/sd/etc/runlevels/default/lncm && \
         echo "Persist final state to apkovl" && \
         /sbin/lbu commit
         
