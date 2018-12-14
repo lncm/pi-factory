@@ -133,7 +133,7 @@ start() {
             INSTALLED=0
             echo "Installed successfully"
             echo "Rebooting..."
-            /sbin/rc reboot
+            /sbin/reboot
         fi
 
         exit ${INSTALLED}
