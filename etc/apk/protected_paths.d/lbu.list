@@ -3,3 +3,8 @@
 +etc/init.d/iotwifi
 +etc/init.d/avahi-daemon
 +etc/init.d/portainer
++home/lncm/.bitcoin
++home/lncm/.litecoin
++home/lncm/.lnd
++home/lncm/.lightning
++home/lncm/compose
