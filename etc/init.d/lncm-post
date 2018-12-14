@@ -60,8 +60,8 @@ start() {
                     cd /home/lncm
                     
                     # Generate RPC USER and PASS
-                    GENERATEDUID=`pwgen -s 12 1` # This can be used in for for subsequent scripts
-                    GENERATEDPW=`pwgen -s 16 1` # This can be used in for for subsequent scripts
+                    export GENERATEDUID=`pwgen -s 12 1` # This can be used in for for subsequent scripts
+                    export GENERATEDPW=`pwgen -s 16 1` # This can be used in for for subsequent scripts
                     echo "Generating RPC Auth from bitcoin repo"
                     curl "https://raw.githubusercontent.com/bitcoin/bitcoin/master/share/rpcauth/rpcauth.py" 2>/dev/null 1>rpcauth.py
                     if [ -f ./rpcauth.py ]; then
@@ -81,12 +81,15 @@ start() {
                     # Execute Config generator
                     if [ -f ./generate.txt ]; then
                         # Replace RPCAUTHLINE with what was generated
+                        RPCAUTHLINE=`cat ./generate.txt`
                         /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/.bitcoin/bitcoin.conf                        
                         /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/.litecoin/litecoin.conf
                         /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/.lnd/lnd.conf
-                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPWD/g;"  /home/lncm/.lnd/lnd.conf
+                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/.lnd/lnd.conf
                         /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/.lightning/config
-                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPWD/g;"  /home/lncm/.lightning/config                       
+                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/.lightning/config
+                        /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/compose/docker-compose.yml
+                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/docker-compose.yml
 
                         # Cleanup
                         rm ./generate.txt
