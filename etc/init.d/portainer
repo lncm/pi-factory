@@ -23,7 +23,7 @@ start() {
 
     sleep 2 && \
     docker volume create portainer_data && \
-    docker run -rm -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock \
+    docker run --rm -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock \
      -v portainer_data:/data portainer/portainer && \
     echo "Portainer can be reached on http://box.local:9000"
 
