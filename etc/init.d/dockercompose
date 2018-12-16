@@ -67,30 +67,8 @@ start() {
 stop() {
     ebegin "Stopping docker compose"
 
-    # Check if main mirror is reachable
-    net_check() {
-        ONLINE=$(echo -e 'GET http://dl-cdn.alpinelinux.org/alpine/ HTTP/1.0\n\n' | nc dl-cdn.alpinelinux.org 80 > /dev/null 2>&1; echo $?)
-    }
-
-    ONLINE=1
-
-    if [ -f /media/mmcblk0p1/installed ]; then
-            if [ -f /etc/lncm-post-installed ]; then
-
-              cd /home/lncm/compose
-              docker-compose down
-
-            else
-                echo "LNCM post installation not done yet"
-                exit 0
-            fi
-    else
-        echo "LNCM persistent installation not found!"
-        exit 0
-    fi
-    if [ $ONLINE -eq 1]; then
-        echo "No internet connection. Aborting installation!"
-        exit 0
-    fi
+    cd /home/lncm/compose
+    docker-compose down
+    
     eend $?
 }
