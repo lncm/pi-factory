@@ -18,7 +18,7 @@
 ## To be run on persistently installed SD card
 
 depend() {
-    need net sshd
+    need net sshd docker
 }
 
 start() {
@@ -69,6 +69,6 @@ stop() {
 
     cd /home/lncm/compose
     docker-compose down
-    
+
     eend $?
 }
