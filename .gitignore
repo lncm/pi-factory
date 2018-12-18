@@ -23,3 +23,9 @@ alpine-rpi-*-armhf.tar.gz
 # Don't commit LNCM variant build stuff
 lncm-box-*.tar.gz
 *.img
+
+# Don't commit work dir
+lncm-workdir/
+
+# Don't apkvol
+*.apkovl.tar.gz
