@@ -1,5 +1,6 @@
 +etc/init.d/lncm
 +etc/init.d/lncm-post
++etc/init.d/dockercompose
 +etc/init.d/iotwifi
 +etc/init.d/avahi-daemon
 +etc/init.d/portainer
