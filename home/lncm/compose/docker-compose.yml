@@ -20,7 +20,6 @@ services:
         image: lncm/lnd:latest
         command: --lnddir=/lnd
         volumes:
-            - /home/lncm/.lnd:/lnd
             - /home/lncm/.lnd:/root/.lnd
         ports:
             - "9735:9735"
