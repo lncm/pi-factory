@@ -16,6 +16,20 @@ services:
         networks:
             localnet:
                 ipv4_address: 172.16.88.8
+    lightningbox:
+        image: lncm/lnd:latest
+        command: --lnddir=/lnd
+        volumes:
+            - /home/lncm/.lnd:/lnd
+            - /home/lncm/.lnd:/root/.lnd
+        ports:
+            - "9735:9735"
+        depends_on:
+            - btcbox
+        restart: on-failure
+        networks:
+            localnet:
+                ipv4_address: 172.16.88.88
 networks:
     localnet:
         driver: bridge
