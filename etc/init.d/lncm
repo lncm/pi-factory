@@ -130,7 +130,7 @@ start() {
         echo "Persist final state to apkovl" && \
         /sbin/lbu commit
         
-        if [ -f /media/$SD}p1/installed ]; then
+        if [ -f /media/${SD}p1/installed ]; then
             INSTALLED=0
             echo "Installed successfully"
             echo "Rebooting..."
