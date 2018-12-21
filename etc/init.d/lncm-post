@@ -26,7 +26,7 @@ start() {
     # This script will only run once, to complete post-installation
 
     # LNCM version
-    VER="v0.3.1"
+    VER="v0.3.2"
 
     # Check if main mirror is reachable
     net_check() {
