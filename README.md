@@ -13,7 +13,7 @@ This repository contains everything necessary to bootstrap a LNCM box for [Raspb
 
 1. Download [Etcher](https://www.balena.io/etcher/).
 2. Download latest [lncm-box.img.zip](
-https://github.com/lncm/pi-factory/releases/download/v0.3.1/lncm-box-v0.3.1.img.zip)
+https://github.com/lncm/pi-factory/releases/download/v0.3.2/lncm-box-v0.3.2.img.zip)
 3. Run Etcher and follow instructions to burn lncm-box.img.zip to SD card
 
 Your box will automatically start installing itself to SD card once it has an internet connection.
