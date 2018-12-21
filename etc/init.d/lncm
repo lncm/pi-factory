@@ -84,8 +84,11 @@ start() {
         /bin/rmdir /media/sd/media/usb
         /bin/rmdir /media/sd/media/floppy
 
-        echo "Create lncm home dir"
-        /bin/mkdir /media/sd/home/lncm
+        echo "Create lncm home dir if doesn't exist"
+        if ! [ -d /media/sd/home/lncm ]; then
+            /bin/mkdir /media/sd/home/lncm
+        fi
+        echo "Set up permissions for LNCM"
         /bin/chown lncm:lncm /media/sd/home/lncm
 
         # Boot installation
@@ -108,6 +111,8 @@ start() {
 
         echo "Mark SD card with installed version"
         /bin/echo "$VER" > /media/${SD}p1/installed && \
+        /bin/echo "Copying rc.log to persistant store before remounting for debugging purposes" && \
+        /bin/cp /var/log/rc.log /media/${SD}p1 && \
         echo "Re-mount FAT partition read-only" && \
         /bin/mount -o remount,ro /dev/${SD}p1 /media/${SD}p1
 
