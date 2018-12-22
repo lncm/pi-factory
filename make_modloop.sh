@@ -8,6 +8,7 @@
 mkdir lncm-workdir
 cd lncm-workdir
 
+wget https://github.com/RPi-Distro/firmware-nonfree/blob/master/brcm/brcmfmac43455-sdio.bin
 wget https://github.com/RPi-Distro/firmware-nonfree/blob/master/brcm/brcmfmac43455-sdio.txt
 wget https://github.com/RPi-Distro/firmware-nonfree/blob/master/brcm/brcmfmac43455-sdio.clm_blob
 
@@ -22,9 +23,14 @@ mount -o loop -t squashfs alpine-rpi-3.8.2/boot/modloop-rpi2 /mnt/squash
 mkdir squash-tmp
 cp -r /mnt/squash/* squash-tmp/
 
+umount /mnt/squash
+rmdir /mnt/squash
+
+cp brcmfmac43455-sdio.bin squash-tmp/modules/firmware/brcm/
 cp brcmfmac43455-sdio.txt squash-tmp/modules/firmware/brcm/
 cp brcmfmac43455-sdio.clm_blob squash-tmp/modules/firmware/brcm/
 
+rm modloop-rpi2
 mksquashfs squash-tmp/ modloop-rpi2 -b 131072 -comp xz -Xdict-size 100%
 
 tar cvzf modloop-rpi2.tar.gz modloop-rpi2
