@@ -62,8 +62,8 @@ echo 'Generate fresh box.apkovl.tar.gz from source'
 sh make_apkovl.sh
 # Cleanup files we created
 if [ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]; then
-    echp 'Restore old WPA Supplicant after making apkovl (and deleting the backup file)'
-    cp ./etc/wpa_supplicant/wpa_supplicant.conf.bak cp ./etc/wpa_supplicant/wpa_supplicant.conf
+    echo 'Restore old WPA Supplicant after making apkovl (and deleting the backup file)'
+    cp ./etc/wpa_supplicant/wpa_supplicant.conf.bak ./etc/wpa_supplicant/wpa_supplicant.conf
     rm ./etc/wpa_supplicant/wpa_supplicant.conf.bak
 fi
 
