@@ -51,8 +51,21 @@ fi
 echo "Building ${IMG}"
 echo "Using ${ALP} as base distribution"
 
+echo 'Check for existing wpa_supplicant.automatic.conf'
+if [ -f ./wpa_supplicant.automatic.conf ]; then
+    echo "WPA supplicant automatic file exists, bootstrapping the network configuration"
+    cp ./etc/wpa_supplicant/wpa_supplicant.conf ./etc/wpa_supplicant/wpa_supplicant.conf.bak
+    cp ./wpa_supplicant.automatic.conf etc/wpa_supplicant/wpa_supplicant.conf
+fi
+
 echo 'Generate fresh box.apkovl.tar.gz from source'
 sh make_apkovl.sh
+# Cleanup files we created
+if [ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]; then
+    echp 'Restore old WPA Supplicant after making apkovl (and deleting the backup file)'
+    cp ./etc/wpa_supplicant/wpa_supplicant.conf.bak cp ./etc/wpa_supplicant/wpa_supplicant.conf
+    rm ./etc/wpa_supplicant/wpa_supplicant.conf.bak
+fi
 
 if ! [ -d lncm-workdir ]; then
   mkdir lncm-workdir
