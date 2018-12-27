@@ -20,7 +20,7 @@ services:
         image: lncm/lnd:latest
         command: --lnddir=/lnd
         volumes:
-            - /home/lncm/.lnd:/root/.lnd
+            - /home/lncm/.lnd:/lnd
         ports:
             - "9735:9735"
         depends_on:
