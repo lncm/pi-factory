@@ -50,9 +50,8 @@ start() {
 
                     echo "Install docker-compose and dependencies for config files"
                     # Install dependencies for docker compose and for generating config files
-                    /sbin/apk add py3-pip
-                    /sbin/apk add curl
-                    /sbin/apk add pwgen
+		    /sbin/apk update && \
+                    /sbin/apk add py3-pip curl pwgen
 
                     /usr/bin/pip3 install --upgrade pip
                     /usr/bin/pip3 install docker-compose
