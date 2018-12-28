@@ -58,7 +58,7 @@ start() {
         echo "Online, proceeding with installation"
 
         echo "Add partitioning and filesystem tools"
-        /sbin/apk add parted e2fsprogs
+        /sbin/apk update && /sbin/apk add parted e2fsprogs
 
         echo "Create second primary partition"
         /usr/sbin/parted -s /dev/$SD mkpart p ext4 $START 100%
