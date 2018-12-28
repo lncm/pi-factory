@@ -8,11 +8,11 @@
 mkdir lncm-workdir
 cd lncm-workdir
 
-wget https://github.com/RPi-Distro/firmware-nonfree/blob/master/brcm/brcmfmac43455-sdio.bin
-wget https://github.com/RPi-Distro/firmware-nonfree/blob/master/brcm/brcmfmac43455-sdio.txt
-wget https://github.com/RPi-Distro/firmware-nonfree/blob/master/brcm/brcmfmac43455-sdio.clm_blob
+wget https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
 
-apk add squashfs-tools
+apk add squashfs-tools unzip
+
+unzip brcm-firmware.zip
 
 mkdir alpine-rpi-3.8.2
 tar xvzf alpine-rpi-3.8.2-armhf.tar.gz -C alpine-rpi-3.8.2
