@@ -1,6 +1,6 @@
 +etc/init.d/lncm
 +etc/init.d/lncm-post
-+etc/init.d/dockercompose
++etc/init.d/docker-compose
 +etc/init.d/iotwifi
 +etc/init.d/avahi-daemon
 +etc/init.d/portainer
@@ -9,3 +9,4 @@
 +home/lncm/.lnd
 +home/lncm/.lightning
 +home/lncm/compose
++home/lncm/README.md
