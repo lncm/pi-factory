@@ -4,21 +4,31 @@
 # which contains modloop-rpi2, an xz compressed squashfs
 # filesystem with block size 131072 and 100% dict-size
 
+ALP=alpine-rpi-3.8.2-armhf.tar.gz
+FIRMWARE=https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
 
 mkdir lncm-workdir
 cd lncm-workdir
 
-wget https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
+if ! [ -f $FIRMWARE ]; then
+  echo "Brcm firmware not found, fetching..."
+  wget https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
+fi
 
-apk add squashfs-tools unzip
+apk update && apk add squashfs-tools unzip
 
 unzip brcm-firmware.zip
 
-mkdir alpine-rpi-3.8.2
-tar xvzf alpine-rpi-3.8.2-armhf.tar.gz -C alpine-rpi-3.8.2
+if ! [ -f $ALP ]; then
+  echo "${ALP} not found, fetching..."
+  wget http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/armhf/${ALP}
+fi
+
+mkdir alp-distro
+tar xvzf $ALP -C alp-distro
 
 mkdir /mnt/squash
-mount -o loop -t squashfs alpine-rpi-3.8.2/boot/modloop-rpi2 /mnt/squash
+mount -o loop -t squashfs alp-distro/boot/modloop-rpi2 /mnt/squash
 
 mkdir squash-tmp
 cp -r /mnt/squash/* squash-tmp/
@@ -32,5 +42,6 @@ cp brcmfmac43455-sdio.clm_blob squash-tmp/modules/firmware/brcm/
 
 rm modloop-rpi2
 mksquashfs squash-tmp/ modloop-rpi2 -b 131072 -comp xz -Xdict-size 100%
+rm -rf squash-tmp
 
 tar cvzf modloop-rpi2.tar.gz modloop-rpi2
