@@ -28,9 +28,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-VER=v0.3.1
-ALP=alpine-rpi-3.8.1-armhf.tar.gz
-IMG=lncm-box-${VER}.img
+OUTPUT_VERSION=v0.3.2
+DOWNLOAD_VERSION=v0.3.2
+ALP=alpine-rpi-3.8.2-armhf.tar.gz
+IMG=lncm-box-${OUTPUT_VERSION}.img
 IOT=iotwifi.tar.gz
 FIX=modloop-rpi2.tar.gz
 CACHE=cache.tar.gz
@@ -65,15 +66,15 @@ if ! [ -f $ALP ]; then
 fi
 if ! [ -f $IOT ]; then
   echo "${IOT} not found, fetching..."
-  wget https://github.com/lncm/pi-factory/releases/download/${VER}/${IOT}
+  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
 fi
 if ! [ -f $FIX ]; then
   echo "${FIX} not found, fetching..."
-  wget https://github.com/lncm/pi-factory/releases/download/${VER}/${FIX}
+  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
 fi
 if ! [ -f $CACHE ]; then
   echo "${CACHE} not found, fetching..."
-  wget https://github.com/lncm/pi-factory/releases/download/${VER}/${CACHE}
+  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
 fi
 
 echo "Create and mount 256MB image"
