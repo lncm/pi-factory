@@ -3,7 +3,7 @@ services:
     btcbox:
         image: lncm/bitcoind:0.17.1-alpine-arm
         volumes:
-            - /home/lncm/.bitcoin:/home/bitcoin/.bitcoin
+            - /home/lncm/bitcoin:/root/.bitcoin
         ports:
             - "8332:8332"
             - "8333:8333"
@@ -18,9 +18,8 @@ services:
                 ipv4_address: 172.16.88.8
     lightningbox:
         image: lncm/lnd:latest
-        command: --lnddir=/lnd
         volumes:
-            - /home/lncm/.lnd:/lnd
+            - /home/lncm/lnd:/root/.lnd
         ports:
             - "9735:9735"
         depends_on:
