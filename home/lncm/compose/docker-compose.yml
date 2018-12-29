@@ -3,7 +3,7 @@ services:
     btcbox:
         image: lncm/bitcoind:0.17.1-alpine-arm
         volumes:
-            - /home/lncm/bitcoin:/root/.bitcoin
+            - /home/lncm/bitcoin:/home/bitcoin/.bitcoin
         ports:
             - "8332:8332"
             - "8333:8333"
