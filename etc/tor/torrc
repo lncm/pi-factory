@@ -1,0 +1,32 @@
+SOCKSPort 9050 # Default: Bind to localhost:9050 for local connections.
+
+Log notice file /var/log/tor/notices.log
+Log notice syslog
+#Log debug file /var/log/tor/debug.log
+#Log debug syslog
+
+DataDirectory /var/lib/tor
+ControlPort 9051
+
+## If you enable the controlport, be sure to enable one of these
+## authentication methods, to prevent attackers from accessing it.
+# TODO: generate the password too
+#ControlPort 9051
+#HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
+#CookieAuthentication 1
+
+# SSHD
+HiddenServiceDir /var/lib/tor/ssh/
+HiddenServiceVersion 3
+HiddenServicePort 22 127.0.0.1:22
+
+# For Lightning / lnd
+# TODO: have it add the hostname to lnd.conf 
+HiddenServiceDir /var/lib/tor/lightning/
+HiddenServiceVersion 3
+HiddenServicePort 9735 127.0.0.1:9735
+
+# For controlling the lnd node service
+HiddenServiceDir /var/lib/tor/lnd-control/
+HiddenServiceVersion 3
+HiddenServicePort 10009 127.0.0.1:10009
