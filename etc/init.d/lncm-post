@@ -98,6 +98,10 @@ start() {
                     fi
                     
 
+                    # Install TOR
+                    echo "Installing TOR"
+                    /sbin/apk update && /sbin/apk add tor
+
                     # Backup apkovl.tar.gz to USB storage
                     # /sbin/lbu pkg /media/usb
 
