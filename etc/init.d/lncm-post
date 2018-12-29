@@ -50,7 +50,7 @@ start() {
 
                     echo "Install docker-compose and dependencies for config files"
                     # Install dependencies for docker compose and for generating config files
-		    /sbin/apk update && \
+		            /sbin/apk update && \
                     /sbin/apk add py3-pip curl pwgen
 
                     /usr/bin/pip3 install --upgrade pip
@@ -81,12 +81,12 @@ start() {
                     if [ -f ./generate.txt ]; then
                         # Replace RPCAUTHLINE with what was generated
                         RPCAUTHLINE=`cat ./generate.txt`
-                        /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/.bitcoin/bitcoin.conf                        
-                        /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/.litecoin/litecoin.conf
-                        /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/.lnd/lnd.conf
-                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/.lnd/lnd.conf
-                        /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/.lightning/config
-                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/.lightning/config
+                        /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf                        
+                        /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/litecoin/litecoin.conf
+                        /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/lnd/lnd.conf
+                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/lnd.conf
+                        /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/lightning/config
+                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lightning/config
                         /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/compose/docker-compose.yml
                         /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/docker-compose.yml
 
