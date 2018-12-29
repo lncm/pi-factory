@@ -48,7 +48,7 @@ start() {
                     docker-compose up -d
 
                     exit 0
-		        fi
+		fi
             else
                 echo "LNCM post installation not done yet"
                 exit 1
