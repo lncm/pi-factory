@@ -1,3 +1,4 @@
++etc/tor/torrc
 +etc/init.d/lncm
 +etc/init.d/lncm-post
 +etc/init.d/docker-compose
