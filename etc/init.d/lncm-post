@@ -99,15 +99,24 @@ start() {
                     
 
                     # Install TOR
-                    echo "Installing TOR"
+                    echo "Installing and starting TOR"
                     /sbin/apk update && /sbin/apk add tor
+                    /sbin/service tor start
+
+                    if [ -f /var/lib/tor/lightning/hostname ]; then
+                        echo "Configuring lnd to have tor as a URI available"
+                        echo "externalip=$(cat /var/lib/tor/lightning/hostname)" >> /home/lncm/lnd/lnd.conf
+                    else
+                        echo "Could not find the tor generated files"
+                        exit 1
+                    fi
 
                     # Backup apkovl.tar.gz to USB storage
                     # /sbin/lbu pkg /media/usb
 
                     echo "Remove lncm-post from boot"
                     /sbin/rc-update del lncm-post default
-                
+                    
                     touch /etc/lncm-post-installed
                     
                     exit 0
