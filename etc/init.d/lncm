@@ -69,10 +69,19 @@ start() {
         /bin/mkdir /media/sd && \
         /bin/mount /media/sd
 
+        if ! [ -d /media/sd/lost+found ]; then
+            echo "Partition doesn't seem to be mounted"
+            exit 1
+        fi
+
         echo "Persist state to apkovl"
         /sbin/lbu commit && \
         echo "Install to /media/sd and apply apkovl" && \
         /sbin/setup-disk -o /media/mmcblk0p1/box.apkovl.tar.gz /media/sd
+        if ! [ -d /media/sd/etc ]; then
+            echo "Setup disk did not seem to create anything! Exiting"
+            exit 1
+        fi
 
         echo "Add FAT partition to new fstab"
         /bin/echo "/dev/mmcblk0p1 /media/mmcblk0p1 vfat defaults 0 0" >> /media/sd/etc/fstab
