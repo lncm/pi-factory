@@ -109,13 +109,13 @@ start() {
                     do 
                         echo "Tor generated directory doesn't exist yet.. waiting";
                         let CHECKTOR_HOSTNAME=CHECKTOR_HOSTNAME+1;
-                        sleep 2;
+                        sleep 1;
                     done
                    
                     # Now check to see if hostname exists
                     if [ -f /var/lib/tor/lightning/hostname ]; then
                         echo "Configuring lnd to have tor as a URI available"
-                        echo "externalip=$(cat /var/lib/tor/lightning/hostname)" >> /home/lncm/lnd/lnd.conf
+                        /bin/sed -i "s/; externalip=/externalip=$(cat /var/lib/tor/lightning/hostname)/g; " /home/lncm/lnd/lnd.conf
                     else
                         echo "Could not find the tor generated files.. exiting"
                         exit 1
