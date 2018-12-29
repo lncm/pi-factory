@@ -98,16 +98,22 @@ start() {
         /bin/sed -e 's/^/root=\/dev\/mmcblk0p2 /' -i /media/${SD}p1/cmdline.txt && \
         echo "Backup old boot files" && \
         /bin/mkdir /media/mmcblk0p1/boot_backup && \
-        /bin/mv /media/mmcblk0p1/boot/* /media/mmcblk0p1/boot_backup/ && \
-        echo "Remove old boot files on fat partition" && \
-        /bin/rm -rf /media/mmcblk0p1/boot/* && \
-        echo "Copy new boot files to fat partition" && \
-        /bin/cp /media/sd/boot/* /media/mmcblk0p1/boot/ && \
-        echo "Delete new boot dir" && \
-        /bin/rm -rf /media/sd/boot && \
-        echo "Link boot to fat partition" && \
-        cd /media/sd && \
-        /bin/ln -s /media/mmcblk0p1 boot
+        /bin/mv /media/mmcblk0p1/boot/* /media/mmcblk0p1/boot_backup/
+
+        if [ -d /media/sd/boot ]; then
+            echo "Remove old boot files on fat partition" && \
+            /bin/rm -rf /media/mmcblk0p1/boot/* && \
+            echo "Copy new boot files to fat partition" && \
+            /bin/cp /media/sd/boot/* /media/mmcblk0p1/boot/ && \
+            echo "Delete new boot dir" && \
+            /bin/rm -rf /media/sd/boot && \
+            echo "Link boot to fat partition" && \
+            cd /media/sd && \
+            /bin/ln -s /media/mmcblk0p1 boot
+        else
+            echo "Uh oh! setup-desk did not put a boot directory in. Exiting"
+            exit 1
+        fi
 
         echo "Mark SD card with installed version"
         /bin/echo "$VER" > /media/${SD}p1/installed && \
