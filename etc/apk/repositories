@@ -1,6 +1,6 @@
 /media/mmcblk0p1/apks
 http://mirror.xtom.com.hk/alpine/v3.8/main
 http://mirror.xtom.com.hk/alpine/v3.8/community
-http://mirror.xtom.com.hk/alpine/edge/main
-http://mirror.xtom.com.hk/alpine/edge/community
-http://mirror.xtom.com.hk/alpine/edge/testing
+#http://mirror.xtom.com.hk/alpine/edge/main
+#http://mirror.xtom.com.hk/alpine/edge/community
+#http://mirror.xtom.com.hk/alpine/edge/testing
