@@ -99,10 +99,10 @@ start() {
                     
 
                     # Install TOR
-                    echo "Installing and starting TOR"
+                    echo "Installing and starting TOR (and waiting about 10 seconds)"
                     /sbin/apk update && /sbin/apk add tor
-                    /sbin/service tor start
-
+                    /sbin/service tor start && /bin/sleep 10
+                    
                     if [ -f /var/lib/tor/lightning/hostname ]; then
                         echo "Configuring lnd to have tor as a URI available"
                         echo "externalip=$(cat /var/lib/tor/lightning/hostname)" >> /home/lncm/lnd/lnd.conf
