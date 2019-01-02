@@ -1,3 +1,4 @@
++etc/tor/torrc
 +etc/init.d/lncm
 +etc/init.d/lncm-post
 +etc/init.d/docker-compose
@@ -10,3 +11,4 @@
 +home/lncm/lightning
 +home/lncm/compose
 +home/lncm/README.md
++home/lncm/mana.sh

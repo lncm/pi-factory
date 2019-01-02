@@ -98,12 +98,35 @@ start() {
                     fi
                     
 
+                    # Install TOR
+                    echo "Installing and starting TOR (and waiting about 10 seconds)"
+                    /sbin/apk update && /sbin/apk add tor
+                    /sbin/service tor start
+                    
+                    CHECKTOR_HOSTNAME=1
+                    # Check to see if TOR generated directory exists
+                    while [ ! -d /var/lib/tor/lightning ] && [ $CHECKTOR_HOSTNAME -lt 10 ]; 
+                    do 
+                        echo "Tor generated directory doesn't exist yet.. waiting";
+                        let CHECKTOR_HOSTNAME=CHECKTOR_HOSTNAME+1;
+                        sleep 1;
+                    done
+                   
+                    # Now check to see if hostname exists
+                    if [ -f /var/lib/tor/lightning/hostname ]; then
+                        echo "Configuring lnd to have tor as a URI available"
+                        /bin/sed -i "s/; externalip=/externalip=$(cat /var/lib/tor/lightning/hostname)/g; " /home/lncm/lnd/lnd.conf
+                    else
+                        echo "Could not find the tor generated files.. exiting"
+                        exit 1
+                    fi
+
                     # Backup apkovl.tar.gz to USB storage
                     # /sbin/lbu pkg /media/usb
 
                     echo "Remove lncm-post from boot"
                     /sbin/rc-update del lncm-post default
-                
+                    
                     touch /etc/lncm-post-installed
                     
                     exit 0

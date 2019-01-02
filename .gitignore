@@ -29,3 +29,6 @@ lncm-workdir/
 
 # Don't apkvol
 *.apkovl.tar.gz
+
+# Ignore Readme
+home/lncm/README.md
