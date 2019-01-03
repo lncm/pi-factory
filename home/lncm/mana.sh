@@ -3,7 +3,7 @@
 if [ "$1" = "" ]; then
   echo -e "Mana: node management\n"
   echo "Must pass an option:"
-  echo "info, unlock, create, stop, start, temp"
+  echo "info, unlock, create, stop, start, btclog, lndlog, temp"
 fi
 
 if [ "$1" = "info" ]; then
@@ -32,6 +32,14 @@ if [ "$1" = "stop" ]; then
   echo "Attempting clean shutdown of bitcoind and lnd nodes"
   docker exec -it compose_lightningbox_1 lncli stop
   docker exec -it compose_btcbox_1 bitcoin-cli stop
+fi
+
+if [ "$1" = "btclog" ]; then
+  docker logs -f compose_btcbox_1
+fi
+
+if [ "$1" = "lndlog" ]; then
+  docker logs -f compose_lightningbox_1
 fi
 
 if [ "$1" = "temp" ]; then
