@@ -11,4 +11,4 @@
 +home/lncm/lightning
 +home/lncm/compose
 +home/lncm/README.md
-+home/lncm/mana.sh
++usr/local/sbin/mana
