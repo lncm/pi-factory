@@ -48,6 +48,9 @@ start() {
                 if [ $ONLINE -eq 0 ]; then
                     echo "Online, proceeding with post-installation"
 
+                    echo "Let apk cache live on persistent volume"
+                    /sbin/setup-apkcache /var/cache/apk
+
                     echo "Install docker-compose and dependencies for config files"
                     # Install dependencies for docker compose and for generating config files
 		            /sbin/apk update && \
