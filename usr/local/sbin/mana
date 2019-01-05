@@ -35,11 +35,15 @@ if [ "$1" = "stop" ]; then
 fi
 
 if [ "$1" = "btclog" ]; then
-  docker logs -f compose_btcbox_1
+  # slow, robust method
+  #docker logs -f compose_btcbox_1
+  tail -f /media/volatile/bitcoin/debug.log
 fi
 
 if [ "$1" = "lndlog" ]; then
-  docker logs -f compose_lightningbox_1
+  # slow, robust method
+  #docker logs -f compose_lightningbox_1
+  tail -f /media/volatile/lnd/logs/bitcoin/mainnet/lnd.log
 fi
 
 if [ "$1" = "temp" ]; then
