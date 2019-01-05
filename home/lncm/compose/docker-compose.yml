@@ -3,8 +3,13 @@ services:
     btcbox:
         image: lncm/bitcoind:0.17.1-alpine-arm
         volumes:
-            - /home/lncm/bitcoin:/home/bitcoin/.bitcoin
-            - /home/lncm/bitcoin:/root/.bitcoin
+            - /media/volatile/bitcoin:/home/bitcoin/.bitcoin
+            - /media/volatile/bitcoin:/root/.bitcoin
+            - /media/archive/bitcoin/chainstate:/home/bitcoin/.bitcoin/chainstate
+            - /media/archive/bitcoin/blocks:/home/bitcoin/.bitcoin/blocks
+            - /media/important/bitcoin/bitcoin.conf:/home/bitcoin/.bitcoin/bitcoin.conf
+            - /media/important/bitcoin/bitcoin.conf:/root/.bitcoin/bitcoin.conf
+            - /media/important/bitcoin/wallets:/home/bitcoin/.bitcoin/wallets
         ports:
             - "8332:8332"
             - "8333:8333"
@@ -19,8 +24,14 @@ services:
                 ipv4_address: 172.16.88.8
     lndbox:
         image: lncm/lnd:latest
+        command: --lnddir=/root/.lnd
         volumes:
-            - /home/lncm/lnd:/root/.lnd
+            - /media/volatile/lnd:/root/.lnd
+            - /media/volatile/lnd/logs:/root/.lnd/logs
+            - /media/important/lnd/data:/root/.lnd/data
+            - /media/important/lnd/tls.cert:/root/.lnd/tls.cert
+            - /media/important/lnd/tls.key:/root/.lnd/tls.key
+            - /media/important/lnd/lnd.conf:/root/.lnd/lnd.conf
         ports:
             - "9735:9735"
         depends_on:
@@ -37,4 +48,3 @@ networks:
             config:
                 -
                     subnet: 172.16.88.0/24
-
