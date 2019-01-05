@@ -40,7 +40,7 @@ start() {
     /usr/bin/pip3 install docker-compose
     
     # USB storage setup
-    /usr/bin/python3 /usr/local/sbin/lncm-usb.py
+    /usr/bin/python3 /usr/local/bin/lncm-usb.py
     # Verify USB setup succeeded
     if [ ! -d /media/archive ]; then
       echo 'USB setup failed'
