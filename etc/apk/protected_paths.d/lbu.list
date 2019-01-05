@@ -1,6 +1,7 @@
 +etc/tor/torrc
 +etc/init.d/lncm
 +etc/init.d/lncm-post
++etc/init.d/lncm-online
 +etc/init.d/docker-compose
 +etc/init.d/iotwifi
 +etc/init.d/avahi-daemon
