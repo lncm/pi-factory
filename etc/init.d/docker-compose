@@ -18,57 +18,24 @@
 ## To be run on persistently installed SD card
 
 depend() {
-    need net sshd docker
+  need net sshd docker lncm-online
 }
 
 start() {
-    ebegin "Starting docker-compose"
+  ebegin "Starting docker-compose"
+  
+  cd /home/lncm/compose
+  docker-compose up -d
 
-    # Check if main mirror is reachable
-    net_check() {
-        ONLINE=$(echo -e 'GET http://dl-cdn.alpinelinux.org/alpine/ HTTP/1.0\n\n' | nc dl-cdn.alpinelinux.org 80 > /dev/null 2>&1; echo $?)
-    }
-
-    ONLINE=1
-
-    if [ -f /media/mmcblk0p1/installed ]; then
-            if [ -f /etc/lncm-post-installed ]; then
-
-                while [ $ONLINE -eq 1 ]
-                do
-                    echo "Checking for internet connection..."
-                    net_check
-                    sleep 1
-                done
-
-                if [ $ONLINE -eq 0 ]; then
-                    echo "Online, lets start up docker-compose"
-
-                    cd /home/lncm/compose
-                    docker-compose up -d
-
-                    exit 0
-		fi
-            else
-                echo "LNCM post installation not done yet"
-                exit 1
-            fi
-    else
-        echo "LNCM persistent installation not found!"
-        exit 1
-    fi
-    if [ $ONLINE -eq 1]; then
-        echo "No internet connection. Aborting installation!"
-        exit 1
-    fi
-    eend $?
+  eend $?
 }
 
 stop() {
-    ebegin "Stopping docker compose"
+  ebegin "Stopping docker compose"
 
-    cd /home/lncm/compose
-    docker-compose down
+  /usr/local/sbin/mana stop
+  cd /home/lncm/compose
+  docker-compose down
 
-    eend $?
+  eend $?
 }
