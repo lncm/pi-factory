@@ -20,7 +20,7 @@
 # TODO: add system-wide is_online dependency
 
 depend() {
-    need net sshd
+    need net sshd lncm-online
 }
 
 start() {
@@ -117,6 +117,10 @@ start() {
 
     echo "Remove lncm-post from boot"
     /sbin/rc-update del lncm-post default
+
+    echo "Enable docker-compose at boot"
+    /sbin/rc-update add docker-compose default
+    /sbin/service docker-compose start
 
     exit 0
   else
