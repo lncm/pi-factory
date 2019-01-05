@@ -146,6 +146,7 @@ setup_volatile() {
       # swapon with high priority
       swapon /media/volatile/swap -p 100 && \
       echo '/media/volatile/swap none swap sw,pri=100 0 0' >> /etc/fstab
+    fi
   else
     echo 'Warning: "volatile" usb does not seem to be ext4 formatted'
     echo "/dev/${MEDIUM} will not be added to /etc/fstab"
