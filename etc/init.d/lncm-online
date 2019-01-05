@@ -19,7 +19,7 @@ depend() {
 }
 
 start() {
-  ebegin "Checking for internet connection..."
+  ebegin "Checking internet connectivity"
 
   # Fetch current mirror URL
   #MIR="$(cat /etc/apk/repositories | sed -n 2p)"
@@ -39,6 +39,7 @@ start() {
   done
 
   if [ $ONLINE -eq 0 ]; then
+    echo "Connected to internet"
     exit 0
   fi
 
