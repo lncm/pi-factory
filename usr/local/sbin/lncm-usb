@@ -93,21 +93,21 @@ check_to_destroy() {
     echo "Going to destroy all data on /dev/${LARGEST} in 3 seconds..."
     umount /dev/${LARGEST} && \
     sleep 3 && \
-    mkfs.ext4 -f /dev/${LARGEST} && \
+    mkfs.ext4 -F /dev/${LARGEST} && \
     mount -t ext4 /dev/${LARGEST} /media/archive
   fi
   if [ -f /media/volatile/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]; then
     echo "Going to destroy all data on /dev/${MEDIUM} in 3 seconds..."
     umount /dev/${MEDIUM} && \
     sleep 3 && \
-    mkfs.ext4 -f /dev/${MEDIUM} && \
+    mkfs.ext4 -F /dev/${MEDIUM} && \
     mount -t ext4 /dev/${MEDIUM} /media/volatile
   fi
   if [ -f /media/important/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]; then
     echo "Going to destroy all data on /dev/${SMALLEST} in 3 seconds..."
     umount /dev/${SMALLEST} && \
     sleep 3 && \
-    mkfs.ext4 -f /dev/${SMALLEST} && \
+    mkfs.ext4 -F /dev/${SMALLEST} && \
     mount -t ext4 /dev/${SMALLEST} /media/important
   fi
 }
