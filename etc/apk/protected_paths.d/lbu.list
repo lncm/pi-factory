@@ -12,6 +12,6 @@
 +home/lncm/lightning
 +home/lncm/compose
 +home/lncm/README.md
-+usr/local/bin/mana
-+usr/local/bin/lncm-usb
-+usr/local/bin/lncm-usb.py
++usr/local/sbin/mana
++usr/local/sbin/lncm-usb
++usr/local/sbin/lncm-usb.py
