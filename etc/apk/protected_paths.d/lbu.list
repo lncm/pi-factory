@@ -1,6 +1,7 @@
 +etc/tor/torrc
 +etc/init.d/lncm
 +etc/init.d/lncm-post
++etc/init.d/lncm-online
 +etc/init.d/docker-compose
 +etc/init.d/iotwifi
 +etc/init.d/avahi-daemon
@@ -12,3 +13,5 @@
 +home/lncm/compose
 +home/lncm/README.md
 +usr/local/sbin/mana
++usr/local/sbin/lncm-usb
++usr/local/sbin/lncm-usb.py

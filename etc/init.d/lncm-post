@@ -17,134 +17,116 @@
 ## LNCM post-installation script
 ## To be run on persistently installed SD card
 
+# TODO: add system-wide is_online dependency
+
 depend() {
-    need net sshd
+    need net sshd lncm-online
 }
 
 start() {
-    ebegin "Starting LNCM post-installation"
-    # This script will only run once, to complete post-installation
+  ebegin "Starting LNCM post-installation"
+  # This script will only run once, to complete post-installation
 
-    # LNCM version
-    VER="v0.3.2"
+  if [ -f /media/mmcblk0p1/installed ]; then
+    echo "Let apk cache live on persistent volume"
+    /sbin/setup-apkcache /var/cache/apk
 
-    # Check if main mirror is reachable
-    net_check() {
-        ONLINE=$(echo -e 'GET http://dl-cdn.alpinelinux.org/alpine/ HTTP/1.0\n\n' | nc dl-cdn.alpinelinux.org 80 > /dev/null 2>&1; echo $?)
-    }
+    echo "Install docker-compose and dependencies for config files"
+    # Install dependencies for docker compose and for generating config files
+    /sbin/apk update && \
+    /sbin/apk add py3-pip curl
 
-    ONLINE=1
+    /usr/bin/pip3 install --upgrade pip
+    /usr/bin/pip3 install docker-compose
+    
+    # USB storage setup
+    /usr/bin/python3 /usr/local/sbin/lncm-usb.py
+    # Verify USB setup succeeded
+    if [ ! -d /media/archive ]; then
+      echo 'USB setup failed'
+      exit 1
+    elif [ ! -d /media/important ]; then
+      echo 'USB setup failed'
+      exit 1
+    elif [ ! -d /media/volatile ]; then
+      echo 'USB setup failed'
+      exit 1
+    fi
 
-    if [ -f /media/mmcblk0p1/installed ]; then
-            if ! [ -f /etc/lncm-post-installed ]; then
-
-                while [ $ONLINE -eq 1 ]
-                do
-                    echo "Checking for internet connection..."
-                    net_check
-                    sleep 1
-                done
-
-                if [ $ONLINE -eq 0 ]; then
-                    echo "Online, proceeding with post-installation"
-
-                    echo "Let apk cache live on persistent volume"
-                    /sbin/setup-apkcache /var/cache/apk
-
-                    echo "Install docker-compose and dependencies for config files"
-                    # Install dependencies for docker compose and for generating config files
-		            /sbin/apk update && \
-                    /sbin/apk add py3-pip curl pwgen
-
-                    /usr/bin/pip3 install --upgrade pip
-                    /usr/bin/pip3 install docker-compose
-                    
-                    cd /home/lncm
-                    
-                    # Generate RPC USER and PASS
-                    export GENERATEDUID=`pwgen -s 12 1` # This can be used in for for subsequent scripts
-                    export GENERATEDPW=`pwgen -s 16 1` # This can be used in for for subsequent scripts
-                    echo "Generating RPC Auth from bitcoin repo"
-                    curl "https://raw.githubusercontent.com/bitcoin/bitcoin/master/share/rpcauth/rpcauth.py" 2>/dev/null 1>rpcauth.py
-                    if [ -f ./rpcauth.py ]; then
-                        chmod 700 rpcauth.py
-                        ./rpcauth.py $GENERATEDUID $GENERATEDPW | head -2 | tail -1 > generate.txt
-                        rm rpcauth.py
-                    else
-                        echo "rpcauth.py not generated - could not reach server"
-                        exit 1
-                    fi
-
-                    if [ $(grep -c $GENERATEDUID ./generate.txt ) == 0 ]; then
-                        echo "Can't generate credentials - exiting!"
-                        exit 1
-                    fi
-                   
-                    # Execute Config generator
-                    if [ -f ./generate.txt ]; then
-                        # Replace RPCAUTHLINE with what was generated
-                        RPCAUTHLINE=`cat ./generate.txt`
-                        /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf                        
-                        /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/litecoin/litecoin.conf
-                        /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/lnd/lnd.conf
-                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/lnd.conf
-                        /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/lightning/config
-                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lightning/config
-                        /bin/sed -i "s/RANDOMUSER/$GENERATEDUID/g;"  /home/lncm/compose/docker-compose.yml
-                        /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/docker-compose.yml
-
-                        # Cleanup
-                        rm ./generate.txt
-                    else
-                        echo "Error generating config files"
-                        exit 1                    
-                    fi
-                    
-
-                    # Install TOR
-                    echo "Installing and starting TOR (and waiting about 10 seconds)"
-                    /sbin/apk update && /sbin/apk add tor
-                    /sbin/service tor start
-                    
-                    CHECKTOR_HOSTNAME=1
-                    # Check to see if TOR generated directory exists
-                    while [ ! -d /var/lib/tor/lightning ] && [ $CHECKTOR_HOSTNAME -lt 10 ]; 
-                    do 
-                        echo "Tor generated directory doesn't exist yet.. waiting";
-                        let CHECKTOR_HOSTNAME=CHECKTOR_HOSTNAME+1;
-                        sleep 1;
-                    done
-                   
-                    # Now check to see if hostname exists
-                    if [ -f /var/lib/tor/lightning/hostname ]; then
-                        echo "Configuring lnd to have tor as a URI available"
-                        /bin/sed -i "s/; externalip=/externalip=$(cat /var/lib/tor/lightning/hostname)/g; " /home/lncm/lnd/lnd.conf
-                    else
-                        echo "Could not find the tor generated files.. exiting"
-                        exit 1
-                    fi
-
-                    # Backup apkovl.tar.gz to USB storage
-                    # /sbin/lbu pkg /media/usb
-
-                    echo "Remove lncm-post from boot"
-                    /sbin/rc-update del lncm-post default
-                    
-                    touch /etc/lncm-post-installed
-                    
-                    exit 0
-		fi
-            else
-                echo "LNCM post installation already complete"
-                exit 0
-            fi
+    # Generate RPC auth
+    echo "Generate RPC auth from bitcoin repo"
+    curl "https://raw.githubusercontent.com/bitcoin/bitcoin/master/share/rpcauth/rpcauth.py" 2>/dev/null 1>rpcauth.py
+    if [ -f ./rpcauth.py ]; then
+      chmod 700 rpcauth.py
+      ./rpcauth.py lncm | tee /media/important/generated.txt | head -2 | tail -1 > /media/important/rpcauth.txt
+      cat /media/important/generated.txt | tail -1 > /media/important/rpcpass.txt
+      rm rpcauth.py /media/important/generated.txt
     else
-        echo "LNCM persistent installation not found!"
-        exit 1	
+      echo "rpcauth not generated - could not reach server"
+      exit 1
     fi
-    if [ $ONLINE -eq 1]; then
-        echo "No internet connection. Aborting installation!"
-        exit 1
+
+    if [ $(grep -c rpcauth /media/important/rpcauth.txt ) == 0 ]; then
+      echo "Can't generate credentials - exiting!"
+      exit 1
     fi
-    eend $?
+    
+    # Apply RPC auth
+    if [ -f /media/important/rpcauth.txt ]; then
+      # Replace strings with what was generated
+      RPCAUTHLINE=`cat /media/important/rpcauth.txt`
+      GENERATEDPW=`cat /media/important/rpcpass.txt`
+      /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf                        
+      /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/litecoin/litecoin.conf
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/lnd.conf
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/lnd.conf
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lightning/config
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lightning/config
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/docker-compose.yml
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/docker-compose.yml
+    else
+      echo "Error generating config files"
+      exit 1                    
+    fi
+    
+    # Install Tor
+    echo "Installing and starting TOR (and waiting about 10 seconds)"
+    /sbin/apk update && /sbin/apk add tor
+    /sbin/service tor start
+    
+    CHECKTOR_HOSTNAME=1
+    # Check to see if Tor generated directory exists
+    while [ ! -d /var/lib/tor/lightning ] && [ $CHECKTOR_HOSTNAME -lt 10 ]; 
+    do 
+      echo "Tor generated directory doesn't exist yet.. waiting";
+      let CHECKTOR_HOSTNAME=CHECKTOR_HOSTNAME+1;
+      sleep 1;
+    done
+    
+    # Now check to see if hostname exists
+    if [ -f /var/lib/tor/lightning/hostname ]; then
+      echo "Configuring lnd to have tor as a URI available"
+      /bin/sed -i "s/; externalip=/externalip=$(cat /var/lib/tor/lightning/hostname)/g; " /home/lncm/lnd/lnd.conf
+    else
+      echo "Could not find the tor generated files.. exiting"
+      exit 1
+    fi
+
+    # Backup apkovl.tar.gz to USB storage
+    /sbin/lbu pkg /media/important
+
+    echo "Remove lncm-post from boot"
+    /sbin/rc-update del lncm-post default
+
+    echo "Enable docker-compose at boot"
+    /sbin/rc-update add docker-compose default
+    /sbin/service docker-compose start
+
+    exit 0
+  else
+    echo "LNCM persistent installation not found!"
+    exit 1	
+  fi
+
+  eend $?
 }

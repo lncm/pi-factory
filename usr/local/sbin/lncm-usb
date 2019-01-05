@@ -1,0 +1,239 @@
+#!/bin/sh
+# Copyright 2018 LNCM contributors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# USB storage device setup script
+
+# Requires three partition names as positional arguments for USB storage
+# 1st = largest for archive (chain)
+# 2nd = medium for volatile (swap)
+# 3rd = smallest for important (keys)
+# 4th = partition size in bytes of largest (archive)
+
+# Todo: symlink/bind mount docker containers from /var/lib/docker to /media/archive
+# Todo: symlink /var/log to /media/volatile
+
+
+LARGEST=$1
+MEDIUM=$2
+SMALLEST=$3
+LARGEST_SIZE=$4
+
+check_args() {
+  if [ -z "$LARGEST" ]; then
+    echo 'Error: "archive" USB unavailable'
+    exit 1
+  elif [ -z "$MEDIUM" ]; then
+    echo 'Error: "volatile" USB unavailable'
+    exit 1
+  elif [ -z "$SMALLEST" ]; then
+    echo 'Error: "important" USB unavailable'
+    exit 1
+  elif [ -z "$LARGEST_SIZE" ]; then
+    echo 'Error: "archive" USB size undefined'
+    exit 1
+  fi
+}
+
+create_mount_points() {
+  echo "Create mount points"
+  mkdir /media/important
+  mkdir /media/volatile
+  mkdir /media/archive
+}
+
+mount_usb_devs() {
+  echo "Mount ext4 usb storage devices"
+  mount -t ext4 /dev/${LARGEST} /media/archive
+  if [ $? -ne 0 ]; then
+    echo "Warning: /dev/${LARGEST} is not mountable as ext4"
+    mount /dev/${LARGEST} /media/archive
+    if [ $? -ne 0 ]; then
+      echo "Error: /dev/${LARGEST} is not mountable with any supported format"
+      echo "Cannot proceed without all USB storage devices"
+      exit 1
+    fi
+  fi
+  mount -t ext4 /dev/${MEDIUM} /media/volatile
+  if [ $? -ne 0 ]; then
+    echo "Warning: /dev/${MEDIUM} is not mountable as ext4"
+    mount /dev/${MEDIUM} /media/volatile
+    if [ $? -ne 0 ]; then
+      echo "Error: /dev/${MEDIUM} is not mountable with any supported format"
+      echo "Cannot proceed without all USB storage devices"
+      exit 1
+    fi
+  fi
+  mount -t ext4 /dev/${SMALLEST} /media/important
+  if [ $? -ne 0 ]; then
+    echo "Warning: /dev/${SMALLEST} is not mountable as ext4"
+    mount /dev/${SMALLEST} /media/important
+    if [ $? -ne 0 ]; then
+      echo "Error: /dev/${SMALLEST} is not mountable with any supported format"
+      echo "Cannot proceed without all USB storage devices"
+      exit 1
+    fi
+  fi
+}
+
+check_to_destroy() {
+  echo "Check devices for destruction flag"
+  if [ -f /media/archive/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]; then
+    echo "Going to destroy all data on /dev/${LARGEST} in 3 seconds..."
+    umount /dev/${LARGEST} && \
+    sleep 3 && \
+    mkfs.ext4 -F /dev/${LARGEST} && \
+    mount -t ext4 /dev/${LARGEST} /media/archive
+  fi
+  if [ -f /media/volatile/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]; then
+    echo "Going to destroy all data on /dev/${MEDIUM} in 3 seconds..."
+    umount /dev/${MEDIUM} && \
+    sleep 3 && \
+    mkfs.ext4 -F /dev/${MEDIUM} && \
+    mount -t ext4 /dev/${MEDIUM} /media/volatile
+  fi
+  if [ -f /media/important/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]; then
+    echo "Going to destroy all data on /dev/${SMALLEST} in 3 seconds..."
+    umount /dev/${SMALLEST} && \
+    sleep 3 && \
+    mkfs.ext4 -F /dev/${SMALLEST} && \
+    mount -t ext4 /dev/${SMALLEST} /media/important
+  fi
+}
+
+setup_archive() {
+  if [ -d /media/archive/lost+found ]; then
+    echo "Add archive usb to fstab"
+    echo "/dev/${LARGEST} /media/archive ext4 defaults,noatime 0 0" >> /etc/fstab
+  else
+    echo 'Warning: "archive" usb does not seem to be ext4 formatted'
+    echo "/dev/${LARGEST} will not be added to /etc/fstab"
+  fi
+}
+
+setup_important() {
+  if [ -d /media/important/lost+found ]; then
+    echo "Add important usb to fstab"
+    echo "/dev/${SMALLEST} /media/important ext4 defaults,noatime 0 0" >> /etc/fstab
+  else
+    echo 'Warning: "important" usb does not seem to be ext4 formatted'
+    echo "/dev/${SMALLEST} will not be added to /etc/fstab"
+  fi
+}
+
+setup_volatile() {
+  if [ -d /media/volatile/lost+found ]; then
+    echo "Add volatile usb to fstab"
+    echo "/dev/${MEDIUM} /media/volatile ext4 defaults,noatime 0 0" >> /etc/fstab
+    if [ -f /media/volatile/swap ]; then
+      echo "Swap exists, adding to fstab"
+      echo '/media/volatile/swap none swap sw,pri=100 0 0' >> /etc/fstab
+    else
+      echo 'Create swap on "volatile" usb device'
+      dd if=/dev/zero of=/media/volatile/swap bs=1M count=1024 && \
+      mkswap /media/volatile/swap && \
+      # swapon with high priority
+      swapon /media/volatile/swap -p 100 && \
+      echo '/media/volatile/swap none swap sw,pri=100 0 0' >> /etc/fstab
+    fi
+  else
+    echo 'Warning: "volatile" usb does not seem to be ext4 formatted'
+    echo "/dev/${MEDIUM} will not be added to /etc/fstab"
+  fi
+}
+
+setup_usb_devs() {
+  setup_archive
+  setup_important
+  setup_volatile
+}
+
+setup_archive_bitcoind() {
+  echo "Detecting existing bitcoin node data"
+  if [ -d /media/archive/bitcoin ]; then
+    echo "Existing bitcoin archive dir found"
+    # bitcoin - archive
+  else
+    echo "No bitcoin archive found, creating"
+    # does not exist, create dir
+    mkdir /media/archive/bitcoin
+    mkdir /media/archive/bitcoin/blocks
+    mkdir /media/archive/bitcoin/chainstate
+  fi
+}
+
+setup_volatile_bitcoind() {
+  if [ -d /media/volatile/bitcoin ]; then
+    echo "Existing bitcoin volatile dir found"
+  else
+    echo "No bitcoin volatile dir found, creating"
+    mkdir /media/volatile/bitcoin
+  fi
+}
+
+setup_important_bitcoind() {
+  if [ -d /media/important/bitcoin ]; then
+    echo "Existing bitcoin important dir found"
+  else
+    echo "No bitcoin important dir, creating"
+    # Returns 1/2 of partition size in MB
+    PRUNE_SIZE=$((LARGEST_SIZE/1000000/2))
+    echo "Using ${PRUNE_SIZE}MB as prune target"
+    mkdir /media/important/bitcoin
+    mkdir /media/important/bitcoin/wallets
+    cp /home/lncm/bitcoin/bitcoin.conf /media/important/bitcoin/
+    /bin/sed -i "s/prune=1500/prune=${PRUNE_SIZE}/g;" /media/important/bitcoin/bitcoin.conf
+  fi
+}
+
+setup_important_lnd() {
+  echo "Setup lnd important directory"
+  if [ -d /media/important/lnd ]; then
+    echo "Existing lnd important dir found"
+  else
+    echo "No lnd imporatnt dir fiybd, creating"
+    mkdir /media/important/lnd
+    mkdir /media/important/lnd/data
+    cp /home/lncm/lnd/lnd.conf /media/important/lnd/
+  fi
+}
+
+setup_volatile_lnd() {
+  if [ -d /media/volatile/lnd ]; then
+    echo "Existing lnd volatile dir found"
+  else
+    echo "No lnd volatile dir found, creating"
+    mkdir /media/volatile/lnd
+    mkdir /media/volatile/lnd/logs
+  fi
+}
+
+setup_bitcoind() {
+  setup_archive_bitcoind
+  setup_important_bitcoind
+  setup_volatile_bitcoind
+}
+
+setup_lnd() {
+  setup_important_lnd
+  setup_volatile_lnd
+}
+
+check_args
+create_mount_points
+mount_usb_devs
+check_to_destroy
+setup_usb_devs
+setup_bitcoind
+setup_lnd
