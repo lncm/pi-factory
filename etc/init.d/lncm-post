@@ -59,7 +59,7 @@ start() {
     if [ -f ./rpcauth.py ]; then
       chmod 700 rpcauth.py
       ./rpcauth.py lncm | tee /media/important/generated.txt | head -2 | tail -1 > /media/important/rpcauth.txt
-      cat generated.txt | tail -1 > /media/important/rpcpass.txt
+      cat /media/important/generated.txt | tail -1 > /media/important/rpcpass.txt
       rm rpcauth.py /media/important/generated.txt
     else
       echo "rpcauth not generated - could not reach server"
