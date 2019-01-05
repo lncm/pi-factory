@@ -210,7 +210,7 @@ setup_important_lnd() {
 }
 
 setup_volatile_lnd() {
-  if [ -d /media/volatile/lnd ]
+  if [ -d /media/volatile/lnd ]; then
     echo "Existing lnd volatile dir found"
   else
     echo "No lnd volatile dir found, creating"
