@@ -17,7 +17,7 @@ services:
         networks:
             localnet:
                 ipv4_address: 172.16.88.8
-    lightningbox:
+    lndbox:
         image: lncm/lnd:latest
         volumes:
             - /home/lncm/lnd:/root/.lnd

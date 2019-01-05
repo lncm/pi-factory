@@ -7,22 +7,22 @@ if [ "$1" = "info" ]; then
   echo "bitcoind info:"
   docker exec -it compose_btcbox_1 bitcoin-cli -getinfo
   echo "lnd info:"
-  docker exec -it compose_lightningbox_1 lncli getinfo
+  docker exec -it compose_lndbox_1 lncli getinfo
 elif [ "$1" = "unlock" ]; then
   # unlock lnd wallet
-  docker exec -it compose_lightningbox_1 lncli unlock
+  docker exec -it compose_lndbox_1 lncli unlock
 elif [ "$1" = "create" ]; then
   # create lnd wallet
-  docker exec -it compose_lightningbox_1 lncli create
+  docker exec -it compose_lndbox_1 lncli create
 elif [ "$1" = "start" ]; then
   service docker-compose start
 elif [ "$1" = "stop" ]; then
   echo "Attempting clean shutdown of bitcoind and lnd nodes"
-  docker exec -it compose_lightningbox_1 lncli stop
+  docker exec -it compose_lndbox_1 lncli stop
   docker exec -it compose_btcbox_1 bitcoin-cli stop
 elif [ "$1" = "restart" ]; then
   echo "Attempting clean shutdown of bitcoind and lnd nodes"
-  docker exec -it compose_lightningbox_1 lncli stop
+  docker exec -it compose_lndbox_1 lncli stop
   docker exec -it compose_btcbox_1 bitcoin-cli stop
   service docker-compose restart
 elif [ "$1" = "btclog" ]; then
@@ -31,7 +31,7 @@ elif [ "$1" = "btclog" ]; then
   tail -f /media/volatile/bitcoin/debug.log
 elif [ "$1" = "lndlog" ]; then
   # slow, robust method
-  #docker logs -f compose_lightningbox_1
+  #docker logs -f compose_lndbox_1
   tail -f /media/volatile/lnd/logs/bitcoin/mainnet/lnd.log
 elif [ "$1" = "temp" ]; then
   # CPU temperature
