@@ -72,8 +72,12 @@ checkconfig() {
       /bin/rm /etc/ssh/ssh_host_ecdsa_key.pub || echo "failed to remove key"
     fi
 		# only generate RSA & ED25519 host keys
-		ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && \
-		ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' || return 1
+		if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
+			ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' || return 1
+		fi
+		if [ ! -f /etc/ssh/ssh_host_ed25519_key ]; then
+			ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' || return 1
+		fi
 	fi
 
 	[ "$pidfile" != "/run/sshd.pid" ] \
