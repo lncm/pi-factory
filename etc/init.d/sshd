@@ -54,7 +54,7 @@ checkconfig() {
 	fi
 
 	if ! yesno "$sshd_disable_keygen"; then
-		echo "Check if placeholder ssh DSA, ECDSA host keys need to be removed"
+		# Check if placeholder DSA, ECDSA host keys need to be removed
     if [ -f /etc/ssh/ssh_host_dsa_key ]; then
       echo "DSA host key exists, removing"
       /bin/rm /etc/ssh/ssh_host_dsa_key || echo "failed to remove key"
