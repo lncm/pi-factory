@@ -55,8 +55,8 @@ checkconfig() {
 
 	if ! yesno "$sshd_disable_keygen"; then
 		# only generate RSA & ED25519 host keys
-		ssh-keygen -t rsa -f /etc/ssh/ssh_rsa_host_key -N '' && \
-		ssh-keygen -t ed25519 -f /etc/ssh/ssh_ed25519_host_key -N '' || return 1
+		ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && \
+		ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' || return 1
 	fi
 
 	[ "$pidfile" != "/run/sshd.pid" ] \
