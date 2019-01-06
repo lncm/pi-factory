@@ -187,7 +187,7 @@ def main():
     print('Using ' + largest_usb_partition() + ' as archive storage')
     print('Using ' + medium_usb_partition() + ' as volatile storage')
     print('Using ' + smallest_usb_partition() + ' as important storage')
-    os.system('/usr/local/sbin/lncm-usb '+largest_usb_partition()+' '+medium_usb_partition()+' '+smallest_usb_partition()+' '+get_uuid(largest_usb_partition)+' '+get_uuid(medium_usb_partition)+' '+get_uuid(smallest_usb_partition)+' '+str(largest_usb_part_size()))
+    os.system('/usr/local/sbin/lncm-usb '+largest_usb_partition()+' '+medium_usb_partition()+' '+smallest_usb_partition()+' '+get_uuid(largest_usb_partition())+' '+get_uuid(medium_usb_partition)+' '+get_uuid(smallest_usb_partition)+' '+str(largest_usb_part_size()))
 
 
 if __name__ == '__main__':
