@@ -17,8 +17,6 @@
 ## LNCM post-installation script
 ## To be run on persistently installed SD card
 
-# TODO: add system-wide is_online dependency
-
 depend() {
     need net sshd lncm-online
 }
