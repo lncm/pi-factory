@@ -128,23 +128,40 @@ def largest_usb_partition():
     usb_partitions = sort_partitions()
     last = len(usb_partitions) - 1
     largest = usb_partitions[last]
-    return largest[0]
+    return str(largest[0])
 
 
 def smallest_usb_partition():
     usb_partitions = sort_partitions()
     smallest = usb_partitions[0]
-    return smallest[0]
+    return str(smallest[0])
+
 
 def medium_usb_partition():
     usb_partitions = sort_partitions()
     usb_partitions.pop(0) # remove smallest
     usb_partitions.pop(len(usb_partitions) - 1) # remove largest
-    return usb_partitions[0][0]
+    return str(usb_partitions[0][0])
 
 
 def largest_usb_part_size():
-    return usb_part_size(str(largest_usb_partition()))
+    return usb_part_size(largest_usb_partition())
+
+
+def uuid_table():
+    device_table = os.popen('blkid').read().splitlines()
+    devices = {}
+    for device in device_table:
+        dev = device.split(":")[0].split("/")[2]
+        uuid = device.split('"')[1]
+        devices[dev] = uuid
+    return devices
+
+
+def get_uuid(device):
+    uuids = uuid_table()
+    return str(uuids[device])
+
 
 
 # print("Detected storage devices:")
@@ -167,10 +184,10 @@ def largest_usb_part_size():
 
 def main():
     print('Starting USB installation')
-    print('Using ' + str(largest_usb_partition()) + ' as archive storage')
-    print('Using ' + str(medium_usb_partition()) + ' as volatile storage')
-    print('Using ' + str(smallest_usb_partition()) + ' as important storage')
-    os.system('/usr/local/sbin/lncm-usb '+str(largest_usb_partition())+' '+str(medium_usb_partition())+' '+str(smallest_usb_partition())+' '+str(largest_usb_part_size()))
+    print('Using ' + largest_usb_partition() + ' as archive storage')
+    print('Using ' + medium_usb_partition() + ' as volatile storage')
+    print('Using ' + smallest_usb_partition() + ' as important storage')
+    os.system('/usr/local/sbin/lncm-usb '+largest_usb_partition()+' '+medium_usb_partition()+' '+smallest_usb_partition()+' '+get_uuid(largest_usb_partition)+' '+get_uuid(medium_usb_partition)+' '+get_uuid(smallest_usb_partition)+' '+str(largest_usb_part_size()))
 
 
 if __name__ == '__main__':

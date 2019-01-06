@@ -15,20 +15,25 @@
 
 # USB storage device setup script
 
-# Requires three partition names as positional arguments for USB storage
+# Requires the following positional arguments for USB storage
 # 1st = largest for archive (chain)
 # 2nd = medium for volatile (swap)
 # 3rd = smallest for important (keys)
-# 4th = partition size in bytes of largest (archive)
+# 4th = largest partition UUID
+# 5th = medium partition UUID
+# 6th = smallest partition UUID
+# 7th = partition size in bytes of largest (archive)
 
 # Todo: symlink/bind mount docker containers from /var/lib/docker to /media/archive
 # Todo: symlink /var/log to /media/volatile
 
-
 LARGEST=$1
 MEDIUM=$2
 SMALLEST=$3
-LARGEST_SIZE=$4
+LARGEST_UUID=$4
+MEDIUM_UUID=$5
+SMALLEST_UUID=$6
+LARGEST_SIZE=$7
 
 check_args() {
   if [ -z "$LARGEST" ]; then
@@ -39,6 +44,15 @@ check_args() {
     exit 1
   elif [ -z "$SMALLEST" ]; then
     echo 'Error: "important" USB unavailable'
+    exit 1
+  elif [ -z "$LARGEST_UUID" ]; then
+    echo 'Error: "largest" USB UUID undefined'
+    exit 1
+  elif [ -z "$MEDIUM_UUID" ]; then
+    echo 'Error: "medium" USB UUID undefined'
+    exit 1
+  elif [ -z "$SMALLEST_UUID" ]; then
+    echo 'Error: "smallest" USB UUID undefined'
     exit 1
   elif [ -z "$LARGEST_SIZE" ]; then
     echo 'Error: "archive" USB size undefined'
@@ -115,7 +129,7 @@ check_to_destroy() {
 setup_archive() {
   if [ -d /media/archive/lost+found ]; then
     echo "Add archive usb to fstab"
-    echo "/dev/${LARGEST} /media/archive ext4 defaults,noatime 0 0" >> /etc/fstab
+    echo "UUID=${LARGEST_UUID} /media/archive ext4 defaults,noatime 0 0" >> /etc/fstab
   else
     echo 'Warning: "archive" usb does not seem to be ext4 formatted'
     echo "/dev/${LARGEST} will not be added to /etc/fstab"
@@ -125,7 +139,7 @@ setup_archive() {
 setup_important() {
   if [ -d /media/important/lost+found ]; then
     echo "Add important usb to fstab"
-    echo "/dev/${SMALLEST} /media/important ext4 defaults,noatime 0 0" >> /etc/fstab
+    echo "UUID=${SMALLEST_UUID} /media/important ext4 defaults,noatime 0 0" >> /etc/fstab
   else
     echo 'Warning: "important" usb does not seem to be ext4 formatted'
     echo "/dev/${SMALLEST} will not be added to /etc/fstab"
@@ -135,7 +149,7 @@ setup_important() {
 setup_volatile() {
   if [ -d /media/volatile/lost+found ]; then
     echo "Add volatile usb to fstab"
-    echo "/dev/${MEDIUM} /media/volatile ext4 defaults,noatime 0 0" >> /etc/fstab
+    echo "UUID=${MEDIUM_UUID} /media/volatile ext4 defaults,noatime 0 0" >> /etc/fstab
     if [ -f /media/volatile/swap ]; then
       echo "Swap exists, adding to fstab"
       echo '/media/volatile/swap none swap sw,pri=100 0 0' >> /etc/fstab
