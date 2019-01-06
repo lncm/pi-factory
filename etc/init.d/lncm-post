@@ -31,24 +31,6 @@ start() {
     echo "Let apk cache live on persistent volume"
     /sbin/setup-apkcache /var/cache/apk
 
-    echo "Check if placeholder ssh DSA, ECDSA host keys need to be removed"
-    if [ -f /etc/ssh/ssh_host_dsa_key ]; then
-      echo "DSA host key exists, removing"
-      /bin/rm /etc/ssh/ssh_host_dsa_key || echo "failed to remove key"
-    fi
-    if [ -f /etc/ssh/ssh_host_dsa_key.pub ]; then
-      echo "DSA host public key exists, removing"
-      /bin/rm /etc/ssh/ssh_host_dsa_key.pub || echo "failed to remove key"
-    fi
-    if [ -f /etc/ssh/ssh_host_ecdsa_key ]; then
-      echo "ECDSA host key exists, removing"
-      /bin/rm /etc/ssh/ssh_host_ecdsa_key || echo "failed to remove key"
-    fi
-    if [ -f /etc/ssh/ssh_host_ecdsa_key.pub ]; then
-      echo "ECDSA host public key exists, removing"
-      /bin/rm /etc/ssh/ssh_host_ecdsa_key.pub || echo "failed to remove key"
-    fi
-
     echo "Install docker-compose and dependencies for config files"
     # Install dependencies for docker compose and for generating config files
     /sbin/apk update && \
