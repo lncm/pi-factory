@@ -93,6 +93,7 @@ start() {
     if [ -d /media/sd/boot ]; then
         echo "Remove old boot files on fat partition" && \
         /bin/rm -rf /media/mmcblk0p1/boot/* && \
+        /bin/rmdir /media/sd/boot/boot && \
         echo "Copy new boot files to fat partition" && \
         /bin/cp /media/sd/boot/* /media/mmcblk0p1/boot/ && \
         echo "Delete new boot dir" && \
