@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import os
+import sys
 import glob
 import re
 
@@ -33,21 +34,31 @@ def dev_size(device):
 
 
 def usb_part_size(partition):
-    # return partition size in bytes
-    path = '/sys/block/'
-    device = partition[:-1]
-    num_sectors = open(path + device + '/' + partition + '/size').read().rstrip('\n')
-    sector_size = open(path + device + '/queue/hw_sector_size').read().rstrip('\n')
-    return (int(num_sectors)*int(sector_size))
+    try:
+        # return partition size in bytes
+        path = '/sys/block/'
+        device = partition[:-1]
+        num_sectors = open(path + device + '/' + partition + '/size').read().rstrip('\n')
+        sector_size = open(path + device + '/queue/hw_sector_size').read().rstrip('\n')
+    except TypeError:
+        print("Not enough USB devices available")
+        sys.exit(1)
+    else:
+        return (int(num_sectors)*int(sector_size))
 
 
 def sd_part_size(partition):
-    # return partition size in bytes
-    path = '/sys/block/'
-    device = partition[:-2]
-    num_sectors = open(path + device + '/' + partition + '/size').read().rstrip('\n')
-    sector_size = open(path + device + '/queue/hw_sector_size').read().rstrip('\n')
-    return (int(num_sectors)*int(sector_size))
+    try:
+        # return partition size in bytes
+        path = '/sys/block/'
+        device = partition[:-2]
+        num_sectors = open(path + device + '/' + partition + '/size').read().rstrip('\n')
+        sector_size = open(path + device + '/queue/hw_sector_size').read().rstrip('\n')
+    except TypeError:
+        print("Not enough USB devices available")
+        sys.exit(1)
+    else:
+        return (int(num_sectors)*int(sector_size))
 
 
 def usb_devs():
@@ -71,10 +82,8 @@ def sd_devs():
 def usb_partitions():
     partitions = []
     for device in usb_devs():
-        # print('device: ' + str(device))
         for partition in glob.glob('/sys/block/' + str(device) + '/*'):
             for pattern in usb_part_pattern:
-                # print('pattern: ' + str(pattern))
                 if re.compile(pattern).match(os.path.basename(partition)):
                     partitions.append(os.path.basename(partition))
     return partitions
@@ -125,23 +134,38 @@ def sort_partitions():
 
 
 def largest_usb_partition():
-    usb_partitions = sort_partitions()
-    last = len(usb_partitions) - 1
-    largest = usb_partitions[last]
-    return str(largest[0])
+    try:
+        usb_partitions = sort_partitions()
+        last = len(usb_partitions) - 1
+        largest = usb_partitions[last]
+    except IndexError:
+        print("Not enough USB devices available")
+        sys.exit(1)
+    else:
+        return str(largest[0])
 
 
 def smallest_usb_partition():
-    usb_partitions = sort_partitions()
-    smallest = usb_partitions[0]
-    return str(smallest[0])
+    try:
+        usb_partitions = sort_partitions()
+        smallest = usb_partitions[0]
+    except IndexError:
+        print("Not enough USB devices available")
+        sys.exit(1)
+    else:
+        return str(smallest[0])
 
 
 def medium_usb_partition():
-    usb_partitions = sort_partitions()
-    usb_partitions.pop(0) # remove smallest
-    usb_partitions.pop(len(usb_partitions) - 1) # remove largest
-    return str(usb_partitions[0][0])
+    try:
+        usb_partitions = sort_partitions()
+        usb_partitions.pop(0) # remove smallest
+        usb_partitions.pop(len(usb_partitions) - 1) # remove largest
+    except IndexError:
+        print("Not enough USB devices available")
+        sys.exit(1)
+    else:
+        return str(usb_partitions[0][0])
 
 
 def largest_usb_part_size():
@@ -161,8 +185,6 @@ def uuid_table():
 def get_uuid(device):
     uuids = uuid_table()
     return str(uuids[device])
-
-
 
 # print("Detected storage devices:")
 # print('usb devs: ' + str(sorted(usb_devs())))
