@@ -6,6 +6,7 @@
 +etc/init.d/iotwifi
 +etc/init.d/avahi-daemon
 +etc/init.d/portainer
++etc/init.d/sshd
 +home/lncm/bitcoin
 +home/lncm/litecoin
 +home/lncm/lnd
