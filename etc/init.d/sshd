@@ -54,6 +54,23 @@ checkconfig() {
 	fi
 
 	if ! yesno "$sshd_disable_keygen"; then
+		echo "Check if placeholder ssh DSA, ECDSA host keys need to be removed"
+    if [ -f /etc/ssh/ssh_host_dsa_key ]; then
+      echo "DSA host key exists, removing"
+      /bin/rm /etc/ssh/ssh_host_dsa_key || echo "failed to remove key"
+    fi
+    if [ -f /etc/ssh/ssh_host_dsa_key.pub ]; then
+      echo "DSA host public key exists, removing"
+      /bin/rm /etc/ssh/ssh_host_dsa_key.pub || echo "failed to remove key"
+    fi
+    if [ -f /etc/ssh/ssh_host_ecdsa_key ]; then
+      echo "ECDSA host key exists, removing"
+      /bin/rm /etc/ssh/ssh_host_ecdsa_key || echo "failed to remove key"
+    fi
+    if [ -f /etc/ssh/ssh_host_ecdsa_key.pub ]; then
+      echo "ECDSA host public key exists, removing"
+      /bin/rm /etc/ssh/ssh_host_ecdsa_key.pub || echo "failed to remove key"
+    fi
 		# only generate RSA & ED25519 host keys
 		ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && \
 		ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' || return 1
