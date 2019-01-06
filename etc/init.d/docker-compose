@@ -32,7 +32,7 @@ start() {
 
 stop() {
   ebegin "Stopping docker compose"
-
+  # TODO: block until bitcoind has shut down cleanly
   /usr/local/sbin/mana stop
   cd /home/lncm/compose
   docker-compose down
