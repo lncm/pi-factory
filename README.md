@@ -9,6 +9,12 @@ This repository contains everything necessary to bootstrap a LNCM box for [Raspb
 
 *Do not put money at stake that you are not willing to lose!*
 
+## Hardware Requirements
+
+* Raspberry PI (Recommended: 3B+)
+* 3 USB Flash Drives (Hard Drive for blockchain may also work too)
+* A good USB cable and power supply
+
 ## Instructions
 
 1. Download [Etcher](https://www.balena.io/etcher/).
