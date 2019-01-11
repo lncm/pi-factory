@@ -11,9 +11,9 @@ This repository contains everything necessary to bootstrap a LNCM box for [Raspb
 
 ## Hardware Requirements
 
-* Raspberry PI (Recommended: 3B+)
-* 3 USB Flash Drives (Hard Drive for blockchain may also work too)
-* A good USB cable and power supply
+* Raspberry Pi (Recommended: 3B+)
+* 3 USB storage devices (Recommended: USB flash drives of 16GB or more. Alternatively, 2 flash devices and a hard drive for the blockchain)
+* A high quality micro-USB cable and power supply with 5.1V (Alternatively: 5V and a shorter cable)
 
 ## Instructions
 
