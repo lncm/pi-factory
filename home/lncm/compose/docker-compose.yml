@@ -26,14 +26,14 @@ services:
         image: lncm/lnd:latest
         command: --lnddir=/root/.lnd
         volumes:
-            - /media/volatile/lnd:/root/.lnd
             - /media/volatile/lnd/logs:/root/.lnd/logs
+            - /media/important/lnd:/root/.lnd
             - /media/important/lnd/data:/root/.lnd/data
-            - /media/important/lnd/tls.cert:/root/.lnd/tls.cert
-            - /media/important/lnd/tls.key:/root/.lnd/tls.key
             - /media/important/lnd/lnd.conf:/root/.lnd/lnd.conf
         ports:
             - "9735:9735"
+            - "8181:8080"
+            - "10009:10009"
         depends_on:
             - btcbox
         restart: on-failure
