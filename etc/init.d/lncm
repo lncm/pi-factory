@@ -55,10 +55,6 @@ start() {
         exit 1
     fi
 
-    echo "Ensure crontab has correct permissions"
-    /bin/chmod 600 /var/spool/cron/crontabs/root
-    /bin/chown root:root /var/spool/cron/crontabs/root
-
     echo "Persist state to apkovl"
     /sbin/lbu commit && \
     echo "Install to /media/sd and apply apkovl" && \
