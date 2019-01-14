@@ -111,6 +111,19 @@ start() {
       exit 1
     fi
 
+    echo "Checking for existing configs"
+    if [ -f /media/important/bitcoin/bitcoin.conf ]; then
+      echo "bitcoin.conf exists, making backup and replacing"
+      /bin/cp /media/important/bitcoin/bitcoin.conf /media/important/bitcoin/bitcoin.conf.backup &&
+      /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/important/bitcoin/bitcoin.conf
+    fi
+
+    if [ -f /media/important/lnd/lnd.conf ]; then
+      echo "lnd.conf exists, making backup and replacing"
+      /bin/cp /media/important/lnd/lnd.conf /media/important/lnd/lnd.conf.backup &&
+      /bin/cp -f /home/lncm/lnd/lnd.conf /media/important/lnd/lnd.conf.backup
+    fi
+
     echo "Install crontab"
     /usr/bin/crontab /home/lncm/crontab
 
