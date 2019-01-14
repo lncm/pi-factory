@@ -216,7 +216,7 @@ setup_important_lnd() {
   if [ -d /media/important/lnd ]; then
     echo "Existing lnd important dir found"
   else
-    echo "No lnd imporatnt dir fiybd, creating"
+    echo "No lnd important dir found, creating"
     mkdir /media/important/lnd
     mkdir /media/important/lnd/data
     cp /home/lncm/lnd/lnd.conf /media/important/lnd/
