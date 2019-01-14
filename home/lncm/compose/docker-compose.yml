@@ -1,7 +1,7 @@
 version: '2.1'
 services:
     btcbox:
-        image: lncm/bitcoind:0.17.1-alpine-arm
+        image: lncm/bitcoind:0.17.1-alpine-arm-wallet
         volumes:
             - /media/volatile/bitcoin:/home/bitcoin/.bitcoin
             - /media/volatile/bitcoin:/root/.bitcoin
