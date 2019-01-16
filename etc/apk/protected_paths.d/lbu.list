@@ -14,6 +14,7 @@
 +home/lncm/compose
 +home/lncm/README.md
 +home/lncm/crontab
++home/lncm/public_html
 +usr/local/sbin/mana
 +usr/local/sbin/lncm-usb
 +usr/local/sbin/lncm-usb.py
