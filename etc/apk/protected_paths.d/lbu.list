@@ -18,3 +18,4 @@
 +usr/local/sbin/lncm-usb
 +usr/local/sbin/lncm-usb.py
 +usr/local/sbin/lncm-unlock.py
++usr/local/sbin/check-invoicer-status
