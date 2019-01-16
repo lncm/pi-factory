@@ -3,22 +3,18 @@ services:
     btcbox:
         image: lncm/bitcoind:0.17.1-alpine-arm-wallet
         volumes:
-            - /media/volatile/bitcoin:/home/bitcoin/.bitcoin
-            - /media/volatile/bitcoin:/root/.bitcoin
+            - /media/important/bitcoin/bitcoin.conf:/root/.bitcoin/bitcoin.conf
+            - /media/important/bitcoin/bitcoin.conf:/home/bitcoin/.bitcoin/bitcoin.conf
             - /media/archive/bitcoin/chainstate:/home/bitcoin/.bitcoin/chainstate
             - /media/archive/bitcoin/blocks:/home/bitcoin/.bitcoin/blocks
-            - /media/important/bitcoin/bitcoin.conf:/home/bitcoin/.bitcoin/bitcoin.conf
-            - /media/important/bitcoin/bitcoin.conf:/root/.bitcoin/bitcoin.conf
-            - /media/important/bitcoin/wallets:/home/bitcoin/.bitcoin/wallets
+            - /media/important/bitcoin/wallets:/root/.bitcoin/wallets
+            - /media/volatile/bitcoin:/home/bitcoin/.bitcoin
+            - /media/volatile/bitcoin:/root/.bitcoin
         ports:
             - "8332:8332"
             - "8333:8333"
             - "28332:28332"
             - "28333:28333"
-        environment:
-            - BITCOINRPCHOST=btcbox
-            - BITCOINRPCUSER=RANDOMUSER
-            - BITCOINRPCPASS=RANDOMPASS
         networks:
             localnet:
                 ipv4_address: 172.16.88.8
@@ -27,9 +23,9 @@ services:
         command: --lnddir=/root/.lnd
         volumes:
             - /media/volatile/lnd/logs:/root/.lnd/logs
-            - /media/important/lnd:/root/.lnd
             - /media/important/lnd/data:/root/.lnd/data
             - /media/important/lnd/lnd.conf:/root/.lnd/lnd.conf
+            - /media/important/lnd:/root/.lnd
         ports:
             - "9735:9735"
             - "8181:8080"
