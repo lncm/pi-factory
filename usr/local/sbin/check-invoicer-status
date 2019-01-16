@@ -36,6 +36,14 @@ fi
 
 if [ $(docker ps -a | grep -c $BOXNAME) == 1 ]; then
     if [ $(docker inspect $BOXNAME | jq '.[0].State.Status' | sed 's/"//g; ') == "running" ]; then
+        if [ $(docker inspect $BOXNAME | jq '.[0].State.Health.Status' | sed 's/"//g; ') == "null" ]; then
+            echo "Healthcheck doesn't exist"
+            exit 0
+        fi
+        if [ $(docker inspect $BOXNAME | jq '.[0].State.Health.Status' | sed 's/"//g; ') == "starting" ]; then
+            echo "Healthcheck still initializing"
+            exit 0
+        fi
         if [ $(docker inspect $BOXNAME | jq '.[0].State.Health.Status' | sed 's/"//g; ') == "healthy" ]; then
             echo "All good"
             exit 0
