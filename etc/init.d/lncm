@@ -23,7 +23,7 @@ start() {
     # This script will only run once, for persistent installation to SD
 
     # LNCM version
-    VER="v0.3.2"
+    VER="v0.4.0"
 
     # Device to partition
     SD=mmcblk0

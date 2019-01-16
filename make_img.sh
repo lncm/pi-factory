@@ -202,8 +202,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-OUTPUT_VERSION=v0.3.2
-DOWNLOAD_VERSION=v0.3.2
+OUTPUT_VERSION=v0.4.0
+DOWNLOAD_VERSION=v0.4.0
 ALP=alpine-rpi-3.8.2-armhf.tar.gz
 IMG=lncm-box-${OUTPUT_VERSION}.img
 IOT=iotwifi.tar.gz
