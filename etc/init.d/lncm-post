@@ -30,9 +30,9 @@ start() {
     /sbin/setup-apkcache /var/cache/apk
 
     echo "Install docker-compose and dependencies for config files"
-    # Install dependencies for docker compose and for generating config files
+    # Install dependencies for docker compose, for generating config files, and to assist with querying containers
     /sbin/apk update && \
-    /sbin/apk add py3-pip curl
+    /sbin/apk add py3-pip curl jq
 
     /usr/bin/pip3 install --upgrade pip && \
     /usr/bin/pip3 install docker-compose
