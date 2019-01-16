@@ -43,10 +43,7 @@ services:
     invoicerbox:
         image: lncm/invoicer:0.0.13
         volumes:
-            - /media/volatile/lnd/logs:/lnd/logs
             - /media/important/lnd:/lnd
-            - /media/important/lnd/data:/lnd/data
-            - /media/important/lnd/lnd.conf:/lnd/lnd.conf
         ports:
             - "8088:8080"
         depends_on:
