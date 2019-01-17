@@ -116,12 +116,18 @@ start() {
       echo "bitcoin.conf exists, making backup and replacing"
       /bin/cp /media/important/bitcoin/bitcoin.conf /media/important/bitcoin/bitcoin.conf.backup &&
       /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/important/bitcoin/bitcoin.conf
+    else
+      # If not exist copy bitcoin.conf from lncm home directory
+      /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/important/bitcoin/bitcoin.conf
     fi
 
     if [ -f /media/important/lnd/lnd.conf ]; then
       echo "lnd.conf exists, making backup and replacing"
       /bin/cp /media/important/lnd/lnd.conf /media/important/lnd/lnd.conf.backup &&
-      /bin/cp -f /home/lncm/lnd/lnd.conf /media/important/lnd/lnd.conf.backup
+      /bin/cp -f /home/lncm/lnd/lnd.conf /media/important/lnd/lnd.conf
+    else
+      # If not exist copy lnd.conf from home directory
+      /bin/cp -f /home/lncm/lnd/lnd.conf /media/important/lnd/lnd.conf
     fi
 
     echo "Install crontab"
