@@ -20,9 +20,19 @@ elif [ "$1" = "stop" ]; then
   echo "Attempting clean shutdown of bitcoind and lnd nodes"
   docker exec -it compose_lndbox_1 lncli stop
   docker exec -it compose_btcbox_1 bitcoin-cli stop
-  # Stop docker so it doesn't auto-restart
-  docker stop compose_lndbox_1
-  docker stop compose_btcbox_1
+  CHECKLNDSTOPPED=1
+  CHECKBTCSTOPPED=1
+  # Give about 10 seconds before we kill it anyway
+  while [ $(docker ps | grep -c compose_lndbox_1) == 1 ] && [ $CHECKLNDSTOPPED -lt 10 ];
+  do
+    let CHECKLNDSTOPPED=CHECKLNDSTOPPED+1;
+    sleep 1
+  done
+  while [ $(docker ps | grep -c compose_btcbox_1) == 1 ] && [ $CHECKBTCSTOPPED -lt 10 ];
+  do
+    let CHECKBTCSTOPPED=CHECKBTCSTOPPED+1;
+    sleep 1
+  done  
   # Stop docker compose
   service docker-compose stop
 elif [ "$1" = "restart" ]; then
