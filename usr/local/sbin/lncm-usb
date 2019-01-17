@@ -206,8 +206,7 @@ setup_important_bitcoind() {
     echo "Using ${PRUNE_SIZE}MB as prune target"
     mkdir /media/important/bitcoin
     mkdir /media/important/bitcoin/wallets
-    cp /home/lncm/bitcoin/bitcoin.conf /media/important/bitcoin/
-    /bin/sed -i "s/prune=1500/prune=${PRUNE_SIZE}/g;" /media/important/bitcoin/bitcoin.conf
+    /bin/sed -i "s/prune=1500/prune=${PRUNE_SIZE}/g;" /home/lncm/bitcoin/bitcoin.conf
   fi
 }
 
@@ -219,7 +218,6 @@ setup_important_lnd() {
     echo "No lnd important dir found, creating"
     mkdir /media/important/lnd
     mkdir /media/important/lnd/data
-    cp /home/lncm/lnd/lnd.conf /media/important/lnd/
   fi
 }
 
