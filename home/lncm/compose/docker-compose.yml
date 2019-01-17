@@ -52,6 +52,7 @@ services:
             - BTCRPCUSER=RANDOMUSER
             - BTCRPCPASS=RANDOMPASS
             - INVOICER_HOSTPORT=invoicerbox:8080
+            - STATICDIR=/home/lncm/public_html/
         networks:
             localnet:
                 ipv4_address: 172.16.88.166
