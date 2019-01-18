@@ -21,9 +21,12 @@ HiddenServiceVersion 3
 HiddenServicePort 22 127.0.0.1:22
 
 # For Lightning / lnd
-# TODO: have it add the hostname to lnd.conf 
+# Tor V3
 HiddenServiceDir /var/lib/tor/lightning/
 HiddenServiceVersion 3
+HiddenServicePort 9735 127.0.0.1:9735
+# Tor V2
+HiddenServiceDir /var/lib/tor/lightning-tor-v2/
 HiddenServicePort 9735 127.0.0.1:9735
 
 # For controlling the lnd node service
