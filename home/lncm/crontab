@@ -6,4 +6,4 @@
 0	3	*	*	6	run-parts /etc/periodic/weekly
 0	5	1	*	*	run-parts /etc/periodic/monthly
 *	*	*	*	*	/usr/local/sbin/lncm-unlock.py >> /var/log/unlocks.log 2>&1
-5	*	*	*	*	/usr/local/sbin/check-invoicer-status 2>/dev/null
+*	*	*	*	*	/usr/local/sbin/check-invoicer-status >> /var/log/checkinvoicer.log 2>&1
