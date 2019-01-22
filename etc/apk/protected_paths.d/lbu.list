@@ -15,6 +15,8 @@
 +home/lncm/README.md
 +home/lncm/crontab
 +home/lncm/public_html
++home/lncm/nginx
++home/lncm/nginx/conf.d
 +usr/local/sbin/mana
 +usr/local/sbin/lncm-usb
 +usr/local/sbin/lncm-usb.py
