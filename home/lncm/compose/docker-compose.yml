@@ -37,7 +37,7 @@ services:
             localnet:
                 ipv4_address: 172.16.88.88
     invoicerbox:
-        image: lncm/invoicer:0.0.13
+        image: lncm/invoicer:0.1.1
         volumes:
             - /media/important/lnd:/lnd
         ports:
