@@ -50,7 +50,7 @@ services:
             - BTCHOST=btcbox
             - BTCRPCUSER=RANDOMUSER
             - BTCRPCPASS=RANDOMPASS
-            - INVOICER_HOSTPORT=invoicerbox:8080
+            - INVOICER_HOSTPORT=invoicer:defaultpassw0rd@invoicerbox:8080
             - STATICDIR=/static/
         networks:
             localnet:
