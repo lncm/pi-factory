@@ -41,8 +41,6 @@ services:
         volumes:
             - /media/important/lnd:/lnd
             - /home/lncm/public_html:/static
-        ports:
-            - "8088:8080"
         depends_on:
             - lndbox
         restart: on-failure
