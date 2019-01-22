@@ -92,6 +92,8 @@ start() {
     echo "Installing and starting TOR (and waiting about 10 seconds)"
     /sbin/apk update && /sbin/apk add tor
     /sbin/service tor start
+    # Add tor to default runlevels
+    /sbin/rc-update add tor default
     
     CHECKTOR_HOSTNAME=1
     # Check to see if Tor generated directory exists
