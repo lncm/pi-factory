@@ -231,6 +231,25 @@ setup_volatile_lnd() {
   fi
 }
 
+setup_important_nginx() {
+  echo "Setup nginx important dir"
+  if [ -d /media/important/nginx ]; then
+    echo "Existing nginx dir found"
+  else
+    echo "No nginx important dir found, creating"
+    mkdir /media/important/nginx
+    mkdir /media/important/nginx/conf.d
+  fi
+}
+setup_volatile_nginx() {
+  if [ -d /media/volatile/nginx ]; then
+    echo "Existing nginx directory found"
+  else
+    echo "No volatile nginx directory, creating"
+    mkdir /media/volatile/nginx
+  fi
+}
+
 setup_bitcoind() {
   setup_archive_bitcoind
   setup_important_bitcoind
@@ -242,6 +261,11 @@ setup_lnd() {
   setup_volatile_lnd
 }
 
+setup_nginx() {
+  setup_important_nginx
+  setup_volatile_nginx
+}
+
 check_args
 create_mount_points
 mount_usb_devs
@@ -249,3 +273,4 @@ check_to_destroy
 setup_usb_devs
 setup_bitcoind
 setup_lnd
+setup_nginx
