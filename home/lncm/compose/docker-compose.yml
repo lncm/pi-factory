@@ -40,6 +40,7 @@ services:
         image: lncm/invoicer:0.1.1
         volumes:
             - /media/important/lnd:/lnd
+            - /home/lncm/public_html:/static
         ports:
             - "8088:8080"
         depends_on:
@@ -52,6 +53,7 @@ services:
             - BTCRPCUSER=RANDOMUSER
             - BTCRPCPASS=RANDOMPASS
             - INVOICER_HOSTPORT=invoicerbox:8080
+            - STATICDIR=/static/
         networks:
             localnet:
                 ipv4_address: 172.16.88.166
