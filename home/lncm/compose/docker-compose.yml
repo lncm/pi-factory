@@ -41,8 +41,6 @@ services:
         volumes:
             - /media/important/lnd:/lnd
             - /home/lncm/public_html:/static
-        ports:
-            - "8088:8080"
         depends_on:
             - lndbox
         restart: on-failure
@@ -52,11 +50,25 @@ services:
             - BTCHOST=btcbox
             - BTCRPCUSER=RANDOMUSER
             - BTCRPCPASS=RANDOMPASS
-            - INVOICER_HOSTPORT=invoicerbox:8080
+            - INVOICER_HOSTPORT=invoicer:defaultpassw0rd@invoicerbox:8080
             - STATICDIR=/static/
         networks:
             localnet:
                 ipv4_address: 172.16.88.166
+    webbybox:
+        image: nginx:1.14-alpine-perl
+        volumes:
+            - /media/important/nginx:/etc/nginx
+            - /media/volatile/nginx:/var/log/nginx
+            - /home/lncm/public_html:/www
+        ports:
+            - "80:80"
+        depends_on:
+            - invoicerbox
+        restart: on-failure
+        networks:
+            localnet:
+                ipv4_address: 172.16.88.250
 networks:
     localnet:
         driver: bridge
