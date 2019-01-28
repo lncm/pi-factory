@@ -57,6 +57,9 @@ if [ -f ./authorized_keys.automatic ]; then
         mkdir -p ./home/lncm/.ssh
     fi
     cp ./authorized_keys.automatic ./home/lncm/.ssh
+    echo "Reconfiguring SSHD to not allow for passwords"
+    cp ./etc/ssh/sshd_config ./etc/ssh/sshd_config.bak
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' ./etc/ssh/sshd_config
 fi
 
 echo 'Generate fresh box.apkovl.tar.gz from source'
@@ -71,6 +74,11 @@ fi
 if [ -d ./home/lncm/.ssh ]; then
     echo "Remove .ssh directory"
     rm -fr ./home/lncm/.ssh
+fi
+if [ -f ./etc/ssh/sshd_config.bak ]; then
+    echo "Restoring sshd_config to be equal with last commit"
+    cp ./etc/ssh/sshd_config.bak ./etc/ssh/sshd_config
+    rm ./etc/ssh/sshd_config.bak
 fi
 
 if ! [ -d lncm-workdir ]; then
