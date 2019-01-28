@@ -50,6 +50,14 @@ if [ -f ./wpa_supplicant.automatic.conf ]; then
     cp ./etc/wpa_supplicant/wpa_supplicant.conf ./etc/wpa_supplicant/wpa_supplicant.conf.bak
     cp ./wpa_supplicant.automatic.conf etc/wpa_supplicant/wpa_supplicant.conf
 fi
+echo 'Check for authorized_keys.automatic'
+if [ -f ./authorized_keys.automatic ]; then
+    echo "Authorized keys file exists, bootstrapping the ssh authorized keys file"
+    if [ ! -d ./home/lncm/.ssh ]; then
+        mkdir -p ./home/lncm/.ssh
+    fi
+    cp ./authorized_keys.automatic ./home/lncm/.ssh
+fi
 
 echo 'Generate fresh box.apkovl.tar.gz from source'
 sh make_apkovl.sh
@@ -58,6 +66,11 @@ if [ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]; then
     echo 'Restore old WPA Supplicant after making apkovl (and deleting the backup file)'
     cp ./etc/wpa_supplicant/wpa_supplicant.conf.bak ./etc/wpa_supplicant/wpa_supplicant.conf
     rm ./etc/wpa_supplicant/wpa_supplicant.conf.bak
+fi
+# Cleanup authorized_keys
+if [ -d ./home/lncm/.ssh ]; then
+    echo "Remove .ssh directory"
+    rm -fr ./home/lncm/.ssh
 fi
 
 if ! [ -d lncm-workdir ]; then
