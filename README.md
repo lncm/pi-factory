@@ -52,6 +52,12 @@ The box provides it's own WiFi hotspot to ease access and configuration.
 
 ## Customization & Settings
 
+#### Security
+
+If you wish to disable passwords altogether (and highly recommended than the default SSH root password), simply place a file called ```authorized_keys.automatic``` into the root of this repository with all your public keys.
+
+Passwords should be disabled when you create a new image.
+
 #### Networking
 
 If you have console access:
