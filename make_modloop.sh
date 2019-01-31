@@ -10,7 +10,7 @@ FIRMWARE=https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
 mkdir lncm-workdir
 cd lncm-workdir
 
-if ! [ -f $FIRMWARE ]; then
+if ! [[ -f ${FIRMWARE} ]]; then
   echo "Brcm firmware not found, fetching..."
   wget https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
 fi
@@ -19,13 +19,13 @@ apk update && apk add squashfs-tools unzip
 
 unzip brcm-firmware.zip
 
-if ! [ -f $ALP ]; then
+if ! [[ -f ${ALP} ]]; then
   echo "${ALP} not found, fetching..."
   wget http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/armhf/${ALP}
 fi
 
 mkdir alp-distro
-tar xvzf $ALP -C alp-distro
+tar xvzf ${ALP} -C alp-distro
 
 mkdir /mnt/squash
 mount -o loop -t squashfs alp-distro/boot/modloop-rpi2 /mnt/squash
