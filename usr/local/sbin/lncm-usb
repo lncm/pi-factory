@@ -36,25 +36,25 @@ SMALLEST_UUID=$6
 LARGEST_SIZE=$7
 
 check_args() {
-  if [ -z "$LARGEST" ]; then
+  if [[ -z "${LARGEST}" ]]; then
     echo 'Error: "archive" USB unavailable'
     exit 1
-  elif [ -z "$MEDIUM" ]; then
+  elif [[ -z "${MEDIUM}" ]]; then
     echo 'Error: "volatile" USB unavailable'
     exit 1
-  elif [ -z "$SMALLEST" ]; then
+  elif [[ -z "${SMALLEST}" ]]; then
     echo 'Error: "important" USB unavailable'
     exit 1
-  elif [ -z "$LARGEST_UUID" ]; then
+  elif [[ -z "${LARGEST_UUID}" ]]; then
     echo 'Error: "largest" USB UUID undefined'
     exit 1
-  elif [ -z "$MEDIUM_UUID" ]; then
+  elif [[ -z "${MEDIUM_UUID}" ]]; then
     echo 'Error: "medium" USB UUID undefined'
     exit 1
-  elif [ -z "$SMALLEST_UUID" ]; then
+  elif [[ -z "${SMALLEST_UUID}" ]]; then
     echo 'Error: "smallest" USB UUID undefined'
     exit 1
-  elif [ -z "$LARGEST_SIZE" ]; then
+  elif [[ -z "${LARGEST_SIZE}" ]]; then
     echo 'Error: "archive" USB size undefined'
     exit 1
   fi
@@ -70,30 +70,30 @@ create_mount_points() {
 mount_usb_devs() {
   echo "Mount ext4 usb storage devices"
   mount -t ext4 /dev/${LARGEST} /media/archive
-  if [ $? -ne 0 ]; then
+  if [[ $? -ne 0 ]]; then
     echo "Warning: /dev/${LARGEST} is not mountable as ext4"
     mount /dev/${LARGEST} /media/archive
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
       echo "Error: /dev/${LARGEST} is not mountable with any supported format"
       echo "Cannot proceed without all USB storage devices"
       exit 1
     fi
   fi
   mount -t ext4 /dev/${MEDIUM} /media/volatile
-  if [ $? -ne 0 ]; then
+  if [[ $? -ne 0 ]]; then
     echo "Warning: /dev/${MEDIUM} is not mountable as ext4"
     mount /dev/${MEDIUM} /media/volatile
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
       echo "Error: /dev/${MEDIUM} is not mountable with any supported format"
       echo "Cannot proceed without all USB storage devices"
       exit 1
     fi
   fi
   mount -t ext4 /dev/${SMALLEST} /media/important
-  if [ $? -ne 0 ]; then
+  if [[ $? -ne 0 ]]; then
     echo "Warning: /dev/${SMALLEST} is not mountable as ext4"
     mount /dev/${SMALLEST} /media/important
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
       echo "Error: /dev/${SMALLEST} is not mountable with any supported format"
       echo "Cannot proceed without all USB storage devices"
       exit 1
@@ -103,21 +103,21 @@ mount_usb_devs() {
 
 check_to_destroy() {
   echo "Check devices for destruction flag"
-  if [ -f /media/archive/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]; then
+  if [[ -f /media/archive/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]]; then
     echo "Going to destroy all data on /dev/${LARGEST} in 3 seconds..."
     umount /dev/${LARGEST} && \
     sleep 3 && \
     mkfs.ext4 -F /dev/${LARGEST} && \
     mount -t ext4 /dev/${LARGEST} /media/archive
   fi
-  if [ -f /media/volatile/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]; then
+  if [[ -f /media/volatile/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]]; then
     echo "Going to destroy all data on /dev/${MEDIUM} in 3 seconds..."
     umount /dev/${MEDIUM} && \
     sleep 3 && \
     mkfs.ext4 -F /dev/${MEDIUM} && \
     mount -t ext4 /dev/${MEDIUM} /media/volatile
   fi
-  if [ -f /media/important/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]; then
+  if [[ -f /media/important/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]]; then
     echo "Going to destroy all data on /dev/${SMALLEST} in 3 seconds..."
     umount /dev/${SMALLEST} && \
     sleep 3 && \
@@ -127,7 +127,7 @@ check_to_destroy() {
 }
 
 setup_archive() {
-  if [ -d /media/archive/lost+found ]; then
+  if [[ -d /media/archive/lost+found ]]; then
     echo "Add archive usb to fstab"
     echo "UUID=${LARGEST_UUID} /media/archive ext4 defaults,noatime 0 0" >> /etc/fstab
   else
@@ -137,7 +137,7 @@ setup_archive() {
 }
 
 setup_important() {
-  if [ -d /media/important/lost+found ]; then
+  if [[ -d /media/important/lost+found ]]; then
     echo "Add important usb to fstab"
     echo "UUID=${SMALLEST_UUID} /media/important ext4 defaults,noatime 0 0" >> /etc/fstab
   else
@@ -147,10 +147,10 @@ setup_important() {
 }
 
 setup_volatile() {
-  if [ -d /media/volatile/lost+found ]; then
+  if [[ -d /media/volatile/lost+found ]]; then
     echo "Add volatile usb to fstab"
     echo "UUID=${MEDIUM_UUID} /media/volatile ext4 defaults,noatime 0 0" >> /etc/fstab
-    if [ -f /media/volatile/swap ]; then
+    if [[ -f /media/volatile/swap ]]; then
       echo "Swap exists, adding to fstab"
       echo '/media/volatile/swap none swap sw,pri=100 0 0' >> /etc/fstab
     else
@@ -175,7 +175,7 @@ setup_usb_devs() {
 
 setup_archive_bitcoind() {
   echo "Detecting existing bitcoin node data"
-  if [ -d /media/archive/bitcoin ]; then
+  if [[ -d /media/archive/bitcoin ]]; then
     echo "Existing bitcoin archive dir found"
     # bitcoin - archive
   else
@@ -188,7 +188,7 @@ setup_archive_bitcoind() {
 }
 
 setup_volatile_bitcoind() {
-  if [ -d /media/volatile/bitcoin ]; then
+  if [[ -d /media/volatile/bitcoin ]]; then
     echo "Existing bitcoin volatile dir found"
   else
     echo "No bitcoin volatile dir found, creating"
@@ -197,7 +197,7 @@ setup_volatile_bitcoind() {
 }
 
 setup_important_bitcoind() {
-  if [ -d /media/important/bitcoin ]; then
+  if [[ -d /media/important/bitcoin ]]; then
     echo "Existing bitcoin important dir found"
   else
     echo "No bitcoin important dir, creating"
@@ -212,7 +212,7 @@ setup_important_bitcoind() {
 
 setup_important_lnd() {
   echo "Setup lnd important directory"
-  if [ -d /media/important/lnd ]; then
+  if [[ -d /media/important/lnd ]]; then
     echo "Existing lnd important dir found"
   else
     echo "No lnd important dir found, creating"
@@ -222,7 +222,7 @@ setup_important_lnd() {
 }
 
 setup_volatile_lnd() {
-  if [ -d /media/volatile/lnd ]; then
+  if [[ -d /media/volatile/lnd ]]; then
     echo "Existing lnd volatile dir found"
   else
     echo "No lnd volatile dir found, creating"
@@ -233,7 +233,7 @@ setup_volatile_lnd() {
 
 setup_important_nginx() {
   echo "Setup nginx important dir"
-  if [ -d /media/important/nginx ]; then
+  if [[ -d /media/important/nginx ]]; then
     echo "Existing nginx dir found"
   else
     echo "No nginx important dir found, creating"
@@ -242,7 +242,7 @@ setup_important_nginx() {
   fi
 }
 setup_volatile_nginx() {
-  if [ -d /media/volatile/nginx ]; then
+  if [[ -d /media/volatile/nginx ]]; then
     echo "Existing nginx directory found"
   else
     echo "No volatile nginx directory, creating"
