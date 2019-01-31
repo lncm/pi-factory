@@ -3,6 +3,6 @@
 # Disables adding resource-forks on MacOS
 export COPYFILE_DISABLE=true
 
-cp README.md home/lncm/README.md
+cp README.md home/lncm/README.txt
 
-tar czf box.apkovl.tar.gz --exclude '.DS_Store' etc home usr
+tar czf box.apkovl.tar.gz --exclude '.DS_Store' --exclude 'README.md' etc home usr
