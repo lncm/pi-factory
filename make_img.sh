@@ -105,31 +105,43 @@ fi
 
 echo "Create and mount 256MB image"
 dd if=/dev/zero of=${IMG} bs=1M count=256 && \
-DEV=$(losetup -f) && \
-losetup -f ${IMG} && \
-echo "Create 256MB FAT32 partition and filesystem" && \
-parted -s ${DEV} mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
-mkfs.vfat ${DEV}p1 -IF 32
+    DEV=$(losetup -f) && \
+    losetup -f ${IMG} && \
+    echo "Create 256MB FAT32 partition and filesystem" && \
+    parted -s ${DEV} mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
+    mkfs.vfat ${DEV}p1 -IF 32
+
 if ! [[ -d ${MNT} ]]; then
   mkdir ${MNT}
 fi
+
 echo "Mount FAT partition"
 mount ${DEV}p1 ${MNT}
+
 echo "Extract alpine distribution"
 tar -xzf ${ALP} -C ${MNT}/ --no-same-owner
+
 echo "Extract iotwifi container"
 tar -xzf ${IOT} -C ${MNT}/ --no-same-owner
+
 echo "Extract cache dir for docker and avahi"
 tar -xzf ${CACHE} -C ${MNT}/ --no-same-owner
+
 #echo "Patch RPi3 WiFi"
 #tar -xzf ${FIX} -C ${MNT}/boot/ --no-same-owner
+
 echo "Copy latest box.apkovl tarball"
 cp ../box.apkovl.tar.gz ${MNT}
+
 echo "Flush writes to disk"
 sync
+
 echo "Unmount"
 umount ${MNT}
+
 losetup -d ${DEV}
 echo "Compress img as zip"
+
 zip -r ${IMG}.zip ${IMG}
+
 echo -e "\nDone!\nYou may flash your ${IMG}.zip using Etcher or dd the ${IMG}"
