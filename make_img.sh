@@ -78,9 +78,7 @@ if [[ -f ./etc/ssh/sshd_config.bak ]]; then
     rm ./etc/ssh/sshd_config.bak
 fi
 
-if ! [[ -d lncm-workdir ]]; then
-  mkdir lncm-workdir
-fi
+mkdir -p lncm-workdir
 cd lncm-workdir
 
 if ! [[ -f ${ALP} ]]; then
