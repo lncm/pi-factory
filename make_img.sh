@@ -120,7 +120,7 @@ if ! [[ -f ${CACHE} ]]; then
 fi
 
 echo "Create and mount 256MB image"
-dd if=/dev/zero of=$IMG bs=1M count=256 && \
+dd if=/dev/zero of=${IMG} bs=1M count=256 && \
 DEV=$(losetup -f) && \
 losetup -f ${IMG} && \
 echo "Create 256MB FAT32 partition and filesystem" && \
