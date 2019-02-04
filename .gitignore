@@ -8,6 +8,10 @@ key.json
 # Alpine sensitive stuff: Machine-id
 machine-id
 
+# Automatic bootstrap files. For bootstrapping a wpa_supplicant and authorized_keys so that we don't have to keep doing it.
+/wpa_supplicant.automatic.conf
+/authorized_keys.automatic
+
 alpine-rpi-*-armhf.tar.gz
 
 # Don't commit LNCM variant build stuff
