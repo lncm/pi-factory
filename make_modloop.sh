@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# NOTE: needed due to a bug in Alpine release, making WiFi/Ethernet
+# not work in some conditions. Can be removed once bug is fixed upstream.
+#
 # Creates modloop-rpi2.tar.gz with WiFi patch for RPI 3B+
 # which contains modloop-rpi2, an xz compressed squashfs
 # filesystem with block size 131072 and 100% dict-size
