@@ -18,16 +18,6 @@ This file defines how all Docker image modules interact with each other.
 > **TODO:** expand on that. Add links to Wikis, describe conventions, etc…
 
 
-## `lightning/config`
-
-A config file for c-lightning. Currently not used - should it be removed?
-
-
-##  `litecoin/litecoin.conf`
-
-A config file for Litecoin Core client. Currently not used - should it be removed?
-
-
 ## `lnd/lnd.conf`
 
 This is the initial config for the `lnd` client. Currently contains a lot of comments that are being overridden later. 
