@@ -4,7 +4,7 @@
 # which contains modloop-rpi2, an xz compressed squashfs
 # filesystem with block size 131072 and 100% dict-size
 
-ALP=alpine-rpi-3.8.2-armhf.tar.gz
+ALP=alpine-rpi-3.9.0-armhf.tar.gz
 FIRMWARE=https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
 
 mkdir lncm-workdir

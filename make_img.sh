@@ -20,9 +20,9 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-OUTPUT_VERSION=v0.4.0
+OUTPUT_VERSION=v0.4.1
 DOWNLOAD_VERSION=v0.4.0
-ALP=alpine-rpi-3.8.2-armhf.tar.gz
+ALP=alpine-rpi-3.9.0-armhf.tar.gz
 IMG=lncm-box-${OUTPUT_VERSION}.img
 IOT=iotwifi.tar.gz
 FIX=modloop-rpi2.tar.gz
