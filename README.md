@@ -57,6 +57,7 @@ The box provides it's own WiFi hotspot to ease access and configuration.
 Before running, **make_img.sh** or **make_apkovl.sh**
 
 If you wish the import your own seed, put at seed.txt into ```home/lncm/seed.txt```
+For the seed file, one word should exist on each line.
 
 If you wish to save the password, do a ```touch home/lncm/save_password```
 
