@@ -52,6 +52,14 @@ The box provides it's own WiFi hotspot to ease access and configuration.
 
 ## Customization & Settings
 
+#### LND Auto-unlock script
+
+Before running, **make_img.sh** or **make_apkovl.sh**
+
+If you wish the import your own seed, put at seed.txt into ```home/lncm/seed.txt```
+
+If you wish to save the password, do a ```touch home/lncm/save_password```
+
 #### Security
 
 If you wish to disable passwords altogether (and highly recommended than the default SSH root password), simply place a file called ```authorized_keys.automatic``` into the root of this repository with all your public keys.
