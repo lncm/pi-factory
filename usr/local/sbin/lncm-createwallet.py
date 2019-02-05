@@ -14,6 +14,16 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+Documented logic
+
+1. Check if theres already a wallet. If there is, then exit.
+2. Check for sesame.txt
+3. If doesn't exist then check for whether we should save the password (save_password_control_file exists) or not
+4. If sesame.txt exists import password in.
+5. If sesame.txt doesn't exist ans we don't save the password,create a password and save it in temporary path as defined in temp_password_file_path
+6. Now start the wallet creation. Look for a seed defined in seed_filename , if not existing then generate a wallet based on the seed by LND.
+
 '''
 import base64, codecs, json, requests, os
 import random, string
@@ -25,6 +35,10 @@ url2 = 'https://localhost:8181/v1/initwallet'
 cert_path = '/media/important/lnd/tls.cert'
 seed_filename  = '/home/lncm/seed.txt' 
 
+# save password control file (Add this file if we want to save passwords)
+save_password_control_file = '/home/lncm/save_password'
+# Create password for writing
+temp_password_file_path = '/home/lncm/password.txt'
 
 ''' 
   Functions have 2 spaces
@@ -34,15 +48,26 @@ def randompass(stringLength=10):
   return ''.join(random.choice(letters) for i in range(stringLength))
 
 def main():
+  if not os.path.exists(save_password_control_file):
+    # Generate password but dont save it in usual spot
+    password_str=randompass(stringLength=15)
+    temp_password_file = open(temp_password_file_path, "w")
   # Check if there is an existing file, if not generate a random password
   if not os.path.exists("/media/important/lnd/sesame.txt"):
+    # sesame file doesnt exist
     password_str=randompass(stringLength=15)
-    # Write password string to file if not exist
-    password_file = open("/media/important/lnd/sesame.txt","w")
-    password_file.write(password_str)
-    password_file.close()
+    if not os.path.exists(save_password_control_file):
+      # Use tempory file if there is a password control file there
+      temp_password_file = open(temp_password_file_path, "w")
+      temp_password_file.write(password_str)
+      temp_password_file.close()
+    else:
+      # Use sesame.txt if password_control_file exists
+      password_file = open("/media/important/lnd/sesame.txt","w")
+      password_file.write(password_str)
+      password_file.close()
   else:
-    # Get password from file
+    # Get password from file if sesame file already exists
     password_str = open('/media/important/lnd/sesame.txt', 'r').read().rstrip()
   
   # Convert password to byte encoded
