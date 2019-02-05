@@ -18,6 +18,8 @@
 +home/lncm/nginx
 +home/lncm/nginx/conf.d
 +home/lncm/.ssh/authorized_keys
++home/lncm/save_password
++home/lncm/seed.txt
 +usr/local/sbin/mana
 +usr/local/sbin/lncm-usb
 +usr/local/sbin/lncm-usb.py
