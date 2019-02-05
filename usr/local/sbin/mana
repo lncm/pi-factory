@@ -30,8 +30,8 @@ elif [ "$1" = "unlock" ]; then
   # unlock lnd wallet
   docker exec -it compose_lndbox_1 lncli unlock
 elif [ "$1" = "create" ]; then
-  # create lnd wallet
-  docker exec -it compose_lndbox_1 lncli create
+  # Use create wallet script. This will either import an existing seed (or our own generated one), or use LND to create one. It will also create a password either randomly or use an existing password provided)
+  /usr/local/sbin/lncm-createwallet.py
 elif [ "$1" = "start" ]; then
   service docker-compose start
 elif [ "$1" = "stop" ]; then
