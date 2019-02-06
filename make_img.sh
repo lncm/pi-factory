@@ -35,12 +35,12 @@ if [ "$(id -u)" -ne "0" ]; then
     exit 1
 fi
 
-if command -v apk 2>&1 1>/dev/null; [ "$?" -e "0" ]; then
+if command -v apk 2>&1 1>/dev/null; [ "$?" -eq "0" ]; then
   echo "Found Alpine-based system, installing dependencies"
   apk add parted zip unzip
 fi
 
-if command -v apt 2>&1 1>/dev/null; [ "$?" -e "0" ]; then
+if command -v apt 2>&1 1>/dev/null; [ "$?" -eq "0" ]; then
   echo "Found Debian-based system, installing dependencies"
   apt install -y parted zip unzip
 fi
