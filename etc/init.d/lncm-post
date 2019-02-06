@@ -163,6 +163,12 @@ start() {
         /bin/cp -f /home/lncm/nginx/mime.types /media/important/nginx/mime.types  
     fi
 
+    echo "Download index.html"
+    if [ ! -f /home/lncm/public_html/index.html]; then
+      cd /home/lncm/public_html
+      wget https://raw.githubusercontent.com/lncm/invoicer-ui/master/dist/index.html
+    fi
+
     echo "Install crontab"
     /usr/bin/crontab /home/lncm/crontab
 
