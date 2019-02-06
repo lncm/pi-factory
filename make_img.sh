@@ -35,7 +35,16 @@ if [ "$(id -u)" -ne "0" ]; then
     exit 1
 fi
 
-# Todo: check for zip & unzip, mkfs.vfat, etc too
+if command -v apk 2>&1 1>/dev/null; [ "$?" -e "0" ]; then
+  echo "Found Alpine-based system, installing dependencies"
+  apk add parted zip unzip
+fi
+
+if command -v apt 2>&1 1>/dev/null; [ "$?" -e "0" ]; then
+  echo "Found Debian-based system, installing dependencies"
+  apt install -y parted zip unzip
+fi
+
 if command -v parted 2>&1 1>/dev/null; [ "$?" -ne "0" ]; then
   echo "'parted' package needs to be installed. If you're on a Debian-based system, you can install it with:"
   echo "	sudo apt install -y parted"
