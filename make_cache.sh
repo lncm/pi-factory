@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # make_cache.sh
-# updates and packages cache
+#
+# updates and packages cache as cache.tar.gz
 # to be run as sudo on Alpine armhf
 
 WORLD=/etc/apk/world
@@ -30,8 +31,21 @@ apk cache sync -v
 # Disables adding resource-forks on MacOS
 export COPYFILE_DISABLE=true
 
+echo "Remove cache dir"
+rm -rf cache
+
+echo "Remove cache tarball"
+rm -v cache.tar.gz
+
+echo "Create cache dir"
+mkdir cache
+
+echo "Copy cache files"
+cp -r ${LOCATION} cache
+
 echo "Bundling cache"
-tar cvzf ${OUTPUT} --exclude '.DS_Store' ${LOCATION}
+# Folder to be compressed must be called cache
+tar cvzf ${OUTPUT} --exclude '.DS_Store' cache
 
 echo "Restoring previous ${WORLD}"
 cp ${WORLD}.backup ${WORLD}
