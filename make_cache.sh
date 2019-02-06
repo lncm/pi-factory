@@ -4,7 +4,7 @@
 # updates and packages cache
 # to be run as sudo on Alpine armhf
 
-LOCATION=/media/mmcblk0p1/cache
+LOCATION=cache
 #LOCATION=/var/cache/apk
 
 apk cache sync -v
