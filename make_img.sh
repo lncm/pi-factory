@@ -26,7 +26,7 @@ ALP=alpine-rpi-3.9.0-armhf.tar.gz
 REL=v3.9
 IMG=lncm-box-${OUTPUT_VERSION}.img
 IOT=iotwifi.tar.gz
-FIX=modloop-rpi2.tar.gz
+#FIX=modloop-rpi2.tar.gz
 CACHE=cache.tar.gz
 MNT=/mnt/lncm
 
@@ -95,10 +95,10 @@ if ! [ -f $IOT ]; then
   echo "${IOT} not found, fetching..."
   wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
 fi
-if ! [ -f $FIX ]; then
-  echo "${FIX} not found, fetching..."
-  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
-fi
+# if ! [ -f $FIX ]; then
+#   echo "${FIX} not found, fetching..."
+#   wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
+# fi
 if ! [ -f $CACHE ]; then
   echo "${CACHE} not found, fetching..."
   wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
@@ -122,8 +122,8 @@ echo "Extract iotwifi container"
 tar -xzf $IOT -C ${MNT}/ --no-same-owner
 echo "Extract cache dir for docker and avahi"
 tar -xzf $CACHE -C ${MNT}/ --no-same-owner
-echo "Patch RPi3 WiFi"
-tar -xzf $FIX -C ${MNT}/boot/ --no-same-owner
+#echo "Patch RPi3 WiFi"
+#tar -xzf $FIX -C ${MNT}/boot/ --no-same-owner
 echo "Copy latest box.apkovl tarball"
 cp ../box.apkovl.tar.gz ${MNT}
 echo "Flush writes to disk"
