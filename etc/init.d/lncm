@@ -39,7 +39,13 @@ start() {
     INSTALLED=1
 
     echo "Add partitioning and filesystem tools"
-    /sbin/apk update && /sbin/apk add parted e2fsprogs
+    /sbin/setup-apkcache /media/mmcblk0p1/cache && \
+    /sbin/apk update && \
+    /sbin/apk upgrade -v && \
+    /sbin/apk add parted e2fsprogs
+    
+    echo "OpenRC init"
+    /sbin/rc
 
     echo "Create second primary partition"
     /usr/sbin/parted -s /dev/$SD mkpart p ext4 $START 100%
