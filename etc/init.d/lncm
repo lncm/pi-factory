@@ -15,7 +15,7 @@
 # limitations under the License.
 
 depend() {
-    need net sshd iotwifi lncm-online
+    need net sshd iotwifi lncm-online ntpd
 }
 
 start() {
@@ -40,12 +40,7 @@ start() {
 
     echo "Add partitioning and filesystem tools"
     /sbin/setup-apkcache /media/mmcblk0p1/cache && \
-    /sbin/apk update && \
-    /sbin/apk upgrade -v && \
     /sbin/apk add parted e2fsprogs
-    
-    echo "OpenRC init"
-    /sbin/rc
 
     echo "Create second primary partition"
     /usr/sbin/parted -s /dev/$SD mkpart p ext4 $START 100%
