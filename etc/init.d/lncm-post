@@ -18,7 +18,7 @@
 ## To be run on persistently installed SD card
 
 depend() {
-    need net sshd lncm-online
+    need net sshd lncm-online ntpd
 }
 
 start() {
