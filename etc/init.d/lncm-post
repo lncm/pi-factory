@@ -166,7 +166,7 @@ start() {
     echo "Install crontab"
     /usr/bin/crontab /home/lncm/crontab
 
-    # Backup apkovl.tar.gz to USB storage
+    echo "Backup apkovl.tar.gz to USB storage"
     /sbin/lbu pkg /media/important
 
     echo "Remove lncm-post from boot"
