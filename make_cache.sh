@@ -37,9 +37,6 @@ rm -rf cache
 echo "Remove cache tarball"
 rm -v cache.tar.gz
 
-echo "Create cache dir"
-mkdir cache
-
 echo "Copy cache files"
 cp -r ${LOCATION} cache
 
