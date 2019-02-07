@@ -16,41 +16,41 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-if [ -z $BOXNAME ]; then
+if [[ -z ${BOXNAME} ]]; then
     BOXNAME='compose_invoicerbox_1'
 fi
 
-if command -v docker 2>&1 1>/dev/null; [ "$?" -ne "0" ]; then
+if command -v docker 2>&1 1>/dev/null; [[ "$?" -ne "0" ]]; then
     echo "Docker is not installed"
     exit 1
 fi
 
-if command -v jq 2>&1 1>/dev/null; [ "$?" -ne "0" ]; then
+if command -v jq 2>&1 1>/dev/null; [[ "$?" -ne "0" ]]; then
     echo "jq is not installed"
     exit 1
 fi
-if [ "$(id -u)" -ne "0" ]; then
+if [[ "$(id -u)" -ne "0" ]]; then
     echo "This tool must be run as root"
     exit 1
 fi
 
-if [ $(docker ps -a | grep -c $BOXNAME) == 1 ]; then
-    if [ $(docker inspect $BOXNAME | jq '.[0].State.Status' | sed 's/"//g; ') == "running" ]; then
-        if [ $(docker inspect $BOXNAME | jq '.[0].State.Health.Status' | sed 's/"//g; ') == "null" ]; then
+if [[ $(docker ps -a | grep -c ${BOXNAME}) == 1 ]]; then
+    if [[ $(docker inspect ${BOXNAME} | jq '.[0].State.Status' | sed 's/"//g; ') == "running" ]]; then
+        if [[ $(docker inspect ${BOXNAME} | jq '.[0].State.Health.Status' | sed 's/"//g; ') == "null" ]]; then
             echo "Healthcheck doesn't exist"
             exit 0
         fi
-        if [ $(docker inspect $BOXNAME | jq '.[0].State.Health.Status' | sed 's/"//g; ') == "starting" ]; then
+        if [[ $(docker inspect ${BOXNAME} | jq '.[0].State.Health.Status' | sed 's/"//g; ') == "starting" ]]; then
             echo "Healthcheck still initializing"
             exit 0
         fi
-        if [ $(docker inspect $BOXNAME | jq '.[0].State.Health.Status' | sed 's/"//g; ') == "healthy" ]; then
+        if [[ $(docker inspect ${BOXNAME} | jq '.[0].State.Health.Status' | sed 's/"//g; ') == "healthy" ]]; then
             echo "All good"
             exit 0
         else
-            echo "Attempting to restart $BOXNAME"
-            docker stop $BOXNAME
-            docker start $BOXNAME
+            echo "Attempting to restart ${BOXNAME}"
+            docker stop ${BOXNAME}
+            docker start ${BOXNAME}
             exit 0
         fi
     fi
