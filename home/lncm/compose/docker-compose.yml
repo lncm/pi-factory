@@ -1,79 +1,81 @@
-version: '2.1'
+version: '3.7'
 services:
-    btcbox:
-        image: lncm/bitcoind:0.17.1-alpine-arm-wallet
-        volumes:
-            - /media/important/bitcoin/bitcoin.conf:/root/.bitcoin/bitcoin.conf
-            - /media/important/bitcoin/bitcoin.conf:/home/bitcoin/.bitcoin/bitcoin.conf
-            - /media/archive/bitcoin/chainstate:/home/bitcoin/.bitcoin/chainstate
-            - /media/archive/bitcoin/blocks:/home/bitcoin/.bitcoin/blocks
-            - /media/important/bitcoin/wallets:/root/.bitcoin/wallets
-            - /media/volatile/bitcoin:/home/bitcoin/.bitcoin
-            - /media/volatile/bitcoin:/root/.bitcoin
-        ports:
-            - "8332:8332"
-            - "8333:8333"
-            - "28332:28332"
-            - "28333:28333"
-        networks:
-            localnet:
-                ipv4_address: 172.16.88.8
-    lndbox:
-        image: lncm/lnd:latest
-        command: --lnddir=/root/.lnd
-        volumes:
-            - /media/volatile/lnd/logs:/root/.lnd/logs
-            - /media/important/lnd/data:/root/.lnd/data
-            - /media/important/lnd/lnd.conf:/root/.lnd/lnd.conf
-            - /media/important/lnd:/root/.lnd
-        ports:
-            - "9735:9735"
-            - "8181:8080"
-            - "10009:10009"
-        depends_on:
-            - btcbox
-        restart: on-failure
-        networks:
-            localnet:
-                ipv4_address: 172.16.88.88
-    invoicerbox:
-        image: lncm/invoicer:0.1.1
-        volumes:
-            - /media/important/lnd:/lnd
-            - /home/lncm/public_html:/static
-        depends_on:
-            - lndbox
-        restart: on-failure
-        environment:
-            - LNDHOST=lndbox
-            - GRPC_GO_RETRY=on
-            - BTCHOST=btcbox
-            - BTCRPCUSER=RANDOMUSER
-            - BTCRPCPASS=RANDOMPASS
-            - INVOICER_HOSTPORT=invoicer:defaultpassw0rd@invoicerbox:8080
-            - STATICDIR=/static/
-        networks:
-            localnet:
-                ipv4_address: 172.16.88.166
-    webbybox:
-        image: nginx:1.14-alpine-perl
-        volumes:
-            - /media/important/nginx:/etc/nginx
-            - /media/volatile/nginx:/var/log/nginx
-            - /home/lncm/public_html:/www
-        ports:
-            - "80:80"
-        depends_on:
-            - invoicerbox
-        restart: on-failure
-        networks:
-            localnet:
-                ipv4_address: 172.16.88.250
+  bitcoind:
+    image: lncm/bitcoind:0.17.1
+    volumes:
+      - /media/important/bitcoin/bitcoin.conf:/root/.bitcoin/bitcoin.conf
+      - /media/important/bitcoin/bitcoin.conf:/home/bitcoin/.bitcoin/bitcoin.conf
+      - /media/archive/bitcoin/chainstate:/home/bitcoin/.bitcoin/chainstate
+      - /media/archive/bitcoin/blocks:/home/bitcoin/.bitcoin/blocks
+      - /media/important/bitcoin/wallets:/root/.bitcoin/wallets
+      - /media/volatile/bitcoin:/home/bitcoin/.bitcoin
+      - /media/volatile/bitcoin:/root/.bitcoin
+    ports:
+      - "8332"
+      - "8333"
+      - "28332"
+      - "28333"
+    networks:
+      localnet:
+        ipv4_address: 172.16.88.1
+
+  lnd:
+    image: lncm/lnd:latest
+    volumes:
+      - /media/volatile/lnd/logs:/root/.lnd/logs
+      - /media/important/lnd/data:/root/.lnd/data
+      - /media/important/lnd/lnd.conf:/root/.lnd/lnd.conf
+      - /media/important/lnd:/root/.lnd
+    ports:
+      - "9735"
+      - "8181:8080"
+      - "10009"
+    depends_on:
+      - bitcoind
+    restart: on-failure
+    networks:
+      localnet:
+        ipv4_address: 172.16.88.2
+
+  invoicer:
+    image: lncm/invoicer:0.1.1
+    volumes:
+      - /media/important/lnd:/lnd
+      - /home/lncm/public_html:/static
+    depends_on:
+      - lnd
+    restart: on-failure
+    environment:
+      - LNDHOST=lnd
+      - GRPC_GO_RETRY=on
+      - BTCHOST=btc
+      - BTCRPCUSER=RANDOMUSER
+      - BTCRPCPASS=RANDOMPASS
+      - INVOICER_HOSTPORT=invoicer:defaultpassw0rd@invoicer:8080
+      - STATICDIR=/static/
+    networks:
+      localnet:
+        ipv4_address: 172.16.88.3
+
+  nginx:
+    image: nginx:1.14-alpine-perl
+    volumes:
+      - /media/important/nginx:/etc/nginx
+      - /media/volatile/nginx:/var/log/nginx
+      - /home/lncm/public_html:/www
+    ports:
+      - "80"
+    depends_on:
+      - invoicer
+    restart: on-failure
+    networks:
+      localnet:
+        ipv4_address: 172.16.88.4
+
 networks:
-    localnet:
-        driver: bridge
-        ipam:
-            driver: default
-            config:
-                -
-                    subnet: 172.16.88.0/24
+  localnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.88.0/24

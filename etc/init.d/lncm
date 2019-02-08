@@ -1,21 +1,7 @@
 #!/sbin/openrc-run
-#
-# Copyright 2018 LNCM contributors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 depend() {
-    need net sshd iotwifi lncm-online
+    need net sshd iotwifi lncm-online ntpd
 }
 
 start() {
@@ -23,7 +9,7 @@ start() {
     # This script will only run once, for persistent installation to SD
 
     # LNCM version
-    VER="v0.4.0"
+    VER="v0.4.1"
 
     # Device to partition
     SD=mmcblk0
@@ -39,7 +25,8 @@ start() {
     INSTALLED=1
 
     echo "Add partitioning and filesystem tools"
-    /sbin/apk update && /sbin/apk add parted e2fsprogs
+    /sbin/setup-apkcache /media/mmcblk0p1/cache && \
+    /sbin/apk add parted e2fsprogs
 
     echo "Create second primary partition"
     /usr/sbin/parted -s /dev/$SD mkpart p ext4 $START 100%
@@ -131,7 +118,7 @@ start() {
     /bin/rm /media/sd/etc/runlevels/default/lncm && \
     echo "Persist final state to apkovl" && \
     /sbin/lbu commit
-    
+
     if [ -f /media/${SD}p1/installed ]; then
         INSTALLED=0
         echo "Installed successfully"

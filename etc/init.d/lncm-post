@@ -1,24 +1,10 @@
 #!/sbin/openrc-run
-#
-# Copyright 2018 LNCM contributors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 ## LNCM post-installation script
 ## To be run on persistently installed SD card
 
 depend() {
-    need net sshd lncm-online
+    need net sshd lncm-online ntpd
 }
 
 start() {
@@ -27,16 +13,19 @@ start() {
 
   if [ -f /media/mmcblk0p1/installed ]; then
     echo "Let apk cache live on persistent volume"
+    if [ -d /media/mmcblk0p1/cache ]; then
+      cp -v /media/mmcblk0p1/cache/* /var/cache/apk/
+    fi
     /sbin/setup-apkcache /var/cache/apk
 
     echo "Install docker-compose and dependencies for config files"
     # Install dependencies for docker compose, for generating config files, and to assist with querying containers
     /sbin/apk update && \
-    /sbin/apk add py3-pip curl jq
+    /sbin/apk add python3 curl jq
 
     /usr/bin/pip3 install --upgrade pip && \
     /usr/bin/pip3 install docker-compose
-    
+
     # USB storage setup
     /usr/bin/python3 /usr/local/sbin/lncm-usb.py || exit 1
 
@@ -69,13 +58,13 @@ start() {
       echo "Can't generate credentials - exiting!"
       exit 1
     fi
-    
+
     # Apply RPC auth
     if [ -f /media/important/rpcauth.txt ]; then
       # Replace strings with what was generated
       RPCAUTHLINE=`cat /media/important/rpcauth.txt`
       GENERATEDPW=`cat /media/important/rpcpass.txt`
-      /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf                        
+      /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf
       /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/litecoin/litecoin.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/lnd.conf
       /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/lnd.conf
@@ -85,25 +74,25 @@ start() {
       /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/docker-compose.yml
     else
       echo "Error generating config files"
-      exit 1                    
+      exit 1
     fi
-    
+
     # Install Tor
     echo "Installing and starting TOR (and waiting about 10 seconds)"
     /sbin/apk update && /sbin/apk add tor
     /sbin/service tor start
     # Add tor to default runlevels
     /sbin/rc-update add tor default
-    
+
     CHECKTOR_HOSTNAME=1
     # Check to see if Tor generated directory exists
-    while [ ! -d /var/lib/tor/lightning ] && [ $CHECKTOR_HOSTNAME -lt 10 ]; 
-    do 
+    while [ ! -d /var/lib/tor/lightning ] && [ $CHECKTOR_HOSTNAME -lt 10 ];
+    do
       echo "Tor generated directory doesn't exist yet.. waiting";
       let CHECKTOR_HOSTNAME=CHECKTOR_HOSTNAME+1;
       sleep 1;
     done
-    
+
     # Now check to see if hostname exists
     if [ -f /var/lib/tor/lightning/hostname ]; then
       echo "Configuring lnd to have tor as a URI available"
@@ -136,7 +125,7 @@ start() {
       # If not exist copy lnd.conf from home directory
       /bin/cp -f /home/lncm/lnd/lnd.conf /media/important/lnd/lnd.conf
     fi
-    
+
     # nginx configs
     if [ -f /media/important/nginx/nginx.conf ]; then
         echo "nginx.conf exists, making backup and replacing"
@@ -157,13 +146,19 @@ start() {
         /bin/cp /media/important/nginx/mime.types /media/important/nginx/mime.types.backup &&
         /bin/cp -f /home/lncm/nginx/mime.types /media/important/nginx/mime.types
     else
-        /bin/cp -f /home/lncm/nginx/mime.types /media/important/nginx/mime.types  
+        /bin/cp -f /home/lncm/nginx/mime.types /media/important/nginx/mime.types
+    fi
+
+    echo "Download index.html"
+    if [ ! -f /home/lncm/public_html/index.html]; then
+      cd /home/lncm/public_html
+      wget https://raw.githubusercontent.com/lncm/invoicer-ui/master/dist/index.html
     fi
 
     echo "Install crontab"
     /usr/bin/crontab /home/lncm/crontab
 
-    # Backup apkovl.tar.gz to USB storage
+    echo "Backup apkovl.tar.gz to USB storage"
     /sbin/lbu pkg /media/important
 
     echo "Remove lncm-post from boot"
@@ -176,7 +171,7 @@ start() {
     exit 0
   else
     echo "LNCM persistent installation not found!"
-    exit 1	
+    exit 1
   fi
 
   eend $?
