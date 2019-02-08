@@ -28,7 +28,6 @@ services:
       - /media/important/lnd:/root/.lnd
     ports:
       - "9735"
-      - "8181:8080"
       - "10009"
     depends_on:
       - bitcoind
