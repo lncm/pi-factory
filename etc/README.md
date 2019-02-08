@@ -10,9 +10,7 @@ This dir contains initial configuration for `apk`, Alpine's package management s
 
 Contains a key needed to verify packages(?) can be verified here
 
-> **TODO_0:** verify description
-
-> **TODO_1:** add link to source
+> **TODO:** these keys can be extracted from `alpine-rpi-3.9.0-armhf.tar.gz/apks/armhf/alpine-keys-2.1-r1.apk/etc/apk/keys/*`, so there's no point having them duplicated in our repo.
 
 
 ### `protected_paths.d/ca-certificates.list`
