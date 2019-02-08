@@ -20,7 +20,7 @@ services:
         ipv4_address: 172.16.88.1
 
   lnd:
-    image: lncm/lnd:latest
+    image: lncm/lnd:0.5.2
     volumes:
       - /media/volatile/lnd/logs:/root/.lnd/logs
       - /media/important/lnd/data:/root/.lnd/data
