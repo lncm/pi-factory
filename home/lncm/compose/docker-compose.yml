@@ -27,6 +27,7 @@ services:
       - /media/important/lnd/lnd.conf:/root/.lnd/lnd.conf
       - /media/important/lnd:/root/.lnd
     ports:
+      - "8181:8080"
       - "9735"
       - "10009"
     depends_on:
