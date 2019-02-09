@@ -14,22 +14,22 @@ IOT=iotwifi.tar.gz
 CACHE=cache.tar.gz
 MNT=/mnt/lncm
 
-if [[ "$(id -u)" -ne "0" ]]; then
+if [ "$(id -u)" -ne "0" ]; then
     echo "This script must be run as root"
     exit 1
 fi
 
-if command -v apk 2>&1 1>/dev/null; [[ "$?" -eq "0" ]]; then
+if command -v apk 2>&1 1>/dev/null; [ "$?" -eq "0" ]; then
   echo "Found Alpine-based system, installing dependencies"
   apk add parted zip unzip
 fi
 
-if command -v apt 2>&1 1>/dev/null; [[ "$?" -eq "0" ]]; then
+if command -v apt 2>&1 1>/dev/null; [ "$?" -eq "0" ]; then
   echo "Found Debian-based system, installing dependencies"
   apt install -y parted zip unzip
 fi
 
-if command -v parted 2>&1 1>/dev/null; [[ "$?" -ne "0" ]]; then
+if command -v parted 2>&1 1>/dev/null; [ "$?" -ne "0" ]; then
   echo "'parted' package needs to be installed. If you're on a Debian-based system, you can install it with:"
   echo "	sudo apt install -y parted"
   exit 1
@@ -39,16 +39,16 @@ echo "Building ${IMG}"
 echo "Using ${ALP} as base distribution"
 
 echo 'Check for existing wpa_supplicant.automatic.conf'
-if [[ -f ./wpa_supplicant.automatic.conf ]]; then
+if [ -f ./wpa_supplicant.automatic.conf ]; then
     echo "WPA supplicant automatic file exists, bootstrapping the network configuration"
     cp ./etc/wpa_supplicant/wpa_supplicant.conf ./etc/wpa_supplicant/wpa_supplicant.conf.bak
     cp ./wpa_supplicant.automatic.conf etc/wpa_supplicant/wpa_supplicant.conf
 fi
 
 echo 'Check for authorized_keys.automatic'
-if [[ -f ./authorized_keys.automatic ]]; then
+if [ -f ./authorized_keys.automatic ]; then
     echo "Authorized keys file exists, bootstrapping the ssh authorized keys file"
-    if [[ ! -d ./home/lncm/.ssh ]]; then
+    if [ ! -d ./home/lncm/.ssh ]; then
         mkdir -p ./home/lncm/.ssh
     fi
     cp ./authorized_keys.automatic ./home/lncm/.ssh/authorized_keys
@@ -60,19 +60,19 @@ fi
 echo 'Generate fresh box.apkovl.tar.gz from source'
 sh make_apkovl.sh
 # Cleanup files we created
-if [[ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]]; then
+if [ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]; then
     echo 'Restore old WPA Supplicant after making apkovl (and deleting the backup file)'
     cp ./etc/wpa_supplicant/wpa_supplicant.conf.bak ./etc/wpa_supplicant/wpa_supplicant.conf
     rm ./etc/wpa_supplicant/wpa_supplicant.conf.bak
 fi
 
 # Cleanup authorized_keys
-if [[ -d ./home/lncm/.ssh ]]; then
+if [ -d ./home/lncm/.ssh ]; then
     echo "Remove .ssh directory"
     rm -fr ./home/lncm/.ssh
 fi
 
-if [[ -f ./etc/ssh/sshd_config.bak ]]; then
+if [ -f ./etc/ssh/sshd_config.bak ]; then
     echo "Restoring sshd_config to be equal with last commit"
     cp ./etc/ssh/sshd_config.bak ./etc/ssh/sshd_config
     rm ./etc/ssh/sshd_config.bak
@@ -81,22 +81,22 @@ fi
 mkdir -p lncm-workdir
 cd lncm-workdir
 
-if ! [[ -f ${ALP} ]]; then
+if ! [ -f ${ALP} ]; then
   echo "${ALP} not found, fetching..."
   wget http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
 fi
 
-if ! [[ -f ${IOT} ]]; then
+if ! [ -f ${IOT} ]; then
   echo "${IOT} not found, fetching..."
   wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
 fi
 
-#if ! [[ -f ${FIX} ]]; then
+#if ! [ -f ${FIX} ]; then
 #  echo "${FIX} not found, fetching..."
 #  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
 #fi
 
-if ! [[ -f ${CACHE} ]]; then
+if ! [ -f ${CACHE} ]; then
   echo "${CACHE} not found, fetching..."
   wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
 fi
@@ -109,7 +109,7 @@ dd if=/dev/zero of=${IMG} bs=1M count=256 && \
     parted -s ${DEV} mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
     mkfs.vfat ${DEV}p1 -IF 32
 
-if ! [[ -d ${MNT} ]]; then
+if ! [ -d ${MNT} ]; then
   mkdir ${MNT}
 fi
 
