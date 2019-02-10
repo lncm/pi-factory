@@ -150,7 +150,7 @@ start() {
     fi
 
     echo "Download index.html"
-    if [ ! -f /home/lncm/public_html/index.html]; then
+    if [ ! -f /home/lncm/public_html/index.html ]; then
       cd /home/lncm/public_html
       wget https://raw.githubusercontent.com/lncm/invoicer-ui/master/dist/index.html
     fi
