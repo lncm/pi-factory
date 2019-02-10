@@ -35,7 +35,7 @@ services:
     restart: on-failure
     networks:
       localnet:
-        ipv4_address: 172.16.88.88
+        ipv4_address: 172.16.88.3
 
   invoicer:
     image: lncm/invoicer:0.1.1
@@ -55,7 +55,7 @@ services:
       - STATICDIR=/static/
     networks:
       localnet:
-        ipv4_address: 172.16.88.3
+        ipv4_address: 172.16.88.4
 
   nginx:
     image: nginx:1.14-alpine-perl
@@ -70,7 +70,7 @@ services:
     restart: on-failure
     networks:
       localnet:
-        ipv4_address: 172.16.88.4
+        ipv4_address: 172.16.88.5
 
 networks:
   localnet:
