@@ -20,21 +20,39 @@ wait_bitcoind_stopped() {
     done
 }
 
-if [ "$1" = "info" ]; then
+# If bitcoind fails to start due to blocks falling behind 
+# the bitcoind wallet birthday.
+# As far as we know we do not use the wallet on bitcoind (but other features)
+nuke_bitcoind_wallet() {
+    if [[ -d /media/volatile/bitcoin ]]; then
+        # Check if bitcoin directory exists
+        if [[ -d /media/volatile/bitcoin/wallets ]]; then
+            rm -fr /media/volatile/bitcoin/wallets
+        fi
+    fi
+    if [[ -d /media/important/bitcoin ]]; then
+        # Check if bitcoin directory exists in important
+        if [[ -d /media/important/bitcoin/wallets ]]; then
+            rm -fr /media/important/bitcoin/wallets
+        fi
+    fi
+}
+
+if [[ "$1" = "info" ]]; then
   # bitcoind and lnd information
   echo "bitcoind info:"
   docker exec -it compose_btcbox_1 bitcoin-cli -getinfo
   echo "lnd info:"
   docker exec -it compose_lndbox_1 lncli getinfo
-elif [ "$1" = "unlock" ]; then
+elif [[ "$1" = "unlock" ]]; then
   # unlock lnd wallet
   docker exec -it compose_lndbox_1 lncli unlock
-elif [ "$1" = "create" ]; then
+elif [[ "$1" = "create" ]]; then
   # Use create wallet script. This will either import an existing seed (or our own generated one), or use LND to create one. It will also create a password either randomly or use an existing password provided)
   /usr/local/sbin/lncm-createwallet.py
-elif [ "$1" = "start" ]; then
+elif [[ "$1" = "start" ]]; then
   service docker-compose start
-elif [ "$1" = "stop" ]; then
+elif [[ "$1" = "stop" ]]; then
   echo "Attempting clean shutdown of bitcoind and lnd nodes"
   docker exec -it compose_lndbox_1 lncli stop
   docker exec -it compose_btcbox_1 bitcoin-cli stop
@@ -42,27 +60,30 @@ elif [ "$1" = "stop" ]; then
   wait_bitcoind_stopped
   # Stop docker compose
   service docker-compose stop
-elif [ "$1" = "restart" ]; then
+elif [[ "$1" = "restart" ]]; then
   echo "Attempting clean shutdown of bitcoind and lnd nodes"
   docker exec -it compose_lndbox_1 lncli stop
   docker exec -it compose_btcbox_1 bitcoin-cli stop
   wait_lnd_stopped
   wait_bitcoind_stopped  
   service docker-compose restart
-elif [ "$1" = "btclog" ]; then
+elif [[ "$1" = "btclog" ]]; then
   # slow, robust method
   #docker logs -f compose_btcbox_1
   tail -f /media/volatile/bitcoin/debug.log
-elif [ "$1" = "lndlog" ]; then
+elif [[ "$1" = "lndlog" ]]; then
   # slow, robust method
   #docker logs -f compose_lndbox_1
   tail -f /media/volatile/lnd/logs/bitcoin/mainnet/lnd.log
-elif [ "$1" = "temp" ]; then
+elif [[ "$1" = "temp" ]]; then
   # CPU temperature
   cpu=$(cat /sys/class/thermal/thermal_zone0/temp)
   echo "CPU: $((cpu/1000))C"
+elif [[ "$1" = "resetbitcoindwallet" ]]; then
+  echo "Reset bitcoind wallet, so it force creates"
+  nuke_bitcoind_wallet
 else
   echo -e "Mana: node management\n"
   echo "Must pass one of:"
-  echo "info, unlock, create, stop, start, restart, btclog, lndlog, temp"
+  echo "info, unlock, create, stop, start, restart, btclog, lndlog, temp, resetbitcoindwallet"
 fi
