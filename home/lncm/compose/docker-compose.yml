@@ -17,7 +17,7 @@ services:
       - "28333"
     networks:
       localnet:
-        ipv4_address: 172.16.88.1
+        ipv4_address: 172.16.88.2
 
   lnd:
     image: lncm/lnd:0.5.2
