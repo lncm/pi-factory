@@ -13,7 +13,6 @@ machine-id
 /authorized_keys.automatic
 # For importing seeds
 home/lncm/seed.txt
-home/lncm/save_password
 
 alpine-rpi-*-armhf.tar.gz
 
