@@ -10,7 +10,7 @@ This dir contains initial configuration for `apk`, Alpine's package management s
 
 Contains a key needed to verify packages(?) can be verified here
 
-> **TODO:** these keys can be extracted from `alpine-rpi-3.9.0-armhf.tar.gz/apks/armhf/alpine-keys-2.1-r1.apk/etc/apk/keys/*`, so there's no point having them duplicated in our repo.
+Original files being in `alpine-rpi-3.9.0-armhf.tar.gz/apks/armhf/alpine-keys-2.1-r1.apk/etc/apk/keys/*`
 
 
 ### `protected_paths.d/ca-certificates.list`
@@ -118,6 +118,10 @@ US keyboard keymap
 
 Alpine LBU backup config
 
+Original file in `alpine-rpi-3.9.0-armhf.tar.gz/apks/armhf/alpine-conf-3.8.1-r1.apk/etc/lbu/lbu.conf`
+
+Difference being: `LBU_MEDIA=mmcblk0p1` extra in our file. 
+
 
 ## `network/interfaces`
 
@@ -166,6 +170,10 @@ The existence of these two pairs of dummy files prevents the generation of these
 
 This is a configuration file for the SSH daemon
 
+Original file in `alpine-rpi-3.9.0-armhf.tar.gz/apks/armhf/openssh-server-common-7.9_p1-r2.apk/etc/ssh/sshd_config`
+
+> **TODO:** What changed?
+
 
 ## `tor/torrc`
 
@@ -199,6 +207,16 @@ Needs more docs
 
 List of groups
 
+Original file in `alpine-rpi-3.9.0-armhf.tar.gz/apks/armhf/alpine-baselayout-3.1.0-r3.apk/etc/group`, plus appended lines:
+
+```
+avahi:x:86:avahi
+messagebus:x:101:messagebus
+docker:x:102:
+lncm:x:1001: 
+```
+
+`group-` file is nowhere to be found.
 
 ## `hostname`
 
@@ -228,11 +246,24 @@ _Message Of The Day_ displayed upon ssh session init.
 
 Users accounts and secrets
 
+Original file in `alpine-rpi-3.9.0-armhf.tar.gz/apks/armhf/alpine-baselayout-3.1.0-r3.apk/etc/passwd`, plus appended lines:
+
+```
+avahi:x:86:86:Avahi System User:/var/run/avahi-daemon:/sbin/nologin
+messagebus:x:100:101:messagebus:/dev/null:/sbin/nologin
+lncm:x:1001:1001:Linux User,,,:/home/lncm:/bin/ash
+```
+
+`passwd-` file is nowhere to be found.
 
 ## `rc.conf`
 
 OpenRC init system configuration
 Defines where to log, etc
+
+Original file from `alpine-rpi-3.9.0-armhf.tar.gz/apks/armhf/openrc-0.39.2-r3.tar.gz/etc/rc.conf`
+
+> **TODO:** what are the changes?
 
  
 ## `resolv.conf`
@@ -243,3 +274,16 @@ Default DNS server
 ## `shadow` & `shadow-`
 
 Users accounts and secrets
+
+Original file in `alpine-rpi-3.9.0-armhf.tar.gz/apks/armhf/alpine-baselayout-3.1.0-r3.apk/etc/shadow`, except:
+
+* stuff added to root, and 
+* below is appended:
+
+```
+avahi:!:17835:0:99999:7:::
+messagebus:!:17835:0:99999:7:::
+lncm:$6$tQyFDIFTxJQ9Kncz$RLR2nTlJTSEwcIRboCVdEX07.997XbvKuID2k7wFT7aC245Z82lSC9AoiceApPZlrvVzljLwlnqmdZmqPxF9J0:17836:0:99999:7:::
+```
+
+`shadow-` file is nowhere to be found.
