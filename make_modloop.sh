@@ -7,7 +7,8 @@
 # which contains modloop-rpi2, an xz compressed squashfs
 # filesystem with block size 131072 and 100% dict-size
 
-ALP=alpine-rpi-3.9.0-armhf.tar.gz
+ALP=alpine-rpi-3.8.2-armhf.tar.gz
+REL=v3.8
 FIRMWARE=https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
 
 mkdir lncm-workdir
@@ -24,7 +25,7 @@ unzip brcm-firmware.zip
 
 if ! [[ -f ${ALP} ]]; then
   echo "${ALP} not found, fetching..."
-  wget http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/armhf/${ALP}
+  wget http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
 fi
 
 mkdir alp-distro
