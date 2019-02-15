@@ -10,7 +10,7 @@ ALP=alpine-rpi-3.8.2-armhf.tar.gz
 REL=v3.8
 IMG=lncm-box-${OUTPUT_VERSION}.img
 IOT=iotwifi.tar.gz
-#FIX=modloop-rpi2.tar.gz
+FIX=modloop-rpi2.tar.gz
 CACHE=cache.tar.gz
 MNT=/mnt/lncm
 
@@ -91,10 +91,10 @@ if ! [ -f ${IOT} ]; then
   wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
 fi
 
-#if ! [ -f ${FIX} ]; then
-#  echo "${FIX} not found, fetching..."
-#  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
-#fi
+if ! [ -f ${FIX} ]; then
+ echo "${FIX} not found, fetching..."
+ wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
+fi
 
 if ! [ -f ${CACHE} ]; then
   echo "${CACHE} not found, fetching..."
