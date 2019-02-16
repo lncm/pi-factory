@@ -15,6 +15,11 @@ machine-id
 home/lncm/seed.txt
 home/lncm/save_password
 
+/defaults/*
+!/defaults/.gitignore
+/downloads/*
+!/downloads/.gitignore
+
 alpine-rpi-*-armhf.tar.gz
 
 # Don't commit LNCM variant build stuff
