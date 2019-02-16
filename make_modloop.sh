@@ -9,21 +9,27 @@
 
 ALP=alpine-rpi-3.8.2-armhf.tar.gz
 REL=v3.8
-FIRMWARE=https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
-
+FIRMWARE=brcm-firmware.zip
+FIRMWARE_URL=https://github.com/lncm/pi-factory/files/2714861/
 mkdir lncm-workdir
 cd lncm-workdir
 
-if ! [[ -f ${FIRMWARE} ]]; then
+if ! [ -f ${FIRMWARE} ]; then
   echo "Brcm firmware not found, fetching..."
   wget https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
 fi
 
-apk update && apk add squashfs-tools unzip
+if type "$apk" > /dev/null; then
+  apk update && apk add squashfs-tools unzip
+fi
+
+if type "$apt" > /dev/null; then
+  apt update && apt install squashfs-tools unzip
+fi
 
 unzip brcm-firmware.zip
 
-if ! [[ -f ${ALP} ]]; then
+if ! [ -f ${ALP} ]; then
   echo "${ALP} not found, fetching..."
   wget http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
 fi
