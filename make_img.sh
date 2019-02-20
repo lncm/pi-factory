@@ -125,8 +125,8 @@ tar -xzf ${IOT} -C ${MNT}/ --no-same-owner
 echo "Extract cache dir for docker and avahi"
 tar -xzf ${CACHE} -C ${MNT}/ --no-same-owner
 
-#echo "Patch RPi3 WiFi"
-#tar -xzf ${FIX} -C ${MNT}/boot/ --no-same-owner
+echo "Patch RPi3 WiFi"
+tar -xzf ${FIX} -C ${MNT}/boot/ --no-same-owner
 
 echo "Copy latest box.apkovl tarball"
 cp ../box.apkovl.tar.gz ${MNT}
