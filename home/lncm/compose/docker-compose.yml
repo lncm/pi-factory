@@ -58,7 +58,7 @@ services:
         ipv4_address: 172.16.88.4
 
   nginx:
-    image: nginx:1.14-alpine-perl
+    image: nginx:1.14.2-alpine
     volumes:
       - /media/important/nginx:/etc/nginx
       - /media/volatile/nginx:/var/log/nginx
