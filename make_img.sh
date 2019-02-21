@@ -10,6 +10,7 @@ ALP=alpine-rpi-3.8.2-armhf.tar.gz
 REL=v3.8
 IMG=lncm-box-${OUTPUT_VERSION}.img
 IOT=iotwifi.tar.gz
+NGINX=nginx.tar.gz
 FIX=modloop-rpi2.tar.gz
 CACHE=cache.tar.gz
 MNT=/mnt/lncm
