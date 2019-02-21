@@ -29,7 +29,7 @@ if [[ "$1" = "info" ]]; then
 elif [ "$1" = "devtools" ]; then
   apk update && \
   apk add tmux sudo git rsync htop iotop nmap nano glances
-elif [ "$1" = "update" ]; then
+elif [ "$1" = "diff" ]; then
   if command -v git 2>&1 1>/dev/null; [ "$?" -ne "0" ]; then
     apk update && \
     apk add git
@@ -41,7 +41,7 @@ elif [ "$1" = "update" ]; then
   if [ -d ~/pi-factory ]; then
     cd ~/pi-factory
     git pull
-    diff -r /etc pi-factory/etc
+    diff -r /etc ~/pi-factory/etc
   fi
 elif [ "$1" = "unlock" ]; then
   # unlock lnd wallet
