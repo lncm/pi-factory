@@ -26,6 +26,9 @@ if [[ "$1" = "info" ]]; then
   docker exec -it compose_bitcoind_1 bitcoin-cli -getinfo
   echo "lnd info:"
   docker exec -it compose_lnd_1 lncli getinfo
+elif [ "$1" = "devtools" ]; then
+  apk update && \
+  apk add tmux sudo git rsync htop iotop nmap nano glances
 elif [ "$1" = "update" ]; then
   apk update && apk add git
   git clone pi-factory
