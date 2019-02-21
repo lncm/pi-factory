@@ -101,6 +101,11 @@ if ! [ -f ${CACHE} ]; then
   wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
 fi
 
+if ! [ -f ${NGINX} ]; then
+  echo "${NGINX} not found, fetching..."
+  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${NGINX}
+fi
+
 echo "Create and mount 256MB image"
 dd if=/dev/zero of=${IMG} bs=1M count=256 && \
     DEV=$(losetup -f) && \
@@ -121,6 +126,9 @@ tar -xzf ${ALP} -C ${MNT}/ --no-same-owner
 
 echo "Extract iotwifi container"
 tar -xzf ${IOT} -C ${MNT}/ --no-same-owner
+
+echo "Extract nginx container"
+tar -xzf ${NGINX} -C ${MNT}/ --no-same-owner
 
 echo "Extract cache dir for docker and avahi"
 tar -xzf ${CACHE} -C ${MNT}/ --no-same-owner
