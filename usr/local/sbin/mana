@@ -20,6 +20,13 @@ wait_bitcoind_stopped() {
     done
 }
 
+install_git() {
+  if command -v git 2>&1 1>/dev/null; [ "$?" -ne "0" ]; then
+    apk update && \
+    apk add git
+  fi
+}
+
 if [[ "$1" = "info" ]]; then
   # bitcoind and lnd information
   echo "bitcoind info:"
@@ -29,11 +36,8 @@ if [[ "$1" = "info" ]]; then
 elif [ "$1" = "devtools" ]; then
   apk update && \
   apk add tmux sudo git rsync htop iotop nmap nano glances
-elif [ "$1" = "diff" ]; then
-  if command -v git 2>&1 1>/dev/null; [ "$?" -ne "0" ]; then
-    apk update && \
-    apk add git
-  fi
+elif [ "$1" = "source" ]; then
+  install_git
   if [ ! -d ~/pi-factory ]; then
     cd ~
     git clone https://github.com/lncm/pi-factory.git
@@ -41,9 +45,20 @@ elif [ "$1" = "diff" ]; then
   if [ -d ~/pi-factory ]; then
     cd ~/pi-factory
     git pull
-    diff -r /etc ~/pi-factory/etc
-    diff -r /usr ~/pi-factory/usr
-    diff -r /home ~/pi-factory/home
+  fi
+elif [ "$1" = "diff" ]; then
+  install_git
+  if [ ! -d ~/pi-factory ]; then
+    cd ~
+    git clone https://github.com/lncm/pi-factory.git
+  fi
+  if [ -d ~/pi-factory ]; then
+    cd ~/pi-factory
+    git pull
+    echo "Writing .diff logs to $HOME"
+    diff -r /etc ~/pi-factory/etc | tee ~/etc.diff
+    diff -r /usr ~/pi-factory/usr | tee ~/usr.diff
+    diff -r /home ~/pi-factory/home | tee ~/home.diff
   fi
 elif [ "$1" = "unlock" ]; then
   # unlock lnd wallet
