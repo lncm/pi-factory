@@ -142,6 +142,7 @@ setup_volatile() {
       echo '/media/volatile/volatile/swap none swap sw,pri=100 0 0' >> /etc/fstab
     else
       echo 'Create swap on "volatile" usb device'
+      mkdir /media/volatile/volatile
       dd if=/dev/zero of=/media/volatile/volatile/swap bs=1M count=1024 && \
       mkswap /media/volatile/volatile/swap && \
       # swapon with high priority

@@ -32,7 +32,7 @@ import random, string
 url = 'https://localhost:8181/v1/genseed'
 # Initialize wallet
 url2 = 'https://localhost:8181/v1/initwallet'
-cert_path = '/media/important/lnd/tls.cert'
+cert_path = '/media/important/important/lnd/tls.cert'
 seed_filename  = '/home/lncm/seed.txt' 
 
 # save password control file (Add this file if we want to save passwords)
@@ -53,7 +53,7 @@ def main():
     password_str=randompass(stringLength=15)
     temp_password_file = open(temp_password_file_path, "w")
   # Check if there is an existing file, if not generate a random password
-  if not os.path.exists("/media/important/lnd/sesame.txt"):
+  if not os.path.exists("/media/important/important/lnd/sesame.txt"):
     # sesame file doesnt exist
     password_str=randompass(stringLength=15)
     if not os.path.exists(save_password_control_file):
@@ -63,12 +63,12 @@ def main():
       temp_password_file.close()
     else:
       # Use sesame.txt if password_control_file exists
-      password_file = open("/media/important/lnd/sesame.txt","w")
+      password_file = open("/media/important/important/lnd/sesame.txt","w")
       password_file.write(password_str)
       password_file.close()
   else:
     # Get password from file if sesame file already exists
-    password_str = open('/media/important/lnd/sesame.txt', 'r').read().rstrip()
+    password_str = open('/media/important/important/lnd/sesame.txt', 'r').read().rstrip()
   
   # Convert password to byte encoded
   password_bytes = str(password_str).encode('utf-8')
@@ -119,17 +119,17 @@ Main entrypoint function
 
 Testing creation notes:
 rm /home/lncm/seed.txt
-rm /media/important/lnd/sesame.txt
+rm /media/important/important/lnd/sesame.txt
 
-docker stop compose_lndbox_1 ; rm -fr /media/important/lnd/data/chain/ ; docker start compose_lndbox_1
+docker stop compose_lndbox_1 ; rm -fr /media/important/important/lnd/data/chain/ ; docker start compose_lndbox_1
 '''
 
 if __name__ == '__main__':
-  if os.path.exists("/media/important/lnd"):
-    if not os.path.exists("/media/important/lnd/data/chain"):
+  if os.path.exists("/media/important/important/lnd"):
+    if not os.path.exists("/media/important/important/lnd/data/chain"):
       main()
     else:
-      print('Wallet already exists! Please delete /media/important/lnd/data/chain and then restart LND')
+      print('Wallet already exists! Please delete /media/important/important/lnd/data/chain and then restart LND')
   else:
     print('LND directory does not exist!')
 

@@ -26,6 +26,11 @@ if [[ "$1" = "info" ]]; then
   docker exec -it compose_bitcoind_1 bitcoin-cli -getinfo
   echo "lnd info:"
   docker exec -it compose_lnd_1 lncli getinfo
+elif [ "$1" = "update" ]; then
+  apk update && apk add git
+  git clone pi-factory
+  cd pi-factory
+
 elif [ "$1" = "unlock" ]; then
   # unlock lnd wallet
   docker exec -it compose_lnd_1 lncli unlock
@@ -49,14 +54,16 @@ elif [[ "$1" = "restart" ]]; then
   wait_lnd_stopped
   wait_bitcoind_stopped
   service docker-compose restart
+elif [[ "$1" = "btclog -s" ]]; then
+  # slow, robust method
+  docker logs -f compose_bitcoind_1
 elif [[ "$1" = "btclog" ]]; then
+  tail -f /media/volatile/volatile/bitcoin/debug.log
+elif [[ "$1" = "lndlog -s" ]]; then
   # slow, robust method
-  #docker logs -f compose_bitcoind_1
-  tail -f /media/volatile/bitcoin/debug.log
+  docker logs -f compose_lnd_1
 elif [[ "$1" = "lndlog" ]]; then
-  # slow, robust method
-  #docker logs -f compose_lnd_1
-  tail -f /media/volatile/lnd/logs/bitcoin/mainnet/lnd.log
+  tail -f /media/volatile/volatile/lnd/logs/bitcoin/mainnet/lnd.log
 elif [[ "$1" = "temp" ]]; then
   # CPU temperature
   cpu=$(cat /sys/class/thermal/thermal_zone0/temp)
