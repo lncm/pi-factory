@@ -198,6 +198,7 @@ setup_important_bitcoind() {
     mkdir /media/important/important/bitcoin
     mkdir /media/important/important/bitcoin/wallets
     /bin/sed -i "s/prune=1500/prune=${PRUNE_SIZE}/g;" /home/lncm/bitcoin/bitcoin.conf
+    cp /home/lncm/bitcoin/bitcoin.conf /media/important/important/bitcoin/
   fi
 }
 
@@ -209,6 +210,7 @@ setup_important_lnd() {
     echo "No lnd important dir found, creating"
     mkdir /media/important/important/lnd
     mkdir /media/important/important/lnd/data
+    cp /home/lncm/lnd/lnd.conf /media/important/important/lnd/
   fi
 }
 
@@ -230,6 +232,7 @@ setup_important_nginx() {
     echo "No nginx important dir found, creating"
     mkdir /media/important/important/nginx
     mkdir /media/important/important/nginx/conf.d
+    cp -r /home/lncm/nginx /media/important/important/nginx/
   fi
 }
 setup_volatile_nginx() {
