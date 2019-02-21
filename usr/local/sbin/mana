@@ -54,12 +54,12 @@ elif [[ "$1" = "restart" ]]; then
   wait_lnd_stopped
   wait_bitcoind_stopped
   service docker-compose restart
-elif [[ "$1" = "btclog -s" ]]; then
+elif [[ "$1" = "btclogs" ]]; then
   # slow, robust method
   docker logs -f compose_bitcoind_1
 elif [[ "$1" = "btclog" ]]; then
   tail -f /media/volatile/volatile/bitcoin/debug.log
-elif [[ "$1" = "lndlog -s" ]]; then
+elif [[ "$1" = "lndlogs" ]]; then
   # slow, robust method
   docker logs -f compose_lnd_1
 elif [[ "$1" = "lndlog" ]]; then
