@@ -19,12 +19,14 @@ fi
 
 cd lncm-workdir
 
-save_container iotwifi cjimti/iotwifi
-save_container nginx nginx
-
 if [ ! -d output ]; then
   mkdir output
 fi
 
-tar cvzf output/iotwifi.tar.gz iotwifi.tar.gz
-tar cvzf output/nginx.tar.gz nginx.tar.gz
+save_container output/iotwifi cjimti/iotwifi
+save_container output/nginx nginx
+
+cd output
+
+tar cvzf ../iotwifi.tar.gz iotwifi.tar.gz
+tar cvzf ../nginx.tar.gz nginx.tar.gz
