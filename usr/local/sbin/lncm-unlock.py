@@ -2,8 +2,8 @@
 
 import base64, codecs, json, requests
 url = 'https://localhost:8181/v1/unlockwallet'
-cert_path = '/media/important/lnd/tls.cert'
-password_str = open('/media/important/lnd/sesame.txt', 'r').read().rstrip()
+cert_path = '/media/important/important/lnd/tls.cert'
+password_str = open('/media/important/important/lnd/sesame.txt', 'r').read().rstrip()
 password_bytes = str(password_str).encode('utf-8')
 data = {
         'wallet_password': base64.b64encode(password_bytes).decode(),
