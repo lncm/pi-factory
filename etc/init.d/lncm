@@ -24,6 +24,21 @@ start() {
 
     INSTALLED=1
 
+    echo "Set timezone to UTC"
+    echo "UTC" >> /etc/TZ
+    mkdir /etc/zoneinfo
+    cp /usr/share/zoneinfo/UTC /etc/zoneinfo/
+
+    echo "Set keymap to US"
+    /sbin/setup-keymap us us
+
+    echo "Set hostname to box"
+    /sbin/setup-hostname box
+    echo "box" > /etc/hostname
+
+    echo "Create folder for docker"
+    mkdir /etc/docker
+
     echo "Add partitioning and filesystem tools"
     /sbin/setup-apkcache /media/mmcblk0p1/cache && \
     /sbin/apk add parted e2fsprogs
