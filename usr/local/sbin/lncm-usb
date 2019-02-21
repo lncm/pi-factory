@@ -137,15 +137,15 @@ setup_volatile() {
   if [ -d /media/volatile/lost+found ]; then
     echo "Add volatile usb to fstab"
     echo "UUID=${MEDIUM_UUID} /media/volatile ext4 defaults,noatime 0 0" >> /etc/fstab
-    if [ -f /media/volatile/swap ]; then
+    if [ -f /media/volatile/volatile/swap ]; then
       echo "Swap exists, adding to fstab"
-      echo '/media/volatile/swap none swap sw,pri=100 0 0' >> /etc/fstab
+      echo '/media/volatile/volatile/swap none swap sw,pri=100 0 0' >> /etc/fstab
     else
       echo 'Create swap on "volatile" usb device'
-      dd if=/dev/zero of=/media/volatile/swap bs=1M count=1024 && \
-      mkswap /media/volatile/swap && \
+      dd if=/dev/zero of=/media/volatile/volatile/swap bs=1M count=1024 && \
+      mkswap /media/volatile/volatile/swap && \
       # swapon with high priority
-      swapon /media/volatile/swap -p 100 && \
+      swapon /media/volatile/volatile/swap -p 100 && \
       echo '/media/volatile/swap none swap sw,pri=100 0 0' >> /etc/fstab
     fi
   else
@@ -162,78 +162,81 @@ setup_usb_devs() {
 
 setup_archive_bitcoind() {
   echo "Detecting existing bitcoin node data"
-  if [ -d /media/archive/bitcoin ]; then
+  if [ -d /media/archive/archive/bitcoin ]; then
     echo "Existing bitcoin archive dir found"
     # bitcoin - archive
   else
     echo "No bitcoin archive found, creating"
     # does not exist, create dir
-    mkdir /media/archive/bitcoin
-    mkdir /media/archive/bitcoin/blocks
-    mkdir /media/archive/bitcoin/chainstate
+    mkdir /media/archive/archive
+    mkdir /media/archive/archive/bitcoin
+    mkdir /media/archive/archive/bitcoin/blocks
+    mkdir /media/archive/archive/bitcoin/chainstate
   fi
 }
 
 setup_volatile_bitcoind() {
-  if [ -d /media/volatile/bitcoin ]; then
+  if [ -d /media/volatile/volatile/bitcoin ]; then
     echo "Existing bitcoin volatile dir found"
   else
     echo "No bitcoin volatile dir found, creating"
-    mkdir /media/volatile/bitcoin
+    mkdir /media/volatile/volatile
+    mkdir /media/volatile/volatile/bitcoin
   fi
 }
 
 setup_important_bitcoind() {
-  if [ -d /media/important/bitcoin ]; then
+  if [ -d /media/important/important/bitcoin ]; then
     echo "Existing bitcoin important dir found"
   else
     echo "No bitcoin important dir, creating"
     # Returns 1/2 of partition size in MB
     PRUNE_SIZE=$((LARGEST_SIZE/1000000/2))
     echo "Using ${PRUNE_SIZE}MB as prune target"
-    mkdir /media/important/bitcoin
-    mkdir /media/important/bitcoin/wallets
+    mkdir /media/important/important
+    mkdir /media/important/important/bitcoin
+    mkdir /media/important/important/bitcoin/wallets
     /bin/sed -i "s/prune=1500/prune=${PRUNE_SIZE}/g;" /home/lncm/bitcoin/bitcoin.conf
   fi
 }
 
 setup_important_lnd() {
   echo "Setup lnd important directory"
-  if [ -d /media/important/lnd ]; then
+  if [ -d /media/important/important/lnd ]; then
     echo "Existing lnd important dir found"
   else
     echo "No lnd important dir found, creating"
-    mkdir /media/important/lnd
-    mkdir /media/important/lnd/data
+    mkdir /media/important/important/lnd
+    mkdir /media/important/important/lnd/data
   fi
 }
 
 setup_volatile_lnd() {
-  if [ -d /media/volatile/lnd ]; then
+  if [ -d /media/volatile/volatile/lnd ]; then
     echo "Existing lnd volatile dir found"
   else
     echo "No lnd volatile dir found, creating"
-    mkdir /media/volatile/lnd
-    mkdir /media/volatile/lnd/logs
+    mkdir /media/volatile/volatile/lnd
+    mkdir /media/volatile/volatile/lnd/logs
   fi
 }
 
 setup_important_nginx() {
   echo "Setup nginx important dir"
-  if [ -d /media/important/nginx ]; then
+  if [ -d /media/important/important/nginx ]; then
     echo "Existing nginx dir found"
   else
     echo "No nginx important dir found, creating"
-    mkdir /media/important/nginx
-    mkdir /media/important/nginx/conf.d
+    mkdir /media/important/important/nginx
+    mkdir /media/important/important/nginx/conf.d
   fi
 }
 setup_volatile_nginx() {
-  if [ -d /media/volatile/nginx ]; then
+  if [ -d /media/volatile/volatile/nginx ]; then
     echo "Existing nginx directory found"
   else
     echo "No volatile nginx directory, creating"
-    mkdir /media/volatile/nginx
+    mkdir /media/volatile/volatile/nginx
   fi
 }
 
