@@ -46,24 +46,24 @@ start() {
     curl "https://raw.githubusercontent.com/bitcoin/bitcoin/master/share/rpcauth/rpcauth.py" 2>/dev/null 1>rpcauth.py
     if [ -f ./rpcauth.py ]; then
       chmod 700 rpcauth.py
-      ./rpcauth.py lncm | tee /media/important/generated.txt | head -2 | tail -1 > /media/important/rpcauth.txt
-      cat /media/important/generated.txt | tail -1 > /media/important/rpcpass.txt
-      rm rpcauth.py /media/important/generated.txt
+      ./rpcauth.py lncm | tee /media/important/important/generated.txt | head -2 | tail -1 > /media/important/important/rpcauth.txt
+      cat /media/important/important/generated.txt | tail -1 > /media/important/important/rpcpass.txt
+      rm rpcauth.py /media/important/important/generated.txt
     else
       echo "rpcauth not generated - could not reach server"
       exit 1
     fi
 
-    if [ $(grep -c rpcauth /media/important/rpcauth.txt ) == 0 ]; then
+    if [ $(grep -c rpcauth /media/important/important/rpcauth.txt ) == 0 ]; then
       echo "Can't generate credentials - exiting!"
       exit 1
     fi
 
     # Apply RPC auth
-    if [ -f /media/important/rpcauth.txt ]; then
+    if [ -f /media/important/important/rpcauth.txt ]; then
       # Replace strings with what was generated
-      RPCAUTHLINE=`cat /media/important/rpcauth.txt`
-      GENERATEDPW=`cat /media/important/rpcpass.txt`
+      RPCAUTHLINE=`cat /media/important/important/rpcauth.txt`
+      GENERATEDPW=`cat /media/important/important/rpcpass.txt`
       /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf
       /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/litecoin/litecoin.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/lnd.conf
@@ -108,45 +108,45 @@ start() {
     fi
 
     echo "Checking for existing configs"
-    if [ -f /media/important/bitcoin/bitcoin.conf ]; then
+    if [ -f /media/important/important/bitcoin/bitcoin.conf ]; then
       echo "bitcoin.conf exists, making backup and replacing"
-      /bin/cp /media/important/bitcoin/bitcoin.conf /media/important/bitcoin/bitcoin.conf.backup &&
-      /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/important/bitcoin/bitcoin.conf
+      /bin/cp /media/important/important/bitcoin/bitcoin.conf /media/important/important/bitcoin/bitcoin.conf.backup &&
+      /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/important/important/bitcoin/bitcoin.conf
     else
       # If not exist copy bitcoin.conf from lncm home directory
-      /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/important/bitcoin/bitcoin.conf
+      /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/important/important/bitcoin/bitcoin.conf
     fi
 
-    if [ -f /media/important/lnd/lnd.conf ]; then
+    if [ -f /media/important/important/lnd/lnd.conf ]; then
       echo "lnd.conf exists, making backup and replacing"
-      /bin/cp /media/important/lnd/lnd.conf /media/important/lnd/lnd.conf.backup &&
-      /bin/cp -f /home/lncm/lnd/lnd.conf /media/important/lnd/lnd.conf
+      /bin/cp /media/important/important/lnd/lnd.conf /media/important/important/lnd/lnd.conf.backup &&
+      /bin/cp -f /home/lncm/lnd/lnd.conf /media/important/important/lnd/lnd.conf
     else
       # If not exist copy lnd.conf from home directory
-      /bin/cp -f /home/lncm/lnd/lnd.conf /media/important/lnd/lnd.conf
+      /bin/cp -f /home/lncm/lnd/lnd.conf /media/important/important/lnd/lnd.conf
     fi
 
     # nginx configs
-    if [ -f /media/important/nginx/nginx.conf ]; then
+    if [ -f /media/important/important/nginx/nginx.conf ]; then
         echo "nginx.conf exists, making backup and replacing"
-        /bin/cp /media/important/nginx/nginx.conf /media/important/nginx/nginx.conf.backup &&
-        /bin/cp -f /home/lncm/nginx/nginx.conf /media/important/nginx/nginx.conf
+        /bin/cp /media/important/important/nginx/nginx.conf /media/important/important/nginx/nginx.conf.backup &&
+        /bin/cp -f /home/lncm/nginx/nginx.conf /media/important/important/nginx/nginx.conf
     else
-        /bin/cp -f /home/lncm/nginx/nginx.conf /media/important/nginx/nginx.conf
+        /bin/cp -f /home/lncm/nginx/nginx.conf /media/important/important/nginx/nginx.conf
     fi
-    if [ -f /media/important/nginx/conf.d/default.conf ]; then
+    if [ -f /media/important/important/nginx/conf.d/default.conf ]; then
         echo "default.conf exists, making backup and replacing"
-        /bin/cp /media/important/nginx/conf.d/default.conf /media/important/nginx/conf.d/default.conf.backup &&
-        /bin/cp -f /home/lncm/nginx/conf.d/default.conf /media/important/nginx/conf.d/default.conf
+        /bin/cp /media/important/important/nginx/conf.d/default.conf /media/important/important/nginx/conf.d/default.conf.backup &&
+        /bin/cp -f /home/lncm/nginx/conf.d/default.conf /media/important/important/nginx/conf.d/default.conf
     else
-        /bin/cp -f /home/lncm/nginx/conf.d/default.conf /media/important/nginx/conf.d/default.conf
+        /bin/cp -f /home/lncm/nginx/conf.d/default.conf /media/important/important/nginx/conf.d/default.conf
     fi
-    if [ -f /media/important/nginx/mime.types ]; then
+    if [ -f /media/important/important/nginx/mime.types ]; then
         echo "mime.types exists, making backup and replacing"
-        /bin/cp /media/important/nginx/mime.types /media/important/nginx/mime.types.backup &&
-        /bin/cp -f /home/lncm/nginx/mime.types /media/important/nginx/mime.types
+        /bin/cp /media/important/important/nginx/mime.types /media/important/important/nginx/mime.types.backup &&
+        /bin/cp -f /home/lncm/nginx/mime.types /media/important/important/nginx/mime.types
     else
-        /bin/cp -f /home/lncm/nginx/mime.types /media/important/nginx/mime.types
+        /bin/cp -f /home/lncm/nginx/mime.types /media/important/important/nginx/mime.types
     fi
 
     echo "Download index.html"
