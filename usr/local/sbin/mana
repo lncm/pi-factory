@@ -42,6 +42,8 @@ elif [ "$1" = "diff" ]; then
     cd ~/pi-factory
     git pull
     diff -r /etc ~/pi-factory/etc
+    diff -r /usr ~/pi-factory/usr
+    diff -r /home ~/pi-factory/home
   fi
 elif [ "$1" = "unlock" ]; then
   # unlock lnd wallet
