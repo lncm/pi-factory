@@ -30,10 +30,19 @@ elif [ "$1" = "devtools" ]; then
   apk update && \
   apk add tmux sudo git rsync htop iotop nmap nano glances
 elif [ "$1" = "update" ]; then
-  apk update && apk add git
-  git clone pi-factory
-  cd pi-factory
-
+  if command -v git 2>&1 1>/dev/null; [ "$?" -ne "0" ]; then
+    apk update && \
+    apk add git
+  fi
+  if [ ! -d ~/pi-factory ]; then
+    cd ~
+    git clone https://github.com/lncm/pi-factory.git
+  fi
+  if [ -d ~/pi-factory ]; then
+    cd ~/pi-factory
+    git pull
+    diff -r /etc pi-factory/etc
+  fi
 elif [ "$1" = "unlock" ]; then
   # unlock lnd wallet
   docker exec -it compose_lnd_1 lncli unlock
