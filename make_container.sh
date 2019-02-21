@@ -7,7 +7,7 @@ get_id() {
 }
 
 save_container() {
-  docker export -o ${1}.tar.gz ${2}
+  docker save -o ${1}.tar.gz ${2}
 }
 
 export iotwifi_ID=`get_id iotwifi`
