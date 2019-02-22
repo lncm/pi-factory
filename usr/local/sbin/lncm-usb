@@ -54,33 +54,36 @@ create_mount_points() {
   mkdir /media/archive
 }
 
+mnt_ext4() {
+  mount -t ext4 /dev/"${1}" "${2}"
+}
+
+mnt_any() {
+  mount /dev/"${1}" "${2}"
+}
+
+
 mount_usb_devs() {
   echo "Mount ext4 usb storage devices"
-  mount -t ext4 /dev/${LARGEST} /media/archive
-  if [ $? -ne 0 ]; then
+  if [ "$(mnt_ext4 "${LARGEST}" /media/archive)" -ne 0 ]; then
     echo "Warning: /dev/${LARGEST} is not mountable as ext4"
-    mount /dev/${LARGEST} /media/archive
-    if [ $? -ne 0 ]; then
+    if [ "$(mnt_any "${LARGEST}" /media/archive)" -ne 0 ]; then
       echo "Error: /dev/${LARGEST} is not mountable with any supported format"
       echo "Cannot proceed without all USB storage devices"
       exit 1
     fi
   fi
-  mount -t ext4 /dev/${MEDIUM} /media/volatile
-  if [ $? -ne 0 ]; then
+  if [ "$(mnt_ext4 "${MEDIUM}" /media/volatile)" -ne 0 ]; then
     echo "Warning: /dev/${MEDIUM} is not mountable as ext4"
-    mount /dev/${MEDIUM} /media/volatile
-    if [ $? -ne 0 ]; then
+    if [ "$(mnt_any "${MEDIUM}" /media/volatile)" -ne 0 ]; then
       echo "Error: /dev/${MEDIUM} is not mountable with any supported format"
       echo "Cannot proceed without all USB storage devices"
       exit 1
     fi
   fi
-  mount -t ext4 /dev/${SMALLEST} /media/important
-  if [ $? -ne 0 ]; then
+  if [ "$(mnt_ext4 "${SMALLEST}" /media/important)" -ne 0 ]; then
     echo "Warning: /dev/${SMALLEST} is not mountable as ext4"
-    mount /dev/${SMALLEST} /media/important
-    if [ $? -ne 0 ]; then
+    if [ "$(mnt_any "${SMALLEST}" /media/important)" -ne 0 ]; then
       echo "Error: /dev/${SMALLEST} is not mountable with any supported format"
       echo "Cannot proceed without all USB storage devices"
       exit 1
@@ -92,24 +95,24 @@ check_to_destroy() {
   echo "Check devices for destruction flag"
   if [ -f /media/archive/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]; then
     echo "Going to destroy all data on /dev/${LARGEST} in 3 seconds..."
-    umount /dev/${LARGEST} && \
+    umount /dev/"${LARGEST}" && \
     sleep 3 && \
-    mkfs.ext4 -F /dev/${LARGEST} && \
-    mount -t ext4 /dev/${LARGEST} /media/archive
+    mkfs.ext4 -F /dev/"${LARGEST}" && \
+    mount -t ext4 /dev/"${LARGEST}" /media/archive
   fi
   if [ -f /media/volatile/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]; then
     echo "Going to destroy all data on /dev/${MEDIUM} in 3 seconds..."
-    umount /dev/${MEDIUM} && \
+    umount /dev/"${MEDIUM}" && \
     sleep 3 && \
-    mkfs.ext4 -F /dev/${MEDIUM} && \
-    mount -t ext4 /dev/${MEDIUM} /media/volatile
+    mkfs.ext4 -F /dev/"${MEDIUM}" && \
+    mount -t ext4 /dev/"${MEDIUM}" /media/volatile
   fi
   if [ -f /media/important/DESTROY_ALL_DATA_ON_THIS_DEVICE.txt ]; then
     echo "Going to destroy all data on /dev/${SMALLEST} in 3 seconds..."
-    umount /dev/${SMALLEST} && \
+    umount /dev/"${SMALLEST}" && \
     sleep 3 && \
-    mkfs.ext4 -F /dev/${SMALLEST} && \
-    mount -t ext4 /dev/${SMALLEST} /media/important
+    mkfs.ext4 -F /dev/"${SMALLEST}" && \
+    mount -t ext4 /dev/"${SMALLEST}" /media/important
   fi
 }
 
