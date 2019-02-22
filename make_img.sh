@@ -20,22 +20,22 @@ if [ "$(id -u)" -ne "0" ]; then
     exit 1
 fi
 
-has_apk=$(command -v apk 2>&1 1>/dev/null;)
-has_apt=$(command -v apk 2>&1 1>/dev/null;)
-has_parted=$(command -v parted 2>&1 1>/dev/null;)
+cmd_exists() {
+  $(command -v ${1} 2>&1 1>/dev/null;)
+  echo $?
+}
 
-
-if  [ "$has_apk" -eq "0" ]; then
+if  [ "$(cmd_exists apk)" -eq "0" ]; then
   echo "Found Alpine-based system, installing dependencies"
   apk add parted zip unzip
 fi
 
-if [ "$has_apt" -eq "0" ]; then
+if [ "$(cmd_exists apt)" -eq "0" ]; then
   echo "Found Debian-based system, installing dependencies"
   apt install -y parted zip unzip
 fi
 
-if [ "$has_parted" -eq "0" ]; then
+if [ "$(cmd_exists parted)" -eq "0" ]; then
   echo "'parted' package needs to be installed. If you're on a Debian-based system, you can install it with:"
   echo "	sudo apt install -y parted"
   exit 1

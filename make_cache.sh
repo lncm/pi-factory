@@ -11,6 +11,16 @@ NORMAL_LOCATION=/var/cache/apk # default of installed boxes
 WORKDIR=/home/lncm/pi-factory/lncm-workdir
 OUTPUT=cache.tar.gz
 
+cmd_exists() {
+  $(command -v ${1} 2>&1 1>/dev/null;)
+  echo $?
+}
+
+if  [ ! "$(cmd_exists apk)" -eq "0" ]; then
+  echo "Not an Alpine-based system, aborting"
+  exit 1
+fi
+
 mkdir -p ${WORKDIR}
 
 cd ${WORKDIR} || exit

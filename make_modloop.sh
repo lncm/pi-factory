@@ -20,14 +20,16 @@ if [ ! -f ${FIRMWARE} ]; then
   wget $FIRMWARE_URL/$FIRMWARE
 fi
 
-has_apk=$(command -v apk 2>&1 1>/dev/null;)
-has_apt=$(command -v apt 2>&1 1>/dev/null;)
+cmd_exists() {
+  $(command -v ${1} 2>&1 1>/dev/null;)
+  echo $?
+}
 
-if [ $has_apk -eq "0" ]; then
+if [ "$(cmd_exists apk)" -eq "0" ]; then
   apk update && apk add squashfs-tools unzip
 fi
 
-if [ $has_apt -eq "0" ]; then
+if [ "$(cmd_exists apt)" -eq "0" ]; then
   apt update && apt install squashfs-tools unzip
 fi
 

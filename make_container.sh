@@ -6,6 +6,16 @@ get_id() {
   docker ps -aqf "name=${1}"
 }
 
+cmd_exists() {
+  $(command -v ${1} 2>&1 1>/dev/null;)
+  echo $?
+}
+
+if  [ ! "$(cmd_exists docker)" -eq "0" ]; then
+  echo "Docker not found, aborting"
+  exit 1
+fi
+
 iotwifi_ID=$(get_id iotwifi)
 nginx_ID=$(get_id nginx)
 
