@@ -168,10 +168,8 @@ setup_archive_bitcoind() {
   echo "Detecting existing bitcoin node data"
   if [ -d /media/archive/archive/bitcoin ]; then
     echo "Existing bitcoin archive dir found"
-    # bitcoin - archive
   else
     echo "No bitcoin archive found, creating"
-    # does not exist, create dir
     mkdir /media/archive/archive
     mkdir /media/archive/archive/bitcoin
     mkdir /media/archive/archive/bitcoin/blocks
@@ -233,11 +231,11 @@ setup_important_nginx() {
     echo "Existing nginx dir found"
   else
     echo "No nginx important dir found, creating"
-    mkdir /media/important/important/nginx
-    mkdir /media/important/important/nginx/conf.d
-    cp -r /home/lncm/nginx /media/important/important/nginx/
+    mkdir -p /media/important/important/nginx
+    cp -rv /home/lncm/nginx/ /media/important/important/nginx/
   fi
 }
+
 setup_volatile_nginx() {
   if [ -d /media/volatile/volatile/nginx ]; then
     echo "Existing nginx directory found"
