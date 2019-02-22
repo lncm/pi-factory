@@ -8,21 +8,20 @@
 WORLD=/etc/apk/world
 #LOCATION=/media/mmcblk0p1/cache # initial cache location
 NORMAL_LOCATION=/var/cache/apk # default of installed boxes
-LOCATION=/home/lncm/pi-factory/lncm-workdir/cache
+WORKDIR=/home/lncm/pi-factory/lncm-workdir
 OUTPUT=cache.tar.gz
 
-if [ ! -d lncm-workdir ]; then
-  mkdir lncm-workdir
-fi
+mkdir -p ${WORKDIR}
 
-cd lncm-workdir || exit
+cd ${WORKDIR} || exit
 
 echo "Cleaning up..."
+
 echo "Remove cache dir"
-rm -rfv cache
+rm -rfv ${WORKDIR}/cache
 
 echo "Remove cache tarball"
-rm -v cache.tar.gz
+rm -v ${WORKDIR}/cache.tar.gz
 
 echo "Making backup of ${WORLD}"
 cp -v ${WORLD} ${WORLD}.backup
@@ -36,12 +35,10 @@ echo -e "openssh" >> ${WORLD}
 echo -e "wireless-tools" >> ${WORLD}
 echo -e "wpa_supplicant" >> ${WORLD}
 
-if [ ! -d ${LOCATION} ]; then
-  mkdir ${LOCATION}
-fi
+mkdir -p ${WORKDIR}/cache
 
-echo "Setting apk cache to ${LOCATION}"
-setup-apkcache ${LOCATION}
+echo "Setting apk cache to ${WORKDIR}/cache"
+setup-apkcache ${WORKDIR}/cache
 
 echo "Syncing cache"
 apk update && \
@@ -55,7 +52,7 @@ export COPYFILE_DISABLE=true
 
 echo "Bundling cache"
 # Folder to be compressed must be called cache
-tar cvzf ${OUTPUT} --exclude '.DS_Store' cache
+tar cvzf ${WORKDIR}/${OUTPUT} --exclude '.DS_Store' cache
 
 echo "Restoring previous ${WORLD}"
 cp ${WORLD}.backup ${WORLD}
