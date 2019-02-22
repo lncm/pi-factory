@@ -55,6 +55,12 @@ elif [ "$1" = "source" ]; then
     cd /home/lncm/pi-factory || exit
     git pull
   fi
+elif [ "$1" = "upgrade" ]; then
+  mana source
+  cd /home/lncm/pi-factory
+  git checkout 3.8.2-backports
+  git pull
+  sh make_upgrade.sh
 elif [ "$1" = "diff" ]; then
   install_git
   if [ ! -d /home/lncm/pi-factory ]; then
