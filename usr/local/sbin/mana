@@ -22,10 +22,15 @@ wait_bitcoind_stopped() {
     done
 }
 
-git_installed="$( { command -v git 1>/dev/null; } 2>&1 )"
+cmd_exists() {
+  $(command -v ${1} 2>&1 1>/dev/null;)
+  ret=$?
+  echo $ret
+  return $ret
+}
 
 install_git() {
-  if [ "$git_installed" -ne "0" ]; then
+  if [ "$(cmd_exists git)" -ne "0" ]; then
     apk update && \
     apk add git
   fi
