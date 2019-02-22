@@ -1,15 +1,17 @@
 #!/bin/sh
 
-# Node management tool
+# mana: node management tool
+
 wait_lnd_stopped() {
     WAITLNDSTOPPED=1
     while [ "$(docker ps | grep -c compose_lnd_1)" = 1 ] && [ $WAITLNDSTOPPED -lt 10 ];
     do
         echo "Waiting for LND to terminate..."
-       WAITLNDSTOPPED=$((WAITLNDSTOPPED+1))
+        WAITLNDSTOPPED=$((WAITLNDSTOPPED+1))
         sleep 2
     done
 }
+
 wait_bitcoind_stopped() {
     WAITBTCSTOPPED=1
     while [ "$(docker ps | grep -c compose_bitcoind_1)" = 1 ] && [ $WAITBTCSTOPPED -lt 10 ];
@@ -40,23 +42,23 @@ elif [ "$1" = "devtools" ]; then
   apk add tmux sudo git rsync htop iotop nmap nano glances
 elif [ "$1" = "source" ]; then
   install_git
-  if [ ! -d ~/pi-factory ]; then
-    cd ~ || exit
+  if [ ! -d /home/lncm/pi-factory ]; then
+    cd /home/lncm || exit
     git clone https://github.com/lncm/pi-factory.git
   fi
-  if [ -d ~/pi-factory ]; then
-    cd ~/pi-factory || exit
+  if [ -d /home/lncm/pi-factory ]; then
+    cd /home/lncm/pi-factory || exit
     git pull
   fi
 elif [ "$1" = "diff" ]; then
   install_git
-  if [ ! -d ~/pi-factory ]; then
-    cd ~ || exit
+  if [ ! -d /home/lncm/pi-factory ]; then
+    cd /home/lncm || exit
     git clone https://github.com/lncm/pi-factory.git
   fi
-  if [ -d ~/pi-factory ]; then
-    cd ~/pi-factory || exit
-    git pull
+  if [ -d /home/lncm/pi-factory ]; then
+    cd /home/lncm/pi-factory || exit
+    git pull || exit
     echo "Writing .diff logs to $HOME"
     diff -r /etc ~/pi-factory/etc | tee ~/etc.diff
     diff -r /usr ~/pi-factory/usr | tee ~/usr.diff
