@@ -34,6 +34,16 @@ start() {
     fi
   }
 
+  mnt_rw() {
+    echo "Re-mount FAT partition read/write"
+    /bin/mount -o remount,rw /dev/${SD}p1 /media/${SD}p1 || exit 1
+  }
+
+  mnt_ro() {
+    echo "Re-mount FAT partition read-only"
+    /bin/mount -o remount,ro /dev/${SD}p1 /media/${SD}p1 || exit 1
+  }
+
   install_tools() {
     echo "Add partitioning and filesystem tools"
     /sbin/setup-apkcache /media/mmcblk0p1/cache && \
@@ -128,16 +138,6 @@ start() {
     /bin/echo "$VER" > /media/${SD}p1/installed
     /bin/echo "Copying rc.log to persistent store for debugging"
     /bin/cp /var/log/rc.log /media/${SD}p1
-  }
-
-  mnt_rw() {
-    echo "Re-mount FAT partition read/write" && \
-    /bin/mount -o remount,rw /dev/${SD}p1 /media/${SD}p1 || exit
-  }
-
-  mnt_ro() {
-    echo "Re-mount FAT partition read-only" && \
-    /bin/mount -o remount,ro /dev/${SD}p1 /media/${SD}p1 || exit
   }
 
   create_swap() {
