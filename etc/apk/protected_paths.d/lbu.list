@@ -7,6 +7,7 @@
 +etc/init.d/avahi-daemon
 +etc/init.d/portainer
 +etc/init.d/sshd
++etc/init.d/nginx
 +home/lncm/bitcoin
 +home/lncm/litecoin
 +home/lncm/lnd
