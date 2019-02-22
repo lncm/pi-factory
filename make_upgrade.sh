@@ -138,6 +138,11 @@ tar -xzf ${CACHE} -C ${MNT}/ --no-same-owner
 echo "Patch RPi3 WiFi"
 tar -xzf ${FIX} -C ${MNT}/boot/ --no-same-owner
 
+echo "Create fresh apkovl"
+cd ..
+sh make_apkovl.sh
+cd lncm-workdir
+
 echo "Copy latest box.apkovl tarball"
 cp ../box.apkovl.tar.gz ${MNT}
 
