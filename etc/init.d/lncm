@@ -190,7 +190,7 @@ start() {
     install_boot
     mark_sd
     mnt_ro
-    create_swap
+    #create_swap # disable sd card swap
     enable_post
     disable_install
     mnt_rw
