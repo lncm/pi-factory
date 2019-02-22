@@ -22,10 +22,10 @@ services:
   lnd:
     image: lncm/lnd:0.5.2
     volumes:
-      - /media/volatile/lnd/logs:/root/.lnd/logs
-      - /media/important/lnd/data:/root/.lnd/data
-      - /media/important/lnd/lnd.conf:/root/.lnd/lnd.conf
-      - /media/important/lnd:/root/.lnd
+      - /media/volatile/volatile/lnd/logs:/root/.lnd/logs
+      - /media/important/important/lnd/data:/root/.lnd/data
+      - /media/important/important/lnd/lnd.conf:/root/.lnd/lnd.conf
+      - /media/important/important/lnd:/root/.lnd
     ports:
       - "8181:8080"
       - "9735"
@@ -40,7 +40,7 @@ services:
   invoicer:
     image: lncm/invoicer:0.1.1
     volumes:
-      - /media/important/lnd:/lnd
+      - /media/important/important/lnd:/lnd
       - /home/lncm/public_html:/static
     depends_on:
       - lnd
@@ -60,8 +60,8 @@ services:
   nginx:
     image: nginx:1.14.2-alpine
     volumes:
-      - /media/important/nginx:/etc/nginx
-      - /media/volatile/nginx:/var/log/nginx
+      - /media/important/important/nginx:/etc/nginx
+      - /media/volatile/volatile/nginx:/var/log/nginx
       - /home/lncm/public_html:/www
     ports:
       - "80"
