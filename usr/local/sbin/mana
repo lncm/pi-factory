@@ -6,7 +6,7 @@ wait_lnd_stopped() {
     while [ "$(docker ps | grep -c compose_lnd_1)" = 1 ] && [ $WAITLNDSTOPPED -lt 10 ];
     do
         echo "Waiting for LND to terminate..."
-       _=$((WAITLNDSTOPPED=WAITLNDSTOPPED+1))
+       WAITLNDSTOPPED=$(($WAITLNDSTOPPED+1))
         sleep 2
     done
 }
@@ -15,7 +15,7 @@ wait_bitcoind_stopped() {
     while [ "$(docker ps | grep -c compose_bitcoind_1)" = 1 ] && [ $WAITBTCSTOPPED -lt 10 ];
     do
         echo "Waiting for bitcoind to terminate..."
-        _=$((WAITBTCSTOPPED=WAITBTCSTOPPED+1))
+        WAITBTCSTOPPED=$(($WAITBTCSTOPPED+1))
         sleep 2
     done
 }

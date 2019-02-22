@@ -20,17 +20,22 @@ if [ "$(id -u)" -ne "0" ]; then
     exit 1
 fi
 
-if command -v apk 2>&1 1>/dev/null; [ "$?" -eq "0" ]; then
+has_apk=$(command -v apk 2>&1 1>/dev/null;)
+has_apt=$(command -v apk 2>&1 1>/dev/null;)
+has_parted=$(command -v parted 2>&1 1>/dev/null;)
+
+
+if  [ "$has_apk" -eq "0" ]; then
   echo "Found Alpine-based system, installing dependencies"
   apk add parted zip unzip
 fi
 
-if command -v apt 2>&1 1>/dev/null; [ "$?" -eq "0" ]; then
+if [ "$has_apt" -eq "0" ]; then
   echo "Found Debian-based system, installing dependencies"
   apt install -y parted zip unzip
 fi
 
-if command -v parted 2>&1 1>/dev/null; [ "$?" -ne "0" ]; then
+if [ "$has_parted" -eq "0" ]; then
   echo "'parted' package needs to be installed. If you're on a Debian-based system, you can install it with:"
   echo "	sudo apt install -y parted"
   exit 1
@@ -80,7 +85,7 @@ if [ -f ./etc/ssh/sshd_config.bak ]; then
 fi
 
 mkdir -p lncm-workdir
-cd lncm-workdir
+cd lncm-workdir || exit
 
 if ! [ -f ${ALP} ]; then
   echo "${ALP} not found, fetching..."
@@ -112,15 +117,15 @@ dd if=/dev/zero of=${IMG} bs=1M count=256 && \
     DEV=$(losetup -f) && \
     losetup -f ${IMG} && \
     echo "Create 256MB FAT32 partition and filesystem" && \
-    parted -s ${DEV} mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
-    mkfs.vfat ${DEV}p1 -IF 32
+    parted -s "${DEV}" mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
+    mkfs.vfat "${DEV}"p1 -IF 32
 
 if ! [ -d ${MNT} ]; then
   mkdir ${MNT}
 fi
 
 echo "Mount FAT partition"
-mount ${DEV}p1 ${MNT}
+mount "${DEV}"p1 "${MNT}"
 
 echo "Extract alpine distribution"
 tar -xzf ${ALP} -C ${MNT}/ --no-same-owner
@@ -146,9 +151,10 @@ sync
 echo "Unmount"
 umount ${MNT}
 
-losetup -d ${DEV}
+losetup -d "${DEV}"
 echo "Compress img as zip"
 
 zip -r ${IMG}.zip ${IMG}
 
-echo -e "\nDone!\nYou may flash your ${IMG}.zip using Etcher or dd the ${IMG}"
+echo "Done!"
+echo "You may flash your ${IMG}.zip using Etcher or dd the ${IMG}"

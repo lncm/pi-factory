@@ -6,18 +6,21 @@ get_id() {
   docker ps -aqf "name=${1}"
 }
 
-export iotwifi_ID=`get_id iotwifi`
-export nginx_ID=`get_id nginx`
+iotwifi_ID=$(get_id iotwifi)
+nginx_ID=$(get_id nginx)
+
+export iotwifi_ID
+export nginx_ID
 
 save_container() {
-  docker save -o ${1}.tar.gz ${2}
+  docker save -o "${1}".tar.gz "${2}"
 }
 
 if [ ! -d lncm-workdir ]; then
   mkdir lncm-workdir
 fi
 
-cd lncm-workdir
+cd lncm-workdir || exit
 
 if [ ! -d output ]; then
   mkdir output
@@ -26,7 +29,7 @@ fi
 save_container output/iotwifi cjimti/iotwifi
 save_container output/nginx nginx
 
-cd output
+cd output || exit
 
 tar cvzf ../iotwifi.tar.gz iotwifi.tar.gz
 tar cvzf ../nginx.tar.gz nginx.tar.gz

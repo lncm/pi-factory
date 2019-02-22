@@ -10,13 +10,13 @@
 ALP=alpine-rpi-3.8.2-armhf.tar.gz
 REL=v3.8
 FIRMWARE=brcm-firmware.zip
-FIRMWARE_URL=https://github.com/lncm/pi-factory/files/2714861/
+FIRMWARE_URL=https://github.com/lncm/pi-factory/files/2714861
 mkdir lncm-workdir
-cd lncm-workdir
+cd lncm-workdir || exit
 
 if ! [ -f ${FIRMWARE} ]; then
   echo "Brcm firmware not found, fetching..."
-  wget https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
+  wget $FIRMWARE_URL/$FIRMWARE
 fi
 
 if type "$apk" > /dev/null; then

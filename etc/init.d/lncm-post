@@ -47,14 +47,14 @@ start() {
     if [ -f ./rpcauth.py ]; then
       chmod 700 rpcauth.py
       ./rpcauth.py lncm | tee /media/important/important/generated.txt | head -2 | tail -1 > /media/important/important/rpcauth.txt
-      cat /media/important/important/generated.txt | tail -1 > /media/important/important/rpcpass.txt
+      tail -1 /media/important/important/generated.txt > /media/important/important/rpcpass.txt
       rm rpcauth.py /media/important/important/generated.txt
     else
       echo "rpcauth not generated - could not reach server"
       exit 1
     fi
 
-    if [ $(grep -c rpcauth /media/important/important/rpcauth.txt ) == 0 ]; then
+    if [ "$(grep -c rpcauth /media/important/important/rpcauth.txt )" = 0 ]; then
       echo "Can't generate credentials - exiting!"
       exit 1
     fi
@@ -62,8 +62,8 @@ start() {
     # Apply RPC auth
     if [ -f /media/important/important/rpcauth.txt ]; then
       # Replace strings with what was generated
-      RPCAUTHLINE=`cat /media/important/important/rpcauth.txt`
-      GENERATEDPW=`cat /media/important/important/rpcpass.txt`
+      RPCAUTHLINE="$(cat /media/important/important/rpcauth.txt)"
+      GENERATEDPW="$(cat /media/important/important/rpcpass.txt)"
       /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf
       /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/litecoin/litecoin.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/lnd.conf
@@ -89,7 +89,7 @@ start() {
     while [ ! -d /var/lib/tor/lightning ] && [ $CHECKTOR_HOSTNAME -lt 10 ];
     do
       echo "Tor generated directory doesn't exist yet.. waiting";
-      let CHECKTOR_HOSTNAME=CHECKTOR_HOSTNAME+1;
+      CHECKTOR_HOSTNAME=$((CHECKTOR_HOSTNAME+1))
       sleep 1;
     done
 
@@ -151,7 +151,7 @@ start() {
 
     echo "Download index.html"
     if [ ! -f /home/lncm/public_html/index.html ]; then
-      cd /home/lncm/public_html
+      cd /home/lncm/public_html || exit
       wget https://raw.githubusercontent.com/lncm/invoicer-ui/master/dist/index.html
     fi
 

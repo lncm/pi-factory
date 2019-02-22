@@ -15,7 +15,7 @@ if [ ! -d lncm-workdir ]; then
   mkdir lncm-workdir
 fi
 
-cd lncm-workdir
+cd lncm-workdir || exit
 
 echo "Cleaning up..."
 echo "Remove cache dir"
