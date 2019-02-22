@@ -63,9 +63,9 @@ start() {
     /bin/mount /media/sd
   }
 
-  is_mounted() {
+  check_mounted() {
     echo "Check if ext4 partition on SD is mounted"
-    if ! [ -d /media/sd/lost+found ]; then
+    if [ ! -d /media/sd/lost+found ]; then
       echo "Error: ${SD}p2 partition doesn't seem to be mounted"
       exit 1
     fi
@@ -180,7 +180,7 @@ start() {
     install_tools
     partition_sd
     create_ext4
-    is_mounted
+    check_mounted
     mnt_rw
     persist_state
     install_sd
@@ -189,13 +189,11 @@ start() {
     setup_user
     install_boot
     mark_sd
-    mnt_ro
     #create_swap # disable sd card swap
     enable_post
     disable_install
-    mnt_rw
     persist_state
-    mount_ro
+    mnt_ro
     
     is_installed=$(check_installed)
     
