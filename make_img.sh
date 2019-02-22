@@ -22,7 +22,9 @@ fi
 
 cmd_exists() {
   $(command -v ${1} 2>&1 1>/dev/null;)
-  echo $?
+  ret=$?
+  echo $ret
+  return $ret
 }
 
 if  [ "$(cmd_exists apk)" -eq "0" ]; then
@@ -35,11 +37,12 @@ if [ "$(cmd_exists apt)" -eq "0" ]; then
   apt install -y parted zip unzip
 fi
 
-if [ "$(cmd_exists parted)" -eq "0" ]; then
-  echo "'parted' package needs to be installed. If you're on a Debian-based system, you can install it with:"
-  echo "	sudo apt install -y parted"
-  exit 1
-fi
+check_deps() {
+  cmd_exists parted >/dev/null || exit 1
+  cmd_exists zip >/dev/null || exit 1
+  cmd_exists unzip >/dev/null || exit 1
+  echo "Found required dependencies"
+}
 
 echo "Building ${IMG}"
 echo "Using ${ALP} as base distribution"
