@@ -63,7 +63,7 @@ start() {
 
   persist_state() {
     echo "Persist state to apkovl"
-    /sbin/lbu package /media"${SD}"p1/"${APK}" || exit
+    /sbin/lbu package /media/"${SD}"p1/"${APK}" || exit
   }
 
   install_sd() {
