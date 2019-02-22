@@ -3,31 +3,33 @@
 # Node management tool
 wait_lnd_stopped() {
     WAITLNDSTOPPED=1
-    while [ $(docker ps | grep -c compose_lnd_1) == 1 ] && [ $WAITLNDSTOPPED -lt 10 ];
+    while [ "$(docker ps | grep -c compose_lnd_1)" = 1 ] && [ $WAITLNDSTOPPED -lt 10 ];
     do
         echo "Waiting for LND to terminate..."
-        let WAITLNDSTOPPED=WAITLNDSTOPPED+1;
+       _=$((WAITLNDSTOPPED=WAITLNDSTOPPED+1))
         sleep 2
     done
 }
 wait_bitcoind_stopped() {
     WAITBTCSTOPPED=1
-    while [ $(docker ps | grep -c compose_bitcoind_1) == 1 ] && [ $WAITBTCSTOPPED -lt 10 ];
+    while [ "$(docker ps | grep -c compose_bitcoind_1)" = 1 ] && [ $WAITBTCSTOPPED -lt 10 ];
     do
         echo "Waiting for bitcoind to terminate..."
-        let WAITBTCSTOPPED=WAITBTCSTOPPED+1;
+        _=$((WAITBTCSTOPPED=WAITBTCSTOPPED+1))
         sleep 2
     done
 }
 
+git_installed="$( { command -v git 1>/dev/null; } 2>&1 )"
+
 install_git() {
-  if command -v git 2>&1 1>/dev/null; [ "$?" -ne "0" ]; then
+  if [ "$git_installed" -ne "0" ]; then
     apk update && \
     apk add git
   fi
 }
 
-if [[ "$1" = "info" ]]; then
+if [ "$1" = "info" ]; then
   # bitcoind and lnd information
   echo "bitcoind info:"
   docker exec -it compose_bitcoind_1 bitcoin-cli -getinfo
@@ -39,21 +41,21 @@ elif [ "$1" = "devtools" ]; then
 elif [ "$1" = "source" ]; then
   install_git
   if [ ! -d ~/pi-factory ]; then
-    cd ~
+    cd ~ || exit
     git clone https://github.com/lncm/pi-factory.git
   fi
   if [ -d ~/pi-factory ]; then
-    cd ~/pi-factory
+    cd ~/pi-factory || exit
     git pull
   fi
 elif [ "$1" = "diff" ]; then
   install_git
   if [ ! -d ~/pi-factory ]; then
-    cd ~
+    cd ~ || exit
     git clone https://github.com/lncm/pi-factory.git
   fi
   if [ -d ~/pi-factory ]; then
-    cd ~/pi-factory
+    cd ~/pi-factory || exit
     git pull
     echo "Writing .diff logs to $HOME"
     diff -r /etc ~/pi-factory/etc | tee ~/etc.diff
@@ -66,9 +68,9 @@ elif [ "$1" = "unlock" ]; then
 elif [ "$1" = "create" ]; then
   # Use create wallet script. This will either import an existing seed (or our own generated one), or use LND to create one. It will also create a password either randomly or use an existing password provided)
   /usr/local/sbin/lncm-createwallet.py
-elif [[ "$1" = "start" ]]; then
+elif [ "$1" = "start" ]; then
   service docker-compose start
-elif [[ "$1" = "stop" ]]; then
+elif [ "$1" = "stop" ]; then
   echo "Attempting clean shutdown of bitcoind and lnd nodes"
   docker exec -it compose_lnd_1 lncli stop
   docker exec -it compose_bitcoind_1 bitcoin-cli stop
@@ -76,29 +78,30 @@ elif [[ "$1" = "stop" ]]; then
   wait_bitcoind_stopped
   # Stop docker compose
   service docker-compose stop
-elif [[ "$1" = "restart" ]]; then
+elif [ "$1" = "restart" ]; then
   echo "Attempting clean shutdown of bitcoind and lnd nodes"
   docker exec -it compose_lnd_1 lncli stop
   docker exec -it compose_bitcoind_1 bitcoin-cli stop
   wait_lnd_stopped
   wait_bitcoind_stopped
   service docker-compose restart
-elif [[ "$1" = "btclogs" ]]; then
+elif [ "$1" = "btclogs" ]; then
   # slow, robust method
   docker logs -f compose_bitcoind_1
-elif [[ "$1" = "btclog" ]]; then
+elif [ "$1" = "btclog" ]; then
   tail -f /media/volatile/volatile/bitcoin/debug.log
-elif [[ "$1" = "lndlogs" ]]; then
+elif [ "$1" = "lndlogs" ]; then
   # slow, robust method
   docker logs -f compose_lnd_1
-elif [[ "$1" = "lndlog" ]]; then
+elif [ "$1" = "lndlog" ]; then
   tail -f /media/volatile/volatile/lnd/logs/bitcoin/mainnet/lnd.log
-elif [[ "$1" = "temp" ]]; then
+elif [ "$1" = "temp" ]; then
   # CPU temperature
   cpu=$(cat /sys/class/thermal/thermal_zone0/temp)
   echo "CPU: $((cpu/1000))C"
 else
-  echo -e "Mana: node management\n"
+  echo "Mana: node management"
+  echo
   echo "Must pass one of:"
   echo "info, unlock, create, stop, start, restart, btclog, lndlog, temp"
 fi
