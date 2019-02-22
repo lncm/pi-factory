@@ -1,5 +1,7 @@
 #!/sbin/openrc-run
 
+# internet connection test
+
 depend() {
   need net sshd
 }
