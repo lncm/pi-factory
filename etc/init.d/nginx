@@ -1,0 +1,15 @@
+#!/sbin/openrc-run
+
+depend() {
+	need net docker
+}
+
+start() {
+	sleep 2 && \
+	docker load --input /media/mmcblk0p1/nginx.tar.gz && \
+	docker run --name=nginx -d --restart=unless-stopped --net host \
+      -v /home/lncm/nginx:/etc/nginx \
+      -v /var/log/nginx:/var/log/nginx \
+      -v /home/lncm/public_html:/www \
+		nginx
+}

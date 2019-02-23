@@ -7,6 +7,7 @@
 +etc/init.d/avahi-daemon
 +etc/init.d/portainer
 +etc/init.d/sshd
++etc/init.d/nginx
 +home/lncm/bitcoin
 +home/lncm/litecoin
 +home/lncm/lnd
@@ -25,3 +26,4 @@
 +usr/local/sbin/lncm-usb.py
 +usr/local/sbin/lncm-unlock.py
 +usr/local/sbin/check-invoicer-status
++usr/local/sbin/lncm-createwallet.py
