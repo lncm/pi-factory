@@ -11,5 +11,5 @@ start() {
       -v /home/lncm/nginx:/etc/nginx \
       -v /var/log/nginx:/var/log/nginx \
       -v /home/lncm/public_html:/www \
-		nginx
+		nginx:1.14.2-alpine
 }
