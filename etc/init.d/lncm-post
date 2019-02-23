@@ -235,9 +235,9 @@ start() {
     install_tor
     enable_tor
     setup_tor
-    config_bitcoind
-    config_lnd
-    config_nginx
+    # config_bitcoind
+    # config_lnd
+    # config_nginx
     fetch_invoicerui
     install_crontab
     disable_post
