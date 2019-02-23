@@ -58,7 +58,6 @@ elif [ "$1" = "source" ]; then
 elif [ "$1" = "upgrade" ]; then
   mana source
   cd /home/lncm/pi-factory
-  git checkout 3.8.2-backports
   git pull
   sh make_upgrade.sh
 elif [ "$1" = "diff" ]; then
