@@ -51,21 +51,6 @@ services:
       localnet:
         ipv4_address: 172.16.88.4
 
-  nginx:
-    image: nginx:1.14.2-alpine
-    volumes:
-      - /media/important/important/nginx:/etc/nginx
-      - /media/volatile/volatile/nginx:/var/log/nginx
-      - /home/lncm/public_html:/www
-    ports:
-      - "80"
-    depends_on:
-      - invoicer
-    restart: on-failure
-    networks:
-      localnet:
-        ipv4_address: 172.16.88.5
-
 networks:
   localnet:
     driver: bridge
