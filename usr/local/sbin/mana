@@ -55,11 +55,26 @@ elif [ "$1" = "source" ]; then
     cd /home/lncm/pi-factory || exit
     git pull
   fi
-elif [ "$1" = "upgrade" ]; then
+elif [ "$1" = "full-upgrade" ]; then
+  # Replaces entire FAT contents, 
+  # as if we installed from freshly burned SD card
   mana source
   cd /home/lncm/pi-factory
   git pull
   sh make_upgrade.sh
+elif [ "$1" = "upgrade" ]; then
+  # Regenerate box.apkovl.tar.gz and mark SD as uninstalled
+  mana source
+  cd /home/lncm/pi-factory
+  git pull
+  cp -v /etc/wpa_supplicant/wpa_supplicant.conf etc/wpa_supplicant/wpa_supplicant.conf
+  ./make_apkovl.sh
+  mount -o remount,rw /dev/mmcblk0p1 /media/mmcblk0p1
+  cp -v box.apkovl.tar.gz /media/mmcblk0p1/
+  rm -v /media/mmcblk0p1/installed
+  mount -o remount,ro /dev/mmcblk0p1 /media/mmcblk0p1
+  echo "Done"
+  echo "Please reboot to upgrade your box"
 elif [ "$1" = "diff" ]; then
   install_git
   if [ ! -d /home/lncm/pi-factory ]; then
