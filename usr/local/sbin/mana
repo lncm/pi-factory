@@ -69,10 +69,10 @@ elif [ "$1" = "diff" ]; then
   if [ -d /home/lncm/pi-factory ]; then
     cd /home/lncm/pi-factory || exit
     git pull || exit
-    echo "Writing .diff logs to $HOME"
-    diff -r /etc ~/pi-factory/etc | tee ~/etc.diff
-    diff -r /usr ~/pi-factory/usr | tee ~/usr.diff
-    diff -r /home ~/pi-factory/home | tee ~/home.diff
+    echo "Writing .diff logs to /home/lncm"
+    diff -r /etc /home/lncm/pi-factory/etc | tee /home/lncm/etc.diff
+    diff -r /usr /home/lncm/pi-factory/usr | tee /home/lncm/usr.diff
+    diff -r /home /home/lncm/pi-factory/home | tee /home/lncm/home.diff
   fi
 elif [ "$1" = "unlock" ]; then
   # unlock lnd wallet
