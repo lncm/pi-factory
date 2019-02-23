@@ -36,12 +36,12 @@ start() {
 
   mnt_rw() {
     echo "Re-mount FAT partition read/write"
-    /bin/mount -o remount,rw /dev/${SD}p1 /media/${SD}p1
+    /bin/mount -o remount,rw /dev/"${SD}"p1 /media/${SD}p1
   }
 
   mnt_ro() {
     echo "Re-mount FAT partition read-only"
-    /bin/mount -o remount,ro /dev/${SD}p1 /media/${SD}p1
+    /bin/mount -o remount,ro /dev/"${SD}p1" /media/${SD}p1
   }
 
   install_tools() {
