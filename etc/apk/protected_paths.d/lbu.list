@@ -16,6 +16,8 @@
 +home/lncm/README.md
 +home/lncm/crontab
 +home/lncm/public_html
++home/lncm/public_html/wifi
++home/lncm/public_html/wifi/index.html
 +home/lncm/nginx
 +home/lncm/nginx/conf.d
 +home/lncm/.ssh/authorized_keys
