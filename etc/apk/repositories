@@ -3,9 +3,9 @@ http://mirror.rise.ph/alpine-linux/v3.8/main
 http://mirror.rise.ph/alpine-linux/v3.8/community
 http://mirror.xtom.com.hk/alpine/v3.8/main
 http://mirror.xtom.com.hk/alpine/v3.8/community
-http://dl-3.alpinelinux.org/alpine/v3.8/main
-http://dl-3.alpinelinux.org/alpine/v3.8/community
-http://dl-5.alpinelinux.org/alpine/v3.8/main
-http://dl-5.alpinelinux.org/alpine/v3.8/community
-http://dl-8.alpinelinux.org/alpine/v3.8/main
-http://dl-8.alpinelinux.org/alpine/v3.8/community
+#http://dl-3.alpinelinux.org/alpine/v3.8/main
+#http://dl-3.alpinelinux.org/alpine/v3.8/community
+#http://dl-5.alpinelinux.org/alpine/v3.8/main
+#http://dl-5.alpinelinux.org/alpine/v3.8/community
+#http://dl-8.alpinelinux.org/alpine/v3.8/main
+#http://dl-8.alpinelinux.org/alpine/v3.8/community

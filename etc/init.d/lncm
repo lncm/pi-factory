@@ -1,86 +1,112 @@
 #!/sbin/openrc-run
-#
-# Copyright 2018 LNCM contributors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+
+# LNCM installation script
 
 depend() {
-    need net sshd iotwifi lncm-online
+  need net sshd iotwifi lncm-online ntpd
 }
 
 start() {
-    ebegin "Starting LNCM installation"
-    # This script will only run once, for persistent installation to SD
+  ebegin "Starting LNCM installation"
+  # This script will only run once, for persistent installation to SD
 
-    # LNCM version
-    VER="v0.4.0"
+  # LNCM version
+  VER="v0.4.1"
 
-    # Device to partition
-    SD=mmcblk0
+  # apkovl
+  APK=box.apkovl.tar.gz
 
-    # Offset for second partition
-    START=268M
+  # Device to partition
+  SD=mmcblk0
 
+  # Offset for second partition
+  START=268M
+
+  check_installed() {
     if [ -f /media/${SD}p1/installed ]; then
-        echo "Already installed, aborting"
-        exit 1
+      #  installed
+      echo 0
+      return 0
+    else
+      # not installed
+      echo 1
+      return 1
     fi
+  }
 
-    INSTALLED=1
+  mnt_rw() {
+    echo "Re-mount FAT partition read/write"
+    /bin/mount -o remount,rw /dev/${SD}p1 /media/${SD}p1
+  }
 
+  mnt_ro() {
+    echo "Re-mount FAT partition read-only"
+    /bin/mount -o remount,ro /dev/${SD}p1 /media/${SD}p1
+  }
+
+  install_tools() {
     echo "Add partitioning and filesystem tools"
-    /sbin/apk update && /sbin/apk add parted e2fsprogs
+    /sbin/setup-apkcache /media/mmcblk0p1/cache && \
+    /sbin/apk add parted e2fsprogs
+  }
 
+  partition_sd() {
     echo "Create second primary partition"
     /usr/sbin/parted -s /dev/$SD mkpart p ext4 $START 100%
+  }
 
+  create_ext4() {
     echo "Create and mount ext4 filesystem"
     /sbin/mkfs.ext4 -F /dev/${SD}p2 && \
     /bin/echo "/dev/${SD}p2 /media/sd ext4 noatime 0 0" >> /etc/fstab && \
     /bin/mkdir /media/sd && \
     /bin/mount /media/sd
+  }
 
-    if ! [ -d /media/sd/lost+found ]; then
-        echo "Partition doesn't seem to be mounted"
-        exit 1
+  check_mounted() {
+    echo "Check if ext4 partition on SD is mounted"
+    if [ ! -d /media/sd/lost+found ]; then
+      echo "Error: ${SD}p2 partition doesn't seem to be mounted"
+      exit 1
     fi
+  }
 
+  persist_state() {
     echo "Persist state to apkovl"
-    /sbin/lbu commit && \
-    echo "Install to /media/sd and apply apkovl" && \
-    /sbin/setup-disk -o /media/mmcblk0p1/box.apkovl.tar.gz /media/sd
-    if ! [ -d /media/sd/etc ]; then
-        echo "Setup disk did not seem to create anything! Exiting"
-        exit 1
-    fi
+    /sbin/lbu package /media/"${SD}"p1/"${APK}" || exit
+  }
 
+  install_sd() {
+    echo "Install to /media/sd and apply apkovl" && \
+    /sbin/setup-disk -o /media/mmcblk0p1/box.apkovl.tar.gz /media/sd || exit
+    if [ ! -d /media/sd/etc ]; then
+      echo "Setup disk did not seem to create anything! Exiting"
+      exit 1
+    fi
+  }
+
+  add_fat() {
     echo "Add FAT partition to new fstab"
     /bin/echo "/dev/mmcblk0p1 /media/mmcblk0p1 vfat defaults 0 0" >> /media/sd/etc/fstab
+  }
 
+  clean_devs() {
     echo "Remove unused devices and mountpoints"
     /bin/sed -i '/cdrom/d' /media/sd/etc/fstab && \
     /bin/rmdir /media/sd/media/cdrom
     /bin/sed -i '/usbdisk/d' /media/sd/etc/fstab && \
     /bin/rmdir /media/sd/media/usb
     /bin/rmdir /media/sd/media/floppy
+  }
 
-    echo "Create lncm home dir if doesn't exist"
-    if ! [ -d /media/sd/home/lncm ]; then
-        /bin/mkdir /media/sd/home/lncm
-    fi
-    echo "Set up permissions for LNCM"
+  setup_user() {
+    echo "Create lncm home dir if necessary"
+    /bin/mkdir -p /media/sd/home/lncm
+    echo "Set user permissions"
     /bin/chown lncm:lncm /media/sd/home/lncm
+  }
 
+  install_boot() {
     # Boot installation
     echo "Re-mount FAT partition read/write"
     /bin/mount -o remount,rw /dev/${SD}p1 /media/${SD}p1 && \
@@ -91,28 +117,30 @@ start() {
     /bin/mv /media/mmcblk0p1/boot/* /media/mmcblk0p1/boot_backup/
 
     if [ -d /media/sd/boot ]; then
-        echo "Remove old boot files on fat partition" && \
-        /bin/rm -rf /media/mmcblk0p1/boot/* && \
-        /bin/rm /media/sd/boot/boot && \
-        echo "Copy new boot files to fat partition" && \
-        /bin/cp /media/sd/boot/* /media/mmcblk0p1/boot/ && \
-        echo "Delete new boot dir" && \
-        /bin/rm -rf /media/sd/boot && \
-        echo "Link boot to fat partition" && \
-        cd /media/sd && \
-        /bin/ln -s /media/mmcblk0p1 boot
+      echo "Remove old boot files on fat partition" && \
+      /bin/rm -rf /media/mmcblk0p1/boot/* && \
+      /bin/rm /media/sd/boot/boot && \
+      echo "Copy new boot files to fat partition" && \
+      /bin/cp /media/sd/boot/* /media/mmcblk0p1/boot/ && \
+      echo "Delete new boot dir" && \
+      /bin/rm -rf /media/sd/boot && \
+      echo "Link boot to fat partition" && \
+      cd /media/sd && \
+      /bin/ln -s /media/mmcblk0p1 boot
     else
-        echo "Uh oh! setup-desk did not put a boot directory in. Exiting"
-        exit 1
+      echo "Error: boot directory on ${SD}p2 missing"
+      exit 1
     fi
+  }
 
+  mark_sd() {
     echo "Mark SD card with installed version"
-    /bin/echo "$VER" > /media/${SD}p1/installed && \
-    /bin/echo "Copying rc.log to persistant store before remounting for debugging purposes" && \
-    /bin/cp /var/log/rc.log /media/${SD}p1 && \
-    echo "Re-mount FAT partition read-only" && \
-    /bin/mount -o remount,ro /dev/${SD}p1 /media/${SD}p1
+    /bin/echo "$VER" > /media/${SD}p1/installed
+    /bin/echo "Copying rc.log to persistent store for debugging"
+    /bin/cp /var/log/rc.log /media/${SD}p1
+  }
 
+  create_swap() {
     echo "Create and install swap file"
     /bin/dd if=/dev/zero of=/media/sd/var/cache/swap bs=1M count=1024 && \
     /bin/chown 600 /media/sd/var/cache/swap && \
@@ -120,26 +148,61 @@ start() {
     /sbin/swapon /media/sd/var/cache/swap && \
     /bin/echo "/var/cache/swap none swap sw,pri=10 0 0" >> /media/sd/etc/fstab && \
     echo "Enable swap at boot"
-    cd /media/sd/etc/runlevels/boot
+    cd /media/sd/etc/runlevels/boot || exit
     /bin/ln -s /etc/init.d/swap swap
+  }
+
+  enable_post() {
     echo "Enable post-installation script at boot"
-    cd /media/sd/etc/runlevels/default
+    cd /media/sd/etc/runlevels/default || exit
     /bin/ln -s /etc/init.d/lncm-post lncm-post
+  }
 
+  disable_install() {
     echo "Deactivate LNCM installation script"
-    /sbin/rc-update del lncm default && \
-    /bin/rm /media/sd/etc/runlevels/default/lncm && \
-    echo "Persist final state to apkovl" && \
-    /sbin/lbu commit
+    /sbin/rc-update del lncm default || exit
+    /bin/rm /media/sd/etc/runlevels/default/lncm || exit
+  }
+
+  reboot_now() {
+    echo "Rebooting..."
+    /sbin/reboot
+  }
+
+  main() {
+    is_installed=$(check_installed)
     
-    if [ -f /media/${SD}p1/installed ]; then
-        INSTALLED=0
-        echo "Installed successfully"
-        echo "Rebooting..."
-        /sbin/reboot
+    if [ "$is_installed" -eq "0" ]; then
+      echo "Already installed, skipping."
+      exit 1
     fi
+    
+    install_tools
+    partition_sd
+    create_ext4
+    check_mounted
+    mnt_rw
+    persist_state
+    install_sd
+    add_fat
+    clean_devs
+    setup_user
+    install_boot
+    mark_sd
+    #create_swap # disable sd card swap
+    enable_post
+    disable_install
+    persist_state
+    mnt_ro
+    
+    is_installed=$(check_installed)
+    
+    if [ "$($is_installed)" -eq "0" ]; then
+      reboot_now
+    fi
+  }
 
-    exit ${INSTALLED}
+  main
 
-    eend $?
+eend $?
 }
