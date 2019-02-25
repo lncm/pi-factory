@@ -2,6 +2,7 @@
 
 depend() {
 	need net docker iotwifi
+	before lncm-online
 }
 
 start() {
