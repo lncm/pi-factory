@@ -3,7 +3,8 @@
 # LNCM installation script
 
 depend() {
-  need net sshd iotwifi lncm-online ntpd
+  need net lncm-online
+  after ntpd sshd
 }
 
 start() {

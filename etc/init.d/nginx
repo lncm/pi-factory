@@ -1,7 +1,8 @@
 #!/sbin/openrc-run
 
 depend() {
-	need net docker iotwifi
+	need net docker
+	after iotwifi
 	before lncm-online
 }
 
