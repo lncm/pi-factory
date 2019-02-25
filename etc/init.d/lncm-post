@@ -192,7 +192,7 @@ start() {
   fetch_invoicerui() {
     echo "Fetch invoicer UI"
     if [ ! -f /home/lncm/public_html/index.html ]; then
-      cd /home/lncm/public_html || exit
+      cd /home/lncm/public_html/pos || exit
       wget https://raw.githubusercontent.com/lncm/invoicer-ui/master/dist/index.html
     fi
   }
@@ -200,8 +200,8 @@ start() {
   fetch_wifi() {
     echo "Fetch latest wifi manager"
     if [ ! -f /home/lncm/public_html/index.html ]; then
-      cd /home/lncm/public_html || exit
-      wget https://raw.githubusercontent.com/lncm/invoicer-ui/master/dist/index.html
+      cd /home/lncm/public_html/wifi || exit
+      wget https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html
     fi
   }
 
