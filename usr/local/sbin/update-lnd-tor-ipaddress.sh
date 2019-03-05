@@ -18,7 +18,7 @@
 IP=`ip route get 1 | awk '{print $NF;exit}'`
 
 # Look for existance of .ipaddress.txt
-if [ ! -f /home/lncm/.ipaddress.txt ]; then
+if [[ ! -f /home/lncm/.ipaddress.txt ]]; then
   # If doesn't exist set it up
   echo $IP > /home/lncm/.ipaddress.txt
   cp /media/important/lnd/lnd.conf /media/important/lnd.conf.old
@@ -26,7 +26,7 @@ if [ ! -f /home/lncm/.ipaddress.txt ]; then
   sed "s/TORIPADDRESS/$IP/g; " /media/important/lnd/lnd.conf
 else
   OLDIP=$(cat /home/lncm/.ipaddress.txt)
-  if [ ! $OLDIP == $IP ]; then
+  if [[ ! $OLDIP == $IP ]]; then
     cp /media/important/lnd/lnd.conf /media/important/lnd.conf.old
     sed "s/$OLDIP/$IP/g; " /media/important/lnd/lnd.conf
     echo $IP > /home/lncm/.ipaddress.txt
