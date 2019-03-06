@@ -1,4 +1,4 @@
-SOCKSPort 9050 # Default: Bind to localhost:9050 for local connections.
+SOCKSPort 0.0.0.0:9050 # Bind to all interfaces
 
 Log notice file /var/log/tor/notices.log
 Log notice syslog
