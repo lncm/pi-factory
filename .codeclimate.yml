@@ -5,7 +5,7 @@ plugins:
     enabled: true
   fixme:
     enabled: true
-  git-legel:
+  git-legal:
     enabled: true
   markdownlint:
     enabled: true
