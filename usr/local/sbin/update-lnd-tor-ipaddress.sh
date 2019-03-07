@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # This script is a helper script that rewrites the host IP to the new IP Address (used for TOR only nodes).
 # if the node LAN IP changes (or box is plugged into a new LAN), lnd is unable to obviously connect to the new TOR IP address.
 # Basically this is an edge case right now as the merchant box should always have the same LAN IP.
