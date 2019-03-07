@@ -29,3 +29,4 @@
 +usr/local/sbin/lncm-unlock.py
 +usr/local/sbin/check-invoicer-status
 +usr/local/sbin/lncm-createwallet.py
++usr/local/sbin/update-lnd-tor-ipaddress.sh
