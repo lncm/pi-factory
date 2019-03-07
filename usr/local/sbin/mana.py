@@ -19,6 +19,7 @@ from os import chdir
 
 from plumbum import local
 from plumbum.cmd import grep, wc, cat, head
+
 # TODO: source, full-upgrade, upgrade, diff, devtools,
 # devtools
 
@@ -32,6 +33,9 @@ if __name__ == '__main__':
         print(str(cpu_temp/1000) + "C")
       elif arguments['start'] == True:
         call(["service", "docker-compose", "start"])
+      elif arguments['devtools'] == True:
+        call(["apk", "update"])
+        call(["apk", "add", "tmux", "sudo", "git", "rsync", "htop", "iotop", "nmap", "nano"])
       elif arguments['stop'] == True:
         call(["docker", "exec", "-it", "compose_lnd_1", "lncli", "stop"])
         call(["docker", "exec", "-it", "compose_bitcoind_1", "bitcoin-cli", "stop"])
