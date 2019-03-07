@@ -13,9 +13,12 @@ Options:
 
 """
 from docopt import docopt
+
 from subprocess import call
 from os import chdir
 
+from plumbum import local
+from plumbum.cmd import grep, wc, cat, head
 # TODO: source, full-upgrade, upgrade, diff, devtools,
 # devtools
 
