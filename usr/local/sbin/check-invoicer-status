@@ -3,7 +3,7 @@
 # Copyright (C) 2018 and onwards LNCM Contributors
 
 if [ -z "${BOXNAME}" ]; then
-    BOXNAME='compose_invoicerbox_1'
+    BOXNAME='compose_invoicer_1'
 fi
 
 docker_installed="$( { command -v docker 1>/dev/null; } 2>&1 )"
