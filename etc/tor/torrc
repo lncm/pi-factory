@@ -15,21 +15,35 @@ ControlPort 9051
 #HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
 #CookieAuthentication 1
 
-# SSHD
-HiddenServiceDir /var/lib/tor/ssh/
+### sshd
+
+# sshd (tor v3)
+HiddenServiceDir /var/lib/tor/ssh-v3/
 HiddenServiceVersion 3
 HiddenServicePort 22 127.0.0.1:22
 
-# For Lightning / lnd
-# Tor V3
-HiddenServiceDir /var/lib/tor/lightning/
+# sshd (tor vw)
+HiddenServiceDir /var/lib/tor/ssh-v2/
+HiddenServicePort 22 127.0.0.1:22
+
+
+### lnd
+
+# lnd (tor v3)
+HiddenServiceDir /var/lib/tor/lnd-v3/
 HiddenServiceVersion 3
-HiddenServicePort 9735 127.0.0.1:9735
-# Tor V2
-HiddenServiceDir /var/lib/tor/lightning-tor-v2/
 HiddenServicePort 9735 127.0.0.1:9735
 
-# For controlling the lnd node service
-HiddenServiceDir /var/lib/tor/lnd-control/
+# lnd (tor v2)
+HiddenServiceDir /var/lib/tor/lnd-v2/
+HiddenServicePort 9735 127.0.0.1:9735
+
+# lnd rpc (tor v3)
+HiddenServiceDir /var/lib/tor/lnd-rpc-v3/
 HiddenServiceVersion 3
+HiddenServicePort 10009 127.0.0.1:10009
+
+# lnd rpc (tor v2)
+# For controlling the lnd node service
+HiddenServiceDir /var/lib/tor/lnd-rpc-v2/
 HiddenServicePort 10009 127.0.0.1:10009
