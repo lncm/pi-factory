@@ -22,7 +22,7 @@ HiddenServiceDir /var/lib/tor/ssh-v3/
 HiddenServiceVersion 3
 HiddenServicePort 22 127.0.0.1:22
 
-# sshd (tor vw)
+# sshd (tor v2)
 HiddenServiceDir /var/lib/tor/ssh-v2/
 HiddenServicePort 22 127.0.0.1:22
 
