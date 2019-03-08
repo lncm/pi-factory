@@ -39,7 +39,7 @@ services:
       - LNDPORT=10009
       - PORT=8088
       - GRPC_GO_RETRY=on
-      - BTCHOST=btc
+      - BTCHOST=localhost
       - BTCRPCUSER=RANDOMUSER
       - BTCRPCPASS=RANDOMPASS
       - INVOICER_HOSTPORT=invoicer:defaultpassw0rd@localhost:8088
