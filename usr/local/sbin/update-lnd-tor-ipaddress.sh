@@ -25,12 +25,12 @@ if [ ! -f /home/lncm/.ipaddress.txt ]; then
   echo "$IP" > /home/lncm/.ipaddress.txt
   cp /media/important/important/lnd/lnd.conf /media/important/important/lnd.conf.old
   # replace TORIPADDRESS in config with the IP
-  sed "s/TORIPADDRESS/$IP/g; " /media/important/important/lnd/lnd.conf
+  sed -i "s/TORIPADDRESS/$IP/g; " /media/important/important/lnd/lnd.conf
 else
   OLDIP=$(cat /home/lncm/.ipaddress.txt)
   if [ ! "$OLDIP" = "$IP" ]; then
     cp /media/important/important/lnd/lnd.conf /media/important/important/lnd.conf.old
-    sed "s/$OLDIP/$IP/g; " /media/important/important/lnd/lnd.conf
+    sed -i "s/$OLDIP/$IP/g; " /media/important/important/lnd/lnd.conf
     echo "$IP" > /home/lncm/.ipaddress.txt
   fi
 fi
