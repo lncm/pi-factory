@@ -31,6 +31,19 @@ if __name__ == '__main__':
         # CPU temperature
         cpu_temp = call(["cat", "/sys/class/thermal/thermal_zone0/temp"])
         print(str(cpu_temp/1000) + "C")
+      elif arguments['voltage'] == True:
+        # CPU voltage (default: core)
+        # optionally pass: core, sdram_c, sdram_i, sdram_p
+        call(["/opt/vc/bin/vcgencmd", "measure_volts", "core"])
+      elif arguments['clock'] == True:
+        # CPU clock (default: core)
+        # optionally pass: arm, core, h264, isp, v3d, uart, 
+        # pwm, emmc, pixel, vec, hdmi, dpi
+        call(["/opt/vc/bin/vcgencmd", "measure_clock", "core"])
+      elif arguments['memory'] == True:
+        # Show memory allocation split between cpu and gpu
+        call(["vcgencmd", "get_mem", "arm"])
+        call(["vcgencmd", "get_mem", "gpu"])
       elif arguments['start'] == True:
         call(["service", "docker-compose", "start"])
       elif arguments['devtools'] == True:
