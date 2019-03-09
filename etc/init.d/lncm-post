@@ -35,14 +35,35 @@ start() {
     /sbin/apk add raspberrypi
   }
 
+  apk_update() {
+    echo "Update package repositories"
+    /sbin/apk update
+  }
+
+  install_python() {
+    echo "Install python"
+    /sbin/apk add python3
+  }
+
+  install_apk_deps() {
+    # jq for parsing JSON
+    echo "Install curl and jq"
+    /sbin/apk add curl jq
+  }
+
+  install_pip() {
+    echo "Install and upgrade pip"
+    /usr/bin/pip3 install --upgrade pip
+  }
+
   install_compose() {
     echo "Install docker-compose and dependencies"
-    # jq for help with parsing JSON
-    /sbin/apk update && \
-    /sbin/apk add python3 curl jq
-
-    /usr/bin/pip3 install --upgrade pip && \
     /usr/bin/pip3 install docker-compose
+  }
+
+  install_python_deps() {
+    echo "Install python dependencies"
+    /usr/bin/pip3 install docopt plumbum
   }
 
   usb_setup() {
@@ -245,7 +266,12 @@ start() {
 
     move_cache
     install_firmware
+    apk_update
+    install_python
+    install_apk_deps
+    install_pip
     install_compose
+    install_python_deps
     usb_setup
     verify_usb
     fetch_rpcauth
