@@ -1,7 +1,7 @@
 """mana.py Node Management
 
 Usage:
-  mana.py box (start|stop|temp|voltage)
+  mana.py box (start|stop|temp|clock|voltage|backup|restore)
   mana.py bitcoin (start|stop|logs|info) [--tail]
   mana.py lnd (start|stop|logs|info|create|unlock) [--tail]
   mana.py (-h | --help)
@@ -44,6 +44,10 @@ if __name__ == '__main__':
         # Show memory allocation split between cpu and gpu
         call(["vcgencmd", "get_mem", "arm"])
         call(["vcgencmd", "get_mem", "gpu"])
+      elif arguments['backup'] == True:
+        call(["lbu", "pkg", "-v", "/media/important/important/"])
+      elif arguments['restore'] == True:
+        print("restore unimplemented")
       elif arguments['start'] == True:
         call(["service", "docker-compose", "start"])
       elif arguments['devtools'] == True:
