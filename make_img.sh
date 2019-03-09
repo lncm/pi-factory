@@ -5,7 +5,7 @@
 # Make sure "parted", "dosfstools" and "zip" are installed
 
 OUTPUT_VERSION=v0.4.1
-DOWNLOAD_VERSION=v0.4.0
+DOWNLOAD_VERSION=v0.4.1
 ALP=alpine-rpi-3.8.2-armhf.tar.gz
 REL=v3.8
 IMG=lncm-box-${OUTPUT_VERSION}.img
