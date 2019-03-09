@@ -244,6 +244,7 @@ start() {
     fi
 
     move_cache
+    install_firmware
     install_compose
     usb_setup
     verify_usb
