@@ -30,6 +30,11 @@ start() {
     /sbin/setup-apkcache /var/cache/apk
   }
 
+  enable_swap() {
+    echo "Enable swap devices at boot"
+    /sbin/rc-update add swap boot
+  }
+
   install_firmware() {
     echo "Install raspberry-pi firmware"
     /sbin/apk add raspberrypi
@@ -265,6 +270,7 @@ start() {
     fi
 
     move_cache
+    enable_swap
     install_firmware
     apk_update
     install_python
