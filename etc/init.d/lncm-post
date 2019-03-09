@@ -30,6 +30,11 @@ start() {
     /sbin/setup-apkcache /var/cache/apk
   }
 
+  install_firmware() {
+    echo "Install raspberry-pi firmware"
+    /sbin/apk add raspberrypi
+  }
+
   install_compose() {
     echo "Install docker-compose and dependencies"
     # jq for help with parsing JSON
