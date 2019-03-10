@@ -127,17 +127,17 @@ start() {
     done
 
     # Now check to see if hostname exists
-    if [ -f /var/lib/tor/lightning/hostname ]; then
+    if [ -f /var/lib/tor/lnd-v3/hostname ]; then
       echo "Configuring lnd to have tor as a URI available"
-      /bin/sed -i "s/; externalip=/externalip=$(cat /var/lib/tor/lightning/hostname)/g; " /home/lncm/lnd/lnd.conf
+      /bin/sed -i "s/; externalip=/externalip=$(cat /var/lib/tor/lnd-v3/hostname)/g; " /home/lncm/lnd/lnd.conf
     else
       echo "Could not find the tor generated files.. exiting"
       exit 1
     fi
     # Check if theres a V2 hostname, but don't exit uncleanly, just let it go
-    if [ -f /var/lib/tor/lightning-tor-v2/hostname ]; then
+    if [ -f /var/lib/tor/lnd-v2/hostname ]; then
         echo "Configuring a V2 URI"
-        /bin/sed -i "s/; 2 externalip=/externalip=$(cat /var/lib/tor/lightning-tor-v2/hostname)/g; " /home/lncm/lnd/lnd.conf
+        /bin/sed -i "s/; 2 externalip=/externalip=$(cat /var/lib/tor/lnd-v2/hostname)/g; " /home/lncm/lnd/lnd.conf
     fi
   }
 
