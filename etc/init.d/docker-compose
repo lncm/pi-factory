@@ -8,10 +8,28 @@ depend() {
 
 start() {
   ebegin "Starting docker-compose"
-
-  cd /home/lncm/compose
-  docker-compose up -d
-
+  if [[ -d /media/important/important/lnd ]]; then
+    if [[ -d /media/archive/archive/bitcoin ]]; then
+      if [[ -f /media/important/important/lnd/lnd.conf ]]; then
+        if [[ -f /media/archive/archive/bitcoin/bitcoin.conf ]]; then
+          cd /home/lncm/compose
+          docker-compose up -d
+        else
+          echo "Bitcoin configuration not found"
+          exit 1
+        fi
+      else
+        echo "LND configuration not found"
+        exit 1
+      fi
+    else
+      echo "Bitcoin directory not found"
+      exit 1
+    fi
+  else
+    echo "LND Directory not found"
+    exit 1
+  fi
   eend $?
 }
 
