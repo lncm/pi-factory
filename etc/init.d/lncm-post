@@ -141,11 +141,6 @@ start() {
       echo "Could not find the tor generated files.. exiting"
       exit 1
     fi
-    # Check if theres a V2 hostname, but don't exit uncleanly, just let it go
-    if [ -f /var/lib/tor/lnd-v2/hostname ]; then
-        echo "Configuring a V2 URI"
-        /bin/sed -i "s/; 2 externalip=/externalip=$(cat /var/lib/tor/lnd-v2/hostname)/g; " /home/lncm/lnd/lnd.conf
-    fi
   }
 
   # config_bitcoind() {
