@@ -48,7 +48,7 @@ services:
     environment:
       - LNDHOST=lnd
       - GRPC_GO_RETRY=on
-      - BTCHOST=btc
+      - BTCHOST=bitcoind
       - BTCRPCUSER=RANDOMUSER
       - BTCRPCPASS=RANDOMPASS
       - INVOICER_HOSTPORT=invoicer:defaultpassw0rd@invoicer:8080
