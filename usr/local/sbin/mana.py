@@ -411,8 +411,8 @@ if __name__ == '__main__':
                     "autoconnect", "lncli"]
         bitcoind_args = ["start", "stop", "logs", "info", "fastsync"]
         for arg in box_args:
-            print("run mana.py box " + arg)
-            call(["mana.py", "box", arg])
+            print("run mana.py " + arg)
+            call(["mana.py", arg])
         for arg in lnd_args:
             print("run mana.py lnd " + arg)
             call(["mana.py", "lnd", arg])
