@@ -1,50 +1,49 @@
 #!/bin/sh
 
-# Creates a zipped & partitioned image file for burning onto SD cards
-# 256MB bootable FAT32L partition with official Alpine linux and lncm-box
-# Make sure "parted", "dosfstools" and "zip" are installed
+# Upgrades an LNCM Box in place via FAT partition
 
-OUTPUT_VERSION=v0.4.2
-DOWNLOAD_VERSION=v0.4.1
-ALP=alpine-rpi-3.9.2-armhf.tar.gz
-REL=v3.9
+OUTPUT_VERSION=v0.4.1
+DOWNLOAD_VERSION=v0.4.0
+ALP=alpine-rpi-3.8.2-armhf.tar.gz
+REL=v3.8
 IMG=lncm-box-${OUTPUT_VERSION}.img
 IOT=iotwifi.tar.gz
 NGINX=nginx.tar.gz
 FIX=modloop-rpi2.tar.gz
 CACHE=cache.tar.gz
 MNT=/mnt/lncm
+DEV=/dev/mmcblk0p1
 
 if [ "$(id -u)" -ne "0" ]; then
     echo "This script must be run as root"
     exit 1
 fi
 
-cmd_exists() {
-  $(command -v ${1} 2>&1 1>/dev/null;)
-  ret=$?
-  echo $ret
-  return $ret
-}
+# cmd_exists() {
+#   $(command -v ${1} 2>&1 1>/dev/null;)
+#   ret=$?
+#   echo $ret
+#   return $ret
+# }
 
-if  [ "$(cmd_exists apk)" -eq "0" ]; then
-  echo "Found Alpine-based system, installing dependencies"
-  apk add parted zip unzip
-fi
+# if  [ "$(cmd_exists apk)" -eq "0" ]; then
+#   echo "Found Alpine-based system, installing dependencies"
+#   apk add parted zip unzip
+# fi
 
-if [ "$(cmd_exists apt)" -eq "0" ]; then
-  echo "Found Debian-based system, installing dependencies"
-  apt install -y parted zip unzip
-fi
+# if [ "$(cmd_exists apt)" -eq "0" ]; then
+#   echo "Found Debian-based system, installing dependencies"
+#   apt install -y parted zip unzip
+# fi
 
-check_deps() {
-  cmd_exists parted >/dev/null || exit 1
-  cmd_exists zip >/dev/null || exit 1
-  cmd_exists unzip >/dev/null || exit 1
-  echo "Found required dependencies"
-}
+# check_deps() {
+#   cmd_exists parted >/dev/null || exit 1
+#   cmd_exists zip >/dev/null || exit 1
+#   cmd_exists unzip >/dev/null || exit 1
+#   echo "Found required dependencies"
+# }
 
-echo "Building ${IMG}"
+echo "Upgrading SD card in place"
 echo "Using ${ALP} as base distribution"
 
 echo 'Check for existing wpa_supplicant.automatic.conf'
@@ -115,20 +114,14 @@ if ! [ -f ${NGINX} ]; then
   wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${NGINX}
 fi
 
-echo "Create and mount 256MB image"
-dd if=/dev/zero of=${IMG} bs=1M count=256 && \
-    DEV=$(losetup -f) && \
-    losetup -f ${IMG} && \
-    echo "Create 256MB FAT32 partition and filesystem" && \
-    parted -s "${DEV}" mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
-    mkfs.vfat "${DEV}"p1 -IF 32
-
-if ! [ -d ${MNT} ]; then
-  mkdir ${MNT}
-fi
+echo "Unmount"
+umount "${DEV}"
 
 echo "Mount FAT partition"
-mount "${DEV}"p1 "${MNT}"
+mount "${DEV}" "${MNT}"
+
+rm -rvf ${MNT}
+mkdir -p ${MNT}
 
 echo "Extract alpine distribution"
 tar -xzf ${ALP} -C ${MNT}/ --no-same-owner
@@ -145,6 +138,11 @@ tar -xzf ${CACHE} -C ${MNT}/ --no-same-owner
 echo "Patch RPi3 WiFi"
 tar -xzf ${FIX} -C ${MNT}/boot/ --no-same-owner
 
+echo "Create fresh apkovl"
+cd ..
+sh make_apkovl.sh
+cd lncm-workdir
+
 echo "Copy latest box.apkovl tarball"
 cp ../box.apkovl.tar.gz ${MNT}
 
@@ -154,10 +152,5 @@ sync
 echo "Unmount"
 umount ${MNT}
 
-losetup -d "${DEV}"
-echo "Compress img as zip"
-
-zip -r ${IMG}.zip ${IMG}
-
 echo "Done!"
-echo "You may flash your ${IMG}.zip using Etcher or dd the ${IMG}"
+echo "You can reboot your system to upgrade"

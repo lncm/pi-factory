@@ -6,9 +6,32 @@
 # to be run as sudo on Alpine armhf
 
 WORLD=/etc/apk/world
-LOCATION=/media/mmcblk0p1/cache # initial cache location
-#LOCATION=/var/cache/apk # default of installed boxes
+#LOCATION=/media/mmcblk0p1/cache # initial cache location
+NORMAL_LOCATION=/var/cache/apk # default of installed boxes
+WORKDIR=/home/lncm/pi-factory/lncm-workdir
 OUTPUT=cache.tar.gz
+
+cmd_exists() {
+  $(command -v ${1} 2>&1 1>/dev/null;)
+  echo $?
+}
+
+if  [ ! "$(cmd_exists apk)" -eq "0" ]; then
+  echo "Not an Alpine-based system, aborting"
+  exit 1
+fi
+
+mkdir -p ${WORKDIR}
+
+cd ${WORKDIR} || exit
+
+echo "Cleaning up..."
+
+echo "Remove cache dir"
+rm -rfv ${WORKDIR}/cache
+
+echo "Remove cache tarball"
+rm -v ${WORKDIR}/cache.tar.gz
 
 echo "Making backup of ${WORLD}"
 cp -v ${WORLD} ${WORLD}.backup
@@ -22,27 +45,27 @@ echo -e "openssh" >> ${WORLD}
 echo -e "wireless-tools" >> ${WORLD}
 echo -e "wpa_supplicant" >> ${WORLD}
 
-echo "Setting apk cache to ${LOCATION}"
-setup-apkcache ${LOCATION}
+mkdir -p ${WORKDIR}/cache
+
+echo "Setting apk cache to ${WORKDIR}/cache"
+setup-apkcache ${WORKDIR}/cache
 
 echo "Syncing cache"
-apk cache sync -v
+apk update && \
+apk cache sync -v --no-cache
 
 # Disables adding resource-forks on MacOS
 export COPYFILE_DISABLE=true
 
-echo "Remove cache dir"
-rm -rf cache
-
-echo "Remove cache tarball"
-rm -v cache.tar.gz
-
-echo "Copy cache files"
-cp -r ${LOCATION} cache
+# echo "Copy cache files"
+# cp -rv ${LOCATION} cache
 
 echo "Bundling cache"
 # Folder to be compressed must be called cache
-tar cvzf ${OUTPUT} --exclude '.DS_Store' cache
+tar cvzf ${WORKDIR}/${OUTPUT} --exclude '.DS_Store' cache
 
 echo "Restoring previous ${WORLD}"
 cp ${WORLD}.backup ${WORLD}
+
+echo "Restoring previous apk cache location"
+setup-apkcache ${NORMAL_LOCATION}

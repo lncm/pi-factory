@@ -13,23 +13,37 @@ FIRMWARE=brcm-firmware.zip
 FIRMWARE_URL=https://github.com/lncm/pi-factory/files/2714861
 WORKDIR=/home/lncm/lncm-workdir
 
-mkdir lncm-workdir
-cd lncm-workdir
+mkdir -p ${WORKDIR}
+cd ${WORKDIR} || exit
 
-if ! [[ -f ${FIRMWARE} ]]; then
-  echo "Brcm firmware not found, fetching..."
-  wget https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
+
+if [ ! -f ${FIRMWARE} ]; then
+  echo "brcm firmware not found, fetching..."
+  wget $FIRMWARE_URL/$FIRMWARE
 fi
 
-apk update && apk add squashfs-tools unzip
+cmd_exists() {
+  $(command -v ${1} 2>&1 1>/dev/null;)
+  echo $?
+}
 
+if [ "$(cmd_exists apk)" -eq "0" ]; then
+  apk update && apk add squashfs-tools unzip
+fi
+
+if [ "$(cmd_exists apt)" -eq "0" ]; then
+  apt update && apt install squashfs-tools unzip
+fi
+
+rm -rf brcmfmac*
 unzip brcm-firmware.zip
 
-if ! [[ -f ${ALP} ]]; then
+if ! [ -f ${ALP} ]; then
   echo "${ALP} not found, fetching..."
-  wget http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/armhf/${ALP}
+  wget http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
 fi
 
+rm -rf alp-distro
 mkdir alp-distro
 tar xvzf ${ALP} -C alp-distro
 
@@ -42,9 +56,9 @@ cp -r /mnt/squash/* squash-tmp/
 umount /mnt/squash
 rmdir /mnt/squash
 
-cp brcmfmac43455-sdio.bin squash-tmp/modules/firmware/brcm/
-cp brcmfmac43455-sdio.txt squash-tmp/modules/firmware/brcm/
-cp brcmfmac43455-sdio.clm_blob squash-tmp/modules/firmware/brcm/
+cp -v brcmfmac43455-sdio.bin squash-tmp/modules/firmware/brcm/
+cp -v brcmfmac43455-sdio.txt squash-tmp/modules/firmware/brcm/
+cp -v brcmfmac43455-sdio.clm_blob squash-tmp/modules/firmware/brcm/
 
 rm modloop-rpi2
 mksquashfs squash-tmp/ modloop-rpi2 -b 131072 -comp xz -Xdict-size 100%

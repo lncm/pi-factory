@@ -1,7 +1,6 @@
 #!/sbin/openrc-run
 
-## LNCM post-installation script
-## To be run on persistently installed SD card
+# docker-compose init script
 
 depend() {
   need net sshd docker lncm-online

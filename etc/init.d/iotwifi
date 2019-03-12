@@ -6,7 +6,7 @@ depend() {
 
 start() {
 	sleep 2 && \
-	docker load --input /media/mmcblk0p1/iotwifi.tar && \
+	docker load --input /media/mmcblk0p1/iotwifi.tar.gz && \
 	docker run --name=iotwifi -d --restart=unless-stopped --privileged --net host \
 		-v /etc/iotwifi:/cfg \
 	        -v /etc/wpa_supplicant:/etc/wpa_supplicant \
