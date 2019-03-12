@@ -8,7 +8,10 @@
 # filesystem with block size 131072 and 100% dict-size
 
 ALP=alpine-rpi-3.9.2-armhf.tar.gz
-FIRMWARE=https://github.com/lncm/pi-factory/files/2714861/brcm-firmware.zip
+REL=v3.9
+FIRMWARE=brcm-firmware.zip
+FIRMWARE_URL=https://github.com/lncm/pi-factory/files/2714861
+WORKDIR=/home/lncm/lncm-workdir
 
 mkdir lncm-workdir
 cd lncm-workdir
