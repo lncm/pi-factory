@@ -23,10 +23,11 @@
 +home/lncm/.ssh/authorized_keys
 +home/lncm/save_password
 +home/lncm/seed.txt
++usr/local/sbin
 +usr/local/sbin/mana
 +usr/local/sbin/lncm-usb
 +usr/local/sbin/lncm-usb.py
 +usr/local/sbin/lncm-unlock.py
 +usr/local/sbin/check-invoicer-status
 +usr/local/sbin/lncm-createwallet.py
-+usr/local/sbin/update-lnd-tor-ipaddress.sh
++usr/local/sbin/lncm-istorprivkeycreated.py
