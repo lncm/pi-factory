@@ -95,8 +95,10 @@ start() {
       /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/lnd.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/tor/lnd.conf
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/clearnet/lnd.conf
       /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/lnd.conf
       /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/tor/lnd.conf
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/clearnet/lnd.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/docker-compose.yml
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/tor/docker-compose.yml
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/clearnet/docker-compose.yml
