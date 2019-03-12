@@ -4,9 +4,9 @@
 # 256MB bootable FAT32L partition with official Alpine linux and lncm-box
 # Make sure "parted", "dosfstools" and "zip" are installed
 
-OUTPUT_VERSION=v0.4.1
-DOWNLOAD_VERSION=v0.4.0
-ALP=alpine-rpi-3.9.0-armhf.tar.gz
+OUTPUT_VERSION=v0.4.2
+DOWNLOAD_VERSION=v0.4.1
+ALP=alpine-rpi-3.9.2-armhf.tar.gz
 REL=v3.9
 IMG=lncm-box-${OUTPUT_VERSION}.img
 IOT=iotwifi.tar.gz
