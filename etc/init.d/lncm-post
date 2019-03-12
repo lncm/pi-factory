@@ -39,6 +39,11 @@ start() {
     /usr/bin/pip3 install --upgrade pip && \
     /usr/bin/pip3 install docker-compose
   }
+  
+  install_toml() {
+    # Install TOTML parsing library (https://github.com/uiri/toml) so that we can write to the invoicer config files nicely
+    /usr/bin/pip3 install pip install toml
+  }
 
   usb_setup() {
     # USB storage setup
@@ -246,6 +251,7 @@ start() {
 
     move_cache
     install_compose
+    install_toml
     usb_setup
     verify_usb
     fetch_rpcauth
