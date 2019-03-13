@@ -4,14 +4,7 @@ services:
     image: lncm/bitcoind:0.17.1
     volumes:
       - /media/archive/archive/bitcoin/:/root/.bitcoin/
-    ports:
-      - "8332:8332"
-      - "8333:8333"
-      - "28332:28332"
-      - "28333:28333"
-    networks:
-      localnet:
-        ipv4_address: 172.16.88.2
+    network_mode: host
 
   lnd:
     image: lncm/lnd:0.5.2-linux-arm
