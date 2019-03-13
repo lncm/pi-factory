@@ -4,7 +4,7 @@
 Usage:
   mana.py (info|start|stop|restart|logs)
   mana.py (temp|clock|memory|voltage) [<device>]
-  mana.py (backup|restore|source|diff|devtools|upgrade|full-upgrade)
+  mana.py (backup|restore|source|diff|devtools|upgrade|full-upgrade|tunnel)
   mana.py bitcoind (start|stop|logs|info|fastsync|status) [--tail]
   mana.py lnd (start|stop|logs|info|create|unlock|connect|autoconnect|lncli|status) [<address>...] [--tail]
   mana.py --selftest
@@ -28,7 +28,7 @@ from plumbum import local
 
 try:
     from plumbum.cmd import mkdir, docker, tail, cat, docker_compose,\
-        git, diff, cp, rm
+        git, diff, cp, rm, autossh
 except Exception as error:
     print(error)
 
@@ -212,6 +212,17 @@ def get_source():
         git("clone", "https://github.com/lncm/pi-factory.git")
 
 
+def tunnel(port, host):
+    # Keep the tunnel open, no matter what
+    while True:
+        try:
+            print("Tunneling local port 22 to " + host + ":" + port)
+            port_str = "-R " + port + ":localhost:22"
+            autossh("-M 0", "-o ServerAliveInterval=60", "-o ServerAliveCountMax=10", port_str, host)
+        except Exception as error:
+            print(error)
+
+
 def upgrade():
     """Regenerate box.apkovl.tar.gz and mark SD as uninstalled"""
     install_git()
@@ -336,6 +347,8 @@ if __name__ == '__main__':
         do_diff()
     elif args['upgrade']:
         upgrade()
+    elif args['tunnel']:
+        tunnel()
     elif args['devtools']:
         apk("update")
         apk("add", "tmux", "sudo", "git", "rsync", "htop", "iotop", "nmap", "nano")
