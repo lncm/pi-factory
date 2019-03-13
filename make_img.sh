@@ -11,7 +11,6 @@ REL=v3.9
 IMG=lncm-box-${OUTPUT_VERSION}.img
 IOT=iotwifi.tar.gz
 NGINX=nginx.tar.gz
-FIX=modloop-rpi2.tar.gz
 CACHE=cache.tar.gz
 MNT=/mnt/lncm
 
@@ -100,11 +99,6 @@ if ! [ -f ${IOT} ]; then
   wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
 fi
 
-if ! [ -f ${FIX} ]; then
- echo "${FIX} not found, fetching..."
- wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
-fi
-
 if ! [ -f ${CACHE} ]; then
   echo "${CACHE} not found, fetching..."
   wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
@@ -141,9 +135,6 @@ tar -xzf ${NGINX} -C ${MNT}/ --no-same-owner
 
 echo "Extract cache dir for docker and avahi"
 tar -xzf ${CACHE} -C ${MNT}/ --no-same-owner
-
-echo "Patch RPi3 WiFi"
-tar -xzf ${FIX} -C ${MNT}/boot/ --no-same-owner
 
 echo "Copy latest box.apkovl tarball"
 cp ../box.apkovl.tar.gz ${MNT}
