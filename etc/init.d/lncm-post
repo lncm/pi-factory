@@ -240,6 +240,11 @@ start() {
     fi
   }
 
+  run_fastsync() {
+    echo "Check fastsync eligibility"
+    /usr/local/sbin/mana.py fastsync
+  }
+
   install_crontab() {
     echo "Install crontab"
     /usr/bin/crontab /home/lncm/crontab
