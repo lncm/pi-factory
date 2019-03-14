@@ -52,3 +52,7 @@ This is the merchant dashboard used by the invoicer as a UI for accepting paymen
 ## `crontab`
 
 Specifies periodic tasks. Most things should probably be either removed from here, or split into individual, app-specific files.
+
+## `save_password` 
+
+This is just an empty file which lets the wallet creation script save a password for unlocking LND by default. We will eventually remove this file in future builds when there is a way for users to unlock LND without CLI skills.
