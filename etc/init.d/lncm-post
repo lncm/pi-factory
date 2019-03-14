@@ -94,9 +94,17 @@ start() {
       GENERATEDPW="$(cat /media/important/important/rpcpass.txt)"
       /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/lnd.conf
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/tor/lnd.conf
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/clearnet/lnd.conf
       /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/lnd.conf
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/tor/lnd.conf
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/clearnet/lnd.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/docker-compose.yml
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/tor/docker-compose.yml
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/clearnet/docker-compose.yml
       /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/docker-compose.yml
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/tor/docker-compose.yml
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/clearnet/docker-compose.yml
     else
       echo "Error generating RPC configuration"
       exit 1
@@ -132,11 +140,6 @@ start() {
     else
       echo "Could not find the tor generated files.. exiting"
       exit 1
-    fi
-    # Check if theres a V2 hostname, but don't exit uncleanly, just let it go
-    if [ -f /var/lib/tor/lnd-v2/hostname ]; then
-        echo "Configuring a V2 URI"
-        /bin/sed -i "s/; 2 externalip=/externalip=$(cat /var/lib/tor/lnd-v2/hostname)/g; " /home/lncm/lnd/lnd.conf
     fi
   }
 

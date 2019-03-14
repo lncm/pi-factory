@@ -7,6 +7,7 @@ Log notice syslog
 
 DataDirectory /var/lib/tor
 ControlPort 9051
+CookieAuthentication 1
 
 ## If you enable the controlport, be sure to enable one of these
 ## authentication methods, to prevent attackers from accessing it.
