@@ -13,14 +13,14 @@ This file contains initial Bitcoind configuration. For a full list of options [s
 
 ## `compose/docker-compose.yml`
 
-This file defines how all Docker image modules interact with each other.
+This file defines how all Docker image modules interact with each other. This is now a symlink to either ```compose/clearnet/docker-compose.yml``` or ```compose/tor/docker-compose.yml```
 
 > **TODO:** expand on that. Add links to Wikis, describe conventions, etc…
 
 
 ## `lnd/lnd.conf`
 
-This is the initial config for the `lnd` client. Currently contains a lot of comments that are being overridden later. 
+This is the initial config for the `lnd` client. Currently contains a lot of comments that are being overridden later. This is now a symlink to either ```lnd/clearnet/lnd.conf``` or ```lnd/tor/lnd.conf```
 
 
 ## `nginx`
@@ -52,3 +52,7 @@ This is the merchant dashboard used by the invoicer as a UI for accepting paymen
 ## `crontab`
 
 Specifies periodic tasks. Most things should probably be either removed from here, or split into individual, app-specific files.
+
+## `save_password` 
+
+This is just an empty file which lets the wallet creation script save a password for unlocking LND by default. We will eventually remove this file in future builds when there is a way for users to unlock LND without CLI skills.

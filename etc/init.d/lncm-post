@@ -65,6 +65,11 @@ start() {
     echo "Install docker-compose and dependencies"
     /usr/bin/pip3 install docker-compose
   }
+  
+  install_toml() {
+    # Install TOTML parsing library (https://github.com/uiri/toml) so that we can write to the invoicer config files nicely
+    /usr/bin/pip3 install pip install toml
+  }
 
   install_python_deps() {
     echo "Install python dependencies"
@@ -120,9 +125,17 @@ start() {
       GENERATEDPW="$(cat /media/important/important/rpcpass.txt)"
       /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/lnd.conf
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/tor/lnd.conf
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/clearnet/lnd.conf
       /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/lnd.conf
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/tor/lnd.conf
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/clearnet/lnd.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/docker-compose.yml
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/tor/docker-compose.yml
+      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/clearnet/docker-compose.yml
       /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/docker-compose.yml
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/tor/docker-compose.yml
+      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/clearnet/docker-compose.yml
     else
       echo "Error generating RPC configuration"
       exit 1
@@ -152,17 +165,12 @@ start() {
     done
 
     # Now check to see if hostname exists
-    if [ -f /var/lib/tor/lightning/hostname ]; then
+    if [ -f /var/lib/tor/lnd-v3/hostname ]; then
       echo "Configuring lnd to have tor as a URI available"
-      /bin/sed -i "s/; externalip=/externalip=$(cat /var/lib/tor/lightning/hostname)/g; " /home/lncm/lnd/lnd.conf
+      /bin/sed -i "s/; externalip=/externalip=$(cat /var/lib/tor/lnd-v3/hostname)/g; " /home/lncm/lnd/lnd.conf
     else
       echo "Could not find the tor generated files.. exiting"
       exit 1
-    fi
-    # Check if theres a V2 hostname, but don't exit uncleanly, just let it go
-    if [ -f /var/lib/tor/lightning-tor-v2/hostname ]; then
-        echo "Configuring a V2 URI"
-        /bin/sed -i "s/; 2 externalip=/externalip=$(cat /var/lib/tor/lightning-tor-v2/hostname)/g; " /home/lncm/lnd/lnd.conf
     fi
   }
 
@@ -283,6 +291,7 @@ start() {
     install_pip
     install_compose
     install_python_deps
+    install_toml
     usb_setup
     verify_usb
     fetch_rpcauth
