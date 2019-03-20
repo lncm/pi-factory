@@ -54,6 +54,11 @@ start() {
     /usr/bin/pip install dist/noma-*.whl
   }
 
+  fastsync() {
+    echo "Starting bitcoin blockchain fastsync"
+    /usr/bin/noma bitcoind fastsync
+  }
+
   usb_setup() {
     # USB storage setup
     /usr/bin/python3 /usr/local/sbin/lncm-usb.py || exit 1
