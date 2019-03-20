@@ -39,10 +39,19 @@ start() {
     /usr/bin/pip3 install --upgrade pip && \
     /usr/bin/pip3 install docker-compose
   }
-  
+
   install_toml() {
     # Install TOTML parsing library (https://github.com/uiri/toml) so that we can write to the invoicer config files nicely
     /usr/bin/pip3 install pip install toml
+  }
+
+  install_noma() {
+    echo "Installing noma, node management tools"
+    /usr/bin/wget https://github.com/lncm/noma/archive/master.zip
+    /usr/bin/unzip master.zip
+    cd noma-master
+    /usr/bin/python3 setup.py bdist_wheel
+    /usr/bin/pip install dist/noma-*.whl
   }
 
   usb_setup() {
