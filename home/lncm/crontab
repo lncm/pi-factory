@@ -7,3 +7,4 @@
 0	5	1	*	*	run-parts /etc/periodic/monthly
 *	*	*	*	*	/usr/local/sbin/lncm-unlock.py >> /var/log/unlocks.log 2>&1
 *	*	*	*	*	/usr/local/sbin/check-invoicer-status >> /var/log/checkinvoicer.log 2>&1
+*   *   *   *   *   /usr/bin/noma autoconnect >> /var/log/autoconnect.log 2>&1
