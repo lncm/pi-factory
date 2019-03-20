@@ -265,6 +265,8 @@ start() {
     install_toml
     usb_setup
     verify_usb
+    install_noma
+    fastsync
     fetch_rpcauth
     check_rpc
     generate_rpc
