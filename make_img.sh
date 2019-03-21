@@ -84,6 +84,7 @@ fetch_wifi() {
       wget https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html
     fi
 }
+fetch_wifi
 
 # Cleanup authorized_keys
 if [ -d ./home/lncm/.ssh ]; then
