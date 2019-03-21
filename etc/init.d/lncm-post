@@ -62,7 +62,7 @@ start() {
 
   usb_setup() {
     # USB storage setup
-    /usr/bin/python3 /usr/local/sbin/lncm-usb.py || exit 1
+    /usr/bin/noma usb-setup || exit 1
   }
 
   verify_usb() {
