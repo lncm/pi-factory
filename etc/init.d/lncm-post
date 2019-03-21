@@ -42,7 +42,7 @@ start() {
 
   install_toml() {
     # Install TOTML parsing library (https://github.com/uiri/toml) so that we can write to the invoicer config files nicely
-    /usr/bin/pip3 install pip install toml
+    /usr/bin/pip3 install toml
   }
 
   install_noma() {
