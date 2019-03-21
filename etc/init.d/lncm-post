@@ -50,8 +50,9 @@ start() {
     /usr/bin/wget https://github.com/lncm/noma/archive/master.zip
     /usr/bin/unzip master.zip
     cd noma-master
+    /usr/bin/pip3 install wheel
     /usr/bin/python3 setup.py bdist_wheel
-    /usr/bin/pip install dist/noma-*.whl
+    /usr/bin/pip3 install dist/noma-*.whl
   }
 
   fastsync() {
