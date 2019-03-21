@@ -46,7 +46,13 @@ start() {
   }
 
   install_noma() {
-    echo "Installing noma, node management tools"
+    echo "Fetching, installing noma - node management tools"
+    /sbin/apk add py3-psutil
+    /usr/bin/pip3 install https://github.com/lncm/noma/releases/download/v0.1/noma-0.1-py3-none-any.whl
+  }
+
+  build_noma() {
+    echo "Fetching, building noma - node management tools"
     /usr/bin/wget https://github.com/lncm/noma/archive/master.zip
     /usr/bin/unzip master.zip
     cd noma-master
