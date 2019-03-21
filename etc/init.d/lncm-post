@@ -264,9 +264,9 @@ start() {
     move_cache
     install_compose
     install_toml
+    install_noma
     usb_setup
     verify_usb
-    install_noma
     fastsync
     fetch_rpcauth
     check_rpc
