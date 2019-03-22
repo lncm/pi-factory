@@ -68,6 +68,10 @@ If you wish to disable passwords altogether (and highly recommended than the def
 
 Passwords should be disabled when you create a new image.
 
+For those who still are using password authentication it is recommended that you change both root and lncm users with the ```passwd``` utility.
+
+Also, renaming the hotspot and changing the password is another thing that you need to do - the file is  ```/etc/iotwifi/wificfg.json``` as the password is public.
+
 #### Networking
 
 If you have console access:
