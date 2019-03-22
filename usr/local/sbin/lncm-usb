@@ -64,25 +64,25 @@ mnt_any() {
 
 mount_usb_devs() {
   echo "Mount ext4 usb storage devices"
-  if mount -t ext4 /dev/"${LARGEST}" /media/archive; then
+  if ! mount -t ext4 /dev/"${LARGEST}" /media/archive; then
     echo "Warning: /dev/${LARGEST} is not mountable as ext4"
-    if mount /dev/"${LARGEST}" /media/archive; then
+    if ! mount /dev/"${LARGEST}" /media/archive; then
       echo "Error: /dev/${LARGEST} is not mountable with any supported format"
       echo "Cannot proceed without all USB storage devices"
       exit 1
     fi
   fi
-  if mount -t ext4 /dev/"${MEDIUM}" /media/volatile; then
+  if ! mount -t ext4 /dev/"${MEDIUM}" /media/volatile; then
     echo "Warning: /dev/${MEDIUM} is not mountable as ext4"
-    if mount /dev/"${MEDIUM}" /media/volatile; then
+    if ! mount /dev/"${MEDIUM}" /media/volatile; then
       echo "Error: /dev/${MEDIUM} is not mountable with any supported format"
       echo "Cannot proceed without all USB storage devices"
       exit 1
     fi
   fi
-  if mount -t ext4 /dev/${SMALLEST} /media/important; then
+  if ! mount -t ext4 /dev/${SMALLEST} /media/important; then
     echo "Warning: /dev/${SMALLEST} is not mountable as ext4"
-    if mount /dev/"${SMALLEST}" /media/important; then
+    if ! mount /dev/"${SMALLEST}" /media/important; then
       echo "Error: /dev/${SMALLEST} is not mountable with any supported format"
       echo "Cannot proceed without all USB storage devices"
       exit 1
