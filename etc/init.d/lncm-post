@@ -68,17 +68,30 @@ start() {
 
   install_toml() {
     # Install TOTML parsing library (https://github.com/uiri/toml) so that we can write to the invoicer config files nicely
-    /usr/bin/pip3 install pip install toml
+    /usr/bin/pip3 install toml
   }
 
+  build_noma() {
+    echo "Fetching, building noma - node management tools"
+    /usr/bin/wget https://github.com/lncm/noma/archive/master.zip
+    /usr/bin/unzip master.zip
+    /usr/bin/python3 setup.py bdist_wheel
+    /usr/bin/pip3 install wheel
+    cd noma-master
+    /usr/bin/pip3 install dist/noma-*.whl
+  }
   install_python_deps() {
     echo "Install python dependencies"
     /usr/bin/pip3 install wheel docker
   }
 
+  fastsync() {
+    echo "Starting bitcoin blockchain fastsync"
+    /usr/bin/noma bitcoind fastsync
+  }
   usb_setup() {
     # USB storage setup
-    /usr/bin/python3 /usr/local/sbin/lncm-usb.py || exit 1
+    /usr/bin/noma usb-setup || exit 1
   }
 
   verify_usb() {

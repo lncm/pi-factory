@@ -4,7 +4,7 @@
 # 256MB bootable FAT32L partition with official Alpine linux and lncm-box
 # Make sure "parted", "dosfstools" and "zip" are installed
 
-OUTPUT_VERSION=v0.4.1
+OUTPUT_VERSION=v0.5.0
 DOWNLOAD_VERSION=v0.4.1
 ALP=alpine-rpi-3.8.2-armhf.tar.gz
 REL=v3.8
@@ -84,6 +84,7 @@ fetch_wifi() {
       wget https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html
     fi
 }
+fetch_wifi
 
 # Cleanup authorized_keys
 if [ -d ./home/lncm/.ssh ]; then
