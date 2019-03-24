@@ -51,9 +51,8 @@ start() {
   }
 
   install_apk_deps() {
-    # jq for parsing JSON
-    echo "Install curl and jq"
-    /sbin/apk add curl jq
+    echo "Install apk deps"
+    /sbin/apk add curl jq py3-psutil
   }
 
   install_pip() {
@@ -82,7 +81,7 @@ start() {
   }
   install_python_deps() {
     echo "Install python dependencies"
-    /usr/bin/pip3 install wheel docker py3-psutil
+    /usr/bin/pip3 install wheel docker
   }
 
   fastsync() {
@@ -311,7 +310,7 @@ start() {
     apk_update
     install_python
     install_python_deps
-#    install_apk_deps
+    install_apk_deps
     install_pip
     install_noma
     run_noma
