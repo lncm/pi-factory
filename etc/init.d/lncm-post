@@ -82,7 +82,7 @@ start() {
   }
   install_python_deps() {
     echo "Install python dependencies"
-    /usr/bin/pip3 install wheel docker
+    /usr/bin/pip3 install wheel docker py3-psutil
   }
 
   fastsync() {
