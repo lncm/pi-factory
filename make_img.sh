@@ -75,6 +75,16 @@ if [ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]; then
     rm ./etc/wpa_supplicant/wpa_supplicant.conf.bak
 fi
 
+fetch_wifi() {
+    echo "Checking for wifi manager"
+    mkdir -p home/lncm/public_html/wifi
+    if [ ! -f home/lncm/public_html/wifi/index.html ]; then
+      echo "Fetch wifi manager"
+      cd home/lncm/public_html/wifi || exit
+      wget https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html
+    fi
+}
+
 # Cleanup authorized_keys
 if [ -d ./home/lncm/.ssh ]; then
     echo "Remove .ssh directory"
