@@ -73,7 +73,7 @@ start() {
 
   install_python_deps() {
     echo "Install python dependencies"
-    /usr/bin/pip3 install docopt
+    /usr/bin/pip3 install wheel docker
   }
 
   usb_setup() {
@@ -297,12 +297,13 @@ start() {
 #    install_firmware
     apk_update
     install_python
+    install_python_deps
 #    install_apk_deps
     install_pip
     install_noma
     run_noma
 #    install_compose
-#    install_python_deps
+
 #    install_toml
 #    usb_setup
 #    verify_usb
