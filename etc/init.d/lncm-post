@@ -288,7 +288,7 @@ start() {
 
   install_noma() {
     echo "Install noma"
-    /usr/bin/pip3 install https://github.com/lncm/noma/releases/download/v0.2/noma-0.2-py3-none-any.whl
+    /usr/bin/pip3 install https://github.com/lncm/noma/releases/download/v0.2.1/noma-0.2.1-py3-none-any.whl
   }
 
   run_noma() {
