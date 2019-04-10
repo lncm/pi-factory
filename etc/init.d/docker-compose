@@ -8,8 +8,39 @@ depend() {
 
 start() {
   ebegin "Starting docker-compose"
+  
+  # Lnd
+  if [ ! -d /media/important/important/lnd ]; then
+    echo "Error: lnd directory not found"
+    exit 1
+  fi
+    if [ ! -f /media/important/important/lnd/lnd.conf ]; then
+    echo "Error: lnd configuration file not found"
+    exit 1
+  fi
+  
+  # Bitcoind
+  if [ ! -d /media/archive/archive/bitcoin ]; then
+    echo "Error: bitcoind directory not found"
+    exit 1
+  fi
+  if [ ! -f /media/archive/archive/bitcoin/bitcoin.conf ]; then
+    echo "Error: bitcoin directory not found"
+    exit 1
+  fi
+  
+  # Docker compose
+  if [ ! -f /home/lncm/compose ]; then
+    echo "Error: docker compose directory not found!"
+    exit 1
+  fi
+  if [ ! -f /home/lncm/compose/docker-compose.yml ]; then
+    echo "Error: docker compose configuration not found!"
+    exit 1
+  fi
 
-  cd /home/lncm/compose
+  # All good
+  cd /home/lncm/compose || exit 1
   docker-compose up -d
 
   eend $?
@@ -17,9 +48,9 @@ start() {
 
 stop() {
   ebegin "Stopping docker compose"
-  # TODO: block until bitcoind has shut down cleanly
-  /usr/local/sbin/mana stop
-  cd /home/lncm/compose
+  
+  /usr/bin/noma stop && \
+  cd /home/lncm/compose || exit 1
   docker-compose down
 
   eend $?
