@@ -14,5 +14,5 @@ plugins:
   shellcheck:
     enabled: true
   sonar-python:
-    enabled: true
+    enabled: false
  
