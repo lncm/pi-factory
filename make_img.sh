@@ -81,7 +81,7 @@ fetch_wifi() {
     if [ ! -f home/lncm/public_html/wifi/index.html ]; then
       echo "Fetch wifi manager"
       cd home/lncm/public_html/wifi || exit
-      wget https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html
+      wget --no-verbose https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html
     fi
 }
 
@@ -102,27 +102,27 @@ cd lncm-workdir || exit
 
 if ! [ -f ${ALP} ]; then
   echo "${ALP} not found, fetching..."
-  wget http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
+  wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
 fi
 
 if ! [ -f ${IOT} ]; then
   echo "${IOT} not found, fetching..."
-  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
+  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
 fi
 
 if ! [ -f ${FIX} ]; then
  echo "${FIX} not found, fetching..."
- wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
+ wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
 fi
 
 if ! [ -f ${CACHE} ]; then
   echo "${CACHE} not found, fetching..."
-  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
+  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
 fi
 
 if ! [ -f ${NGINX} ]; then
   echo "${NGINX} not found, fetching..."
-  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${NGINX}
+  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${NGINX}
 fi
 
 echo "Create and mount 256MB image"
