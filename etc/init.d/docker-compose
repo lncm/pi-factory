@@ -3,12 +3,12 @@
 # docker-compose init script
 
 depend() {
-  need net sshd docker lncm-online
+  need net sshd docker
 }
 
 start() {
   ebegin "Starting docker-compose"
-  
+
   # Lnd
   if [ ! -d /media/important/important/lnd ]; then
     echo "Error: lnd directory not found"
@@ -18,7 +18,7 @@ start() {
     echo "Error: lnd configuration file not found"
     exit 1
   fi
-  
+
   # Bitcoind
   if [ ! -d /media/archive/archive/bitcoin ]; then
     echo "Error: bitcoind directory not found"
@@ -28,7 +28,7 @@ start() {
     echo "Error: bitcoin directory not found"
     exit 1
   fi
-  
+
   # Docker compose
   if [ ! -f /home/lncm/compose ]; then
     echo "Error: docker compose directory not found!"
@@ -48,7 +48,7 @@ start() {
 
 stop() {
   ebegin "Stopping docker compose"
-  
+
   /usr/bin/noma stop && \
   cd /home/lncm/compose || exit 1
   docker-compose down

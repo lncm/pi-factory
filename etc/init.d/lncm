@@ -3,7 +3,7 @@
 # LNCM installation script
 
 depend() {
-  need net lncm-online
+  need net
   after ntpd sshd
 }
 
@@ -172,12 +172,12 @@ start() {
 
   main() {
     is_installed=$(check_installed)
-    
+
     if [ "$is_installed" -eq "0" ]; then
       echo "Already installed, skipping."
       exit 1
     fi
-    
+
     install_tools
     partition_sd
     create_ext4
@@ -195,9 +195,9 @@ start() {
     disable_install
     persist_state
     mnt_ro
-    
+
     is_installed=$(check_installed)
-    
+
     if [ "${is_installed}" -eq "0" ]; then
       reboot_now
     fi
