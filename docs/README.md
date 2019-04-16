@@ -8,10 +8,6 @@ This repository lets you build a _bitcoin lightning_ box for [Raspberry Pi](http
 **Work in progress.** While stable enough for development, this software is subject to change, some of which may be breaking changes.
 **Warning!** *Do not put money at stake that you are not willing to lose!*
 
-
-[![Documentation Status](https://readthedocs.org/projects/noma/badge/?version=latest)](https://pi-factory.readthedocs.io/en/latest/?badge=latest)
-
-
 ### Features
 
 * `Tor` onion-routing for enhanced privacy and improved connectivity
@@ -20,14 +16,13 @@ This repository lets you build a _bitcoin lightning_ box for [Raspberry Pi](http
 * `Alpine Linux`, a security-oriented, lightweight Linux distribution based on musl *libc* and `Busybox`
 * Containerization of most components including `nginx`, `iotwifi`, `invoicer`, `bitcoind`, `lnd`
 * *Stateless OS* - the microSD card image can be replaced with a newer version *without loss of user data*
-* [Noma](https://github.com/lncm/noma), our convenient CLI *node management* tool also provides a *Python API*
+* `Noma`, our convenient CLI *node management* tool also provides a *Python API*
 * Simple `shell`, `Python` scripts and `Go` backends enable easy auditing and provide a small *attack surface*
 * `Docker` & `docker-compose` make updates easier and orchestration painless
 * [Future] the microSD card can be mounted in read-only mode for zero-wear operation
 * [Future] Redundant storage persistence using RAID 
 
-Hardware Requirements
----------------------
+## Hardware Requirements
 
 * **Raspberry Pi**
     * Recommended: model 3B+
@@ -59,8 +54,7 @@ Hardware Requirements
     
     You **risk losing bitcoin** and **data** when running your Raspberry Pi in an underpowered state. 
     
-Instructions
-------------
+## Instructions
 
 1. Download [Etcher](https://www.balena.io/etcher/) 
     * *Experienced users:* it is possible to use `dd` instead
@@ -86,8 +80,7 @@ Your **lightning box** will automatically start installing itself to *microSD* c
 
 Once the box has *synced* up the **invoicing** service will be available at [http://box.local/pos](http://box.local/pos). Depending on the speed of your internet connection and your USB storage devices the process may take *30 minutes* to *an hour* or more.
 
-Access
-------
+## Access
 
 ### Users & Passwords
 
@@ -118,10 +111,6 @@ The Raspberry Pi lightning box provides it's own WiFi hotspot to ease access and
 - **IP address**: 192.168.27.1
 - **hostname**: box.local
 
-Documentation
--------------
-[Read the Docs](https://pi-factory.readthedocs.io/en/latest/?badge=latest)
-
 
 Support
 -------
@@ -141,7 +130,7 @@ Bug reports, pull-requests and suggestions are very welcome!
 In the Wild
 -----------
 
-There are two public [installations](nodes.lncm.io) of this lightning box in Chiang Mai, Thailand acting as Bitcoin and Lightning points of sale in combination with a tablet.
+There are two public [installations](http://nodes.lncm.io) of this lightning box in Chiang Mai, Thailand acting as Bitcoin and Lightning points of sale in combination with a tablet.
 
 Please do let us know about your own or those you spot!
 
