@@ -32,9 +32,9 @@ if  [ "$(cmd_exists apk)" -eq "0" ]; then
   apk add parted zip unzip
 fi
 
-if [ "$(cmd_exists apt)" -eq "0" ]; then
+if [ "$(cmd_exists apt-get)" -eq "0" ]; then
   echo "Found Debian-based system, installing dependencies"
-  apt install -y parted zip unzip
+  apt-get install -y parted zip unzip
 fi
 
 check_deps() {
