@@ -37,7 +37,7 @@ start() {
 
   install_pip_pkg() {
     echo "Install python package $1"
-    if [ -n "$(pip show $1)" ]; then
+    if [ -n "$(/usr/bin/pip3 show $1)" ]; then
       /usr/bin/pip3 install $1
     else
      install_pip_pkg $1
