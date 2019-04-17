@@ -7,7 +7,7 @@ services:
     network_mode: host
 
   lnd:
-    image: lncm/lnd:0.5.2-linux-arm
+    image: lncm/lnd:0.6-linux-arm
     volumes:
       - /media/volatile/volatile/lnd/logs:/root/.lnd/logs
       - /media/important/important/lnd/data:/root/.lnd/data
@@ -38,11 +38,3 @@ services:
       - INVOICER_HOSTPORT=invoicer:defaultpassw0rd@localhost:8088
       - STATICDIR=/static/
     network_mode: host
-
-networks:
-  localnet:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.16.88.0/24
