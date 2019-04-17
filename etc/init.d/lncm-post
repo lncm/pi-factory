@@ -351,11 +351,14 @@ start() {
     echo "Install noma - node management tool"
     noma_url=https://github.com/lncm/noma/releases/download/v0.2.1/noma-0.2.1-py3-none-any.whl
 
-    if [ -n "$(/usr/bin/pip3 show noma)" ]; then
+    while [ -z "$(/usr/bin/pip3 show noma)" ]; do
       /usr/bin/pip3 install $noma_url
-    else
-      install_noma
-    fi
+      if [ -z "$(/usr/bin/pip3 show noma)" ]; then
+        install_noma
+      else
+        break
+      fi
+    done
   }
 
   run_noma() {
