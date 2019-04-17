@@ -46,7 +46,7 @@ start() {
 
   update_pip_pkg() {
     echo "Install python package $1"
-    if [ -n "$(pip show $1)" ]; then
+    if [ -n "$(/usr/bin/pip3 show $1)" ]; then
       /usr/bin/pip3 install --update $1
     else
      update_pip_pkg $1
@@ -90,7 +90,6 @@ start() {
   }
 
   install_python() {
-    echo "Install python"
     install_apk python3
   }
 
@@ -136,7 +135,6 @@ start() {
 
   install_python_deps() {
     echo "Install python dependencies"
-    install_pip_pkg wheel
     install_pip_pkg docker
   }
 
@@ -347,7 +345,7 @@ start() {
     echo "Install noma - node management tool"
     noma_url=https://github.com/lncm/noma/releases/download/v0.2.1/noma-0.2.1-py3-none-any.whl
 
-    if [ -n "$(pip show noma)" ]; then
+    if [ -n "$(/usr/bin/pip3 show noma)" ]; then
       /usr/bin/pip3 install $noma_url
     else
       install_noma
@@ -375,7 +373,7 @@ start() {
     install_python_deps
     install_apk_deps
     install_pip
-    install_noma_requirementsa
+    install_noma_requirements
     install_noma
     run_noma
 #    install_compose
