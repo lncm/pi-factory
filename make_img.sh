@@ -80,8 +80,8 @@ fetch_wifi() {
     mkdir -p home/lncm/public_html/wifi
     if [ ! -f home/lncm/public_html/wifi/index.html ]; then
       echo "Fetch wifi manager"
-      cd home/lncm/public_html/wifi || exit
-      wget --no-verbose https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html
+      wget -O home/lncm/public_html/wifi/index.html --no-verbose \
+	      https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html || exit
     fi
 }
 fetch_wifi

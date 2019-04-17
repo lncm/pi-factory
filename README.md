@@ -123,6 +123,33 @@ Documentation
 [Read the Docs](https://pi-factory.readthedocs.io/en/latest/?badge=latest)
 
 
+Building
+--------
+To generate a fresh image from source run `make_img.sh` as __root__ on a *Debian*, *Ubuntu* or *Alpine* system.
+
+For convenience, we also support `vagrant` to automate setting up your development VM.
+
+### MacOS instructions:
+
+Install dependencies (brew, virtualbox, vagrant):
+* install [Homebrew](https://brew.sh)
+* `brew cask install virtualbox`
+* `brew cask install vagrant`
+* `git clone pi-factory`
+* `cd pi-factory`
+
+Create VM and generate image:
+* `vagrant up`
+
+Rebuild image without wiping VM:
+* `vagrant up --provision`
+
+Also useful:
+* `vagrant ssh`
+* `vagrant halt`
+* `vagrant destroy -f`
+* `brew cask install vagrant-manager` (optional menu-bar utility)
+
 Support
 -------
 
