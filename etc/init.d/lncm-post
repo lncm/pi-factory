@@ -50,8 +50,9 @@ start() {
   update_pip_pkg() {
     echo "Install python package $1"
     while [ -z "$(/usr/bin/pip3 show $1)" ]; do
-      /usr/bin/pip3 install --update $1
+      /usr/bin/pip3 install --upgrade $1
       if [ -z "$(/usr/bin/pip3 show $1)" ]; then
+        # TODO: Test for successful update
         install_pip_pkg $1
       else
         break
