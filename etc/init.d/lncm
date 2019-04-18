@@ -35,6 +35,13 @@ start() {
     fi
   }
 
+  install_apk() {
+    echo "Install $1"
+    while [ -z "$( apk -e info $1 )" ]; do
+      /sbin/apk add $1
+    done
+  }
+
   mnt_rw() {
     echo "Re-mount FAT partition read/write"
     /bin/mount -o remount,rw /dev/"${SD}"p1 /media/"${SD}"p1
@@ -48,7 +55,8 @@ start() {
   install_tools() {
     echo "Add partitioning and filesystem tools"
     /sbin/setup-apkcache /media/mmcblk0p1/cache && \
-    /sbin/apk add parted e2fsprogs
+    install_apk parted && \
+    install_apk e2fsprogs
   }
 
   partition_sd() {
