@@ -118,9 +118,9 @@ start() {
     /usr/bin/wget https://github.com/lncm/noma/archive/master.zip
     /usr/bin/unzip master.zip
     /usr/bin/pip3 install -r https://raw.githubusercontent.com/lncm/noma/master/requirements.txt
-    /usr/bin/pip3 install wheel
-    /usr/bin/python3 setup.py bdist_wheel
+    install_pip_pkg wheel
     cd noma-master
+    /usr/bin/python3 setup.py bdist_wheel
     /usr/bin/pip3 install dist/noma-*.whl
   }
 
@@ -368,7 +368,8 @@ start() {
     install_apk_deps
     install_pip
     install_noma_requirements
-    install_noma
+#    install_noma
+    build_noma
     run_noma
 #    install_compose
 #    install_toml
