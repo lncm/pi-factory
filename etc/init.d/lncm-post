@@ -39,36 +39,20 @@ start() {
     echo "Install python package $1"
     while [ -z "$(/usr/bin/pip3 show $1)" ]; do
       /usr/bin/pip3 install $1
-      if [ -z "$(/usr/bin/pip3 show $1)" ]; then
-        install_pip_pkg $1
-      else
-        break
-      fi
     done
   }
 
   update_pip_pkg() {
     echo "Update python package $1"
-    while [ -z "$(/usr/bin/pip3 show $1)" ]; do
-      /usr/bin/pip3 install --upgrade $1
-      if [ -z "$(/usr/bin/pip3 show $1)" ]; then
-        # TODO: Test for successful update
-        install_pip_pkg $1
-      else
-        break
-      fi
+    while ! [ "$(/usr/bin/pip3 install --upgrade $1)" ]; do
+      update_pip_pkg $1
     done
   }
 
   install_apk() {
     echo "Install $1"
-    pkg_installed="$( apk -e info $1 )"
-    while [ -z "$pkg_installed" ]; do
+    while [ -z "$( apk -e info $1 )" ]; do
       /sbin/apk add $1
-      pkg_installed="$( apk -e info $1 )"
-      if [ -n "$pkg_installed" ]; then
-        break
-      fi
     done
   }
 
@@ -357,7 +341,7 @@ start() {
       if [ -z "$(/usr/bin/pip3 show noma)" ]; then
         install_noma
       else
-        break
+        true
       fi
     done
   }
