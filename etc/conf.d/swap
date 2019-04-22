@@ -1,0 +1,3 @@
+# If you are using swap files stored on local file systems, uncomment
+# this line.
+rc_need="localmount"
