@@ -12,34 +12,15 @@ start() {
   ebegin "Starting LNCM post-installation"
   # This script will only run once, to complete post-installation
 
-  check_installed() {
+  NOMA_URL=https://github.com/lncm/noma/releases/download/v0.2.2/noma-0.2.2-py3-none-any.whl
+  REQUIREMENTS_URL=https://raw.githubusercontent.com/lncm/noma/master/requirements.txt
+
+  is_installed() {
     if [ -f /media/mmcblk0p1/installed ]; then
-      echo 0
       return 0
     else
-      echo 1
       return 1
     fi
-  }
-
-  move_cache() {
-    echo "Let apk cache live on persistent volume"
-    if [ -d /media/mmcblk0p1/cache ]; then
-      cp -v /media/mmcblk0p1/cache/* /var/cache/apk/
-    fi
-    /sbin/setup-apkcache /var/cache/apk
-  }
-
-  enable_swap() {
-    echo "Enable swap devices at boot"
-    /sbin/rc-update add swap boot
-  }
-
-  install_pip_pkg() {
-    echo "Install python package $1"
-    while [ -z "$(/usr/bin/pip3 show $1)" ]; do
-      /usr/bin/pip3 install $1
-    done
   }
 
   update_pip_pkg() {
@@ -56,24 +37,9 @@ start() {
     done
   }
 
-  install_firmware() {
-    echo "Install raspberry-pi firmware"
-    install_apk raspberrypi
-  }
-
-  apk_update() {
-    echo "Update package repositories"
-    if [ "$(/sbin/apk update)" ]; then
-      echo "Up to date"
-    else
-      apk_update
-    fi
-  }
-
   install_noma_requirements() {
     echo "Install noma requirements"
-    requirements_url=https://raw.githubusercontent.com/lncm/noma/master/requirements.txt
-    if [ "$(/usr/bin/pip3 install -r $requirements_url)" ]; then
+    if [ "$(/usr/bin/pip3 install -r $REQUIREMENTS_URL)" ]; then
       echo "Requirements installed successfully"
     else
       install_noma_requirements
@@ -96,14 +62,11 @@ start() {
     update_pip_pkg pip
   }
 
-  install_compose() {
-    echo "Install docker-compose and dependencies"
-    install_pip_pkg docker-compose
-  }
-
-  install_toml() {
-    # Install TOTML parsing library (https://github.com/uiri/toml) so that we can write to the invoicer config files nicely
-    install_pip_pkg toml
+  install_pip_pkg() {
+    echo "Install python package $1"
+    while [ -z "$(/usr/bin/pip3 show $1)" ]; do
+      /usr/bin/pip3 install $1
+    done
   }
 
   build_noma() {
@@ -129,240 +92,24 @@ start() {
     install_pip_pkg docker
   }
 
-  fastsync() {
-    echo "Starting bitcoin blockchain fastsync"
-    /usr/bin/noma bitcoind fastsync
-  }
-
-  usb_setup() {
-    # USB storage setup
-    /usr/bin/noma usb-setup || exit 1
-  }
-
-  verify_usb() {
-    echo "Verify USB setup"
-    if [ ! -d /media/archive ]; then
-      echo '"Archive" USB missing'
-      exit 1
-    elif [ ! -d /media/important ]; then
-      echo '"Important" USB missing'
-      exit 1
-    elif [ ! -d /media/volatile ]; then
-      echo '"Volatile" USB missing'
-      exit 1
-    fi
-  }
-
-  fetch_rpcauth() {
-    echo "Generate RPC credentials using rpcauth.py from bitcoin repo"
-    curl "https://raw.githubusercontent.com/bitcoin/bitcoin/master/share/rpcauth/rpcauth.py" 2>/dev/null 1>rpcauth.py
-    if [ -f ./rpcauth.py ]; then
-      chmod 700 rpcauth.py
-      ./rpcauth.py lncm | tee /media/important/important/generated.txt | head -2 | tail -1 > /media/important/important/rpcauth.txt
-      tail -1 /media/important/important/generated.txt > /media/important/important/rpcpass.txt
-      rm rpcauth.py /media/important/important/generated.txt
-    else
-      echo "Error: could not reach server"
-      exit 1
-    fi
-  }
-
-  check_rpc() {
-    echo "Check RPC credentials"
-    if [ "$(grep -c rpcauth /media/important/important/rpcauth.txt )" = 0 ]; then
-      echo "Error: RPC credentials missing"
-      exit 1
-    fi
-  }
-
-  generate_rpc() {
-    if [ -f /media/important/important/rpcauth.txt ]; then
-      echo "Apply RPC configuration"
-      # Replace strings with what was generated
-      RPCAUTHLINE="$(cat /media/important/important/rpcauth.txt)"
-      GENERATEDPW="$(cat /media/important/important/rpcpass.txt)"
-      /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf
-      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/lnd.conf
-      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/tor/lnd.conf
-      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/clearnet/lnd.conf
-      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/lnd.conf
-      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/tor/lnd.conf
-      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/clearnet/lnd.conf
-      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/docker-compose.yml
-      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/tor/docker-compose.yml
-      /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/clearnet/docker-compose.yml
-      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/docker-compose.yml
-      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/tor/docker-compose.yml
-      /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/clearnet/docker-compose.yml
-    else
-      echo "Error generating RPC configuration"
-      exit 1
-    fi
-  }
-
-  install_tor() {
-    # Install Tor
-    echo "Installing and starting tor (and waiting about 10 seconds)"
-    /sbin/apk update && /sbin/apk add tor
-    /sbin/service tor start
-  }
-
-  enable_tor() {
-    echo "Add tor to default runlevels"
-    /sbin/rc-update add tor default
-  }
-
-  setup_tor() {
-    CHECKTOR_HOSTNAME=1
-    # Check to see if Tor generated directory exists
-    while [ ! -d /var/lib/tor/lightning ] && [ $CHECKTOR_HOSTNAME -lt 10 ];
-    do
-      echo "Tor generated directory doesn't exist yet.. waiting";
-      CHECKTOR_HOSTNAME=$((CHECKTOR_HOSTNAME+1))
-      sleep 1;
-    done
-
-    # Now check to see if hostname exists
-    if [ -f /var/lib/tor/lnd-v3/hostname ]; then
-      echo "Configuring lnd to have tor as a URI available"
-      /bin/sed -i "s/; externalip=/externalip=$(cat /var/lib/tor/lnd-v3/hostname)/g; " /home/lncm/lnd/lnd.conf
-    else
-      echo "Could not find the tor generated files.. exiting"
-      exit 1
-    fi
-  }
-
-  config_bitcoind() {
-    echo "Checking for existing bitcoind config"
-    if [ -f /media/important/important/bitcoin/bitcoin.conf ]; then
-      echo "bitcoin.conf exists, making backup and replacing"
-      /bin/cp /media/important/important/bitcoin/bitcoin.conf /media/important/important/bitcoin/bitcoin.conf.backup &&
-      /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/important/important/bitcoin/bitcoin.conf
-    else
-      echo "bitcoind.conf does not exist, creating"
-      /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/important/important/bitcoin/bitcoin.conf
-    fi
-  }
-
-  config_lnd() {
-    echo "Checking for existing lnd config"
-    if [ -f /media/important/important/lnd/lnd.conf ]; then
-      echo "lnd.conf exists, making backup and replacing"
-      /bin/cp /media/important/important/lnd/lnd.conf /media/important/important/lnd/lnd.conf.backup &&
-      /bin/cp -f /home/lncm/lnd/lnd.conf /media/important/important/lnd/lnd.conf
-    else
-      echo "lnd.conf does not exist, creating"
-      /bin/cp -f /home/lncm/lnd/lnd.conf /media/important/important/lnd/lnd.conf
-    fi
-  }
-
-  config_nginx() {
-    echo "Checking for existing nginx config"
-    if [ -f /media/important/important/nginx/nginx.conf ]; then
-      echo "nginx.conf exists, making backup and replacing"
-      /bin/cp /media/important/important/nginx/nginx.conf /media/important/important/nginx/nginx.conf.backup &&
-      /bin/cp -f /home/lncm/nginx/nginx.conf /media/important/important/nginx/nginx.conf
-    else
-      echo "nginx.conf does not exist, creating"
-      /bin/cp -f /home/lncm/nginx/nginx.conf /media/important/important/nginx/nginx.conf
-    fi
-
-    if [ -f /media/important/important/nginx/conf.d/default.conf ]; then
-      echo "default.conf exists, making backup and replacing"
-      /bin/cp /media/important/important/nginx/conf.d/default.conf /media/important/important/nginx/conf.d/default.conf.backup &&
-      /bin/cp -f /home/lncm/nginx/conf.d/default.conf /media/important/important/nginx/conf.d/default.conf
-    else
-      echo "default.conf does not exists, creating"
-      /bin/cp -f /home/lncm/nginx/conf.d/default.conf /media/important/important/nginx/conf.d/default.conf
-    fi
-
-    if [ -f /media/important/important/nginx/mime.types ]; then
-      echo "mime.types exists, making backup and replacing"
-      /bin/cp /media/important/important/nginx/mime.types /media/important/important/nginx/mime.types.backup &&
-      /bin/cp -f /home/lncm/nginx/mime.types /media/important/important/nginx/mime.types
-    else
-      echo "mime.types does not exist, creating"
-      /bin/cp -f /home/lncm/nginx/mime.types /media/important/important/nginx/mime.types
-    fi
-  }
-
-  fetch_invoicerui() {
-    echo "Checking for invoicer-ui"
-    if [ ! -f /home/lncm/public_html/pos/index.html ]; then
-      echo "Fetch invoicer-ui"
-      mkdir /home/lncm/public_html/pos
-      cd /home/lncm/public_html/pos || exit
-      wget https://raw.githubusercontent.com/lncm/invoicer-ui/master/dist/index.html
-    fi
-  }
-
-  fetch_wifi() {
-    echo "Checking for wifi manager"
-    if [ ! -f /home/lncm/public_html/wifi/index.html ]; then
-      echo "Fetch wifi manager"
-      mkdir /home/lncm/public_html/wifi
-      cd /home/lncm/public_html/wifi || exit
-      wget https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html
-    fi
-  }
-
-  run_fastsync() {
-    echo "Check fastsync eligibility"
-    /usr/local/sbin/mana.py fastsync
-  }
-
-  install_crontab() {
-    echo "Install crontab"
-    /usr/bin/crontab /home/lncm/crontab
-  }
-
-  persist_state() {
-    echo "Backup apkovl.tar.gz to USB storage"
-    /sbin/lbu package /media/important/important/box.apkovl.tar.gz
-  }
-
-  disable_post() {
-    echo "Remove lncm-post from boot"
-    /sbin/rc-update del lncm-post default
-  }
-
-  enable_compose() {
-    echo "Enable docker-compose at boot"
-    /sbin/rc-update add docker-compose default
-    /sbin/service docker-compose start
-  }
-
   install_noma() {
     echo "Install noma - node management tool"
-    noma_url=https://github.com/lncm/noma/releases/download/v0.2.2/noma-0.2.2-py3-none-any.whl
-
     while [ -z "$(/usr/bin/pip3 show noma)" ]; do
-      /usr/bin/pip3 install $noma_url
-      if [ -z "$(/usr/bin/pip3 show noma)" ]; then
-        install_noma
-      else
-        true
-      fi
+      /usr/bin/pip3 install $NOMA_URL
     done
   }
 
   run_noma() {
     echo "Running noma box-install"
-    /usr/bin/noma install-box
+    /usr/bin/noma install-box &
   }
 
   main() {
-    is_installed=$(check_installed)
-
-    if [ ! "$is_installed" -eq "0" ]; then
+    if ! is_installed; then
       echo "Error: LNCM installation not found!"
       exit 1
     fi
 
-#    move_cache
-#    enable_swap
-#    install_firmware
-    apk_update
     install_python
     install_python_deps
     install_apk_deps
@@ -371,24 +118,6 @@ start() {
 #    install_noma
     build_noma
     run_noma
-#    install_compose
-#    install_toml
-#    usb_setup
-#    verify_usb
-#    fetch_rpcauth
-#    check_rpc
-#    generate_rpc
-#    install_tor
-#    enable_tor
-#    setup_tor
-#    config_bitcoind
-#    config_lnd
-#    config_nginx
-#    fetch_invoicerui
-#    install_crontab
-#    disable_post
-#    enable_compose
-#    persist_state
   }
 
   main
