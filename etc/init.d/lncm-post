@@ -12,7 +12,6 @@ start() {
   ebegin "Starting LNCM post-installation"
   # This script will only run once, to complete post-installation
 
-  NOMA_URL=https://github.com/lncm/noma/releases/download/v0.2.2/noma-0.2.2-py3-none-any.whl
   REQUIREMENTS_URL=https://raw.githubusercontent.com/lncm/noma/master/requirements.txt
 
   is_installed() {
@@ -95,7 +94,7 @@ start() {
   install_noma() {
     echo "Install noma - node management tool"
     while [ -z "$(/usr/bin/pip3 show noma)" ]; do
-      /usr/bin/pip3 install $NOMA_URL
+      /usr/bin/pip3 install noma
     done
   }
 
@@ -115,8 +114,8 @@ start() {
     install_apk_deps
     install_pip
     install_noma_requirements
-#    install_noma
-    build_noma
+    install_noma
+    #build_noma
     run_noma
   }
 
