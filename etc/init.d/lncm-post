@@ -100,7 +100,7 @@ start() {
 
   run_noma() {
     echo "Running noma box-install"
-    /usr/bin/noma install-box &
+    /usr/bin/noma install-box > /var/log/noma.log 2>&1 &
   }
 
   main() {
