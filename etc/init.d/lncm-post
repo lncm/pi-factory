@@ -51,8 +51,6 @@ start() {
 
   install_apk_deps() {
     echo "Install misc dependencies"
-    install_apk curl
-    install_apk jq
     install_apk py3-psutil
   }
 
