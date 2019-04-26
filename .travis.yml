@@ -3,7 +3,7 @@ language: minimal
 install:
 - git clone https://github.com/lncm/pi-factory.git
 - cd pi-factory
-- "./make_img.sh"
+- "sudo ./make_img.sh"
 deploy:
   provider: releases
   api_key:
