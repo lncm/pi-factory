@@ -8,7 +8,7 @@ This repository lets you build a _bitcoin lightning_ box for [Raspberry Pi](http
 **Work in progress.** While stable enough for development, this software is subject to change, some of which may be breaking changes.
 **Warning!** *Do not put money at stake that you are not willing to lose!*
 
-
+[![Build Status](https://travis-ci.com/lncm/pi-factory.svg?branch=v0.5)](https://travis-ci.com/lncm/pi-factory)
 [![Documentation Status](https://readthedocs.org/projects/noma/badge/?version=latest)](https://pi-factory.readthedocs.io/en/latest/?badge=latest)
 
 
