@@ -25,7 +25,7 @@ start() {
     exit 1
   fi
   if [ ! -f /media/archive/archive/bitcoin/bitcoin.conf ]; then
-    echo "Error: bitcoin directory not found"
+    echo "Error: bitcoin configuration not found"
     exit 1
   fi
   
