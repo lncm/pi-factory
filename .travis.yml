@@ -3,13 +3,15 @@ language: minimal
 install:
 - git clone https://github.com/lncm/pi-factory.git
 - cd pi-factory
-- "sudo ./make_img.sh"
+- git checkout v0.5
+- sudo ./make_img.sh
 deploy:
   provider: releases
   api_key:
-    secure: Z6LPc5iCRdUJs/ZbjTD7Lk+Cw3OcP2NBCBurXgVWMrwrHewunM4mIfd7cqUEp16EzD8A2FiyyD+SzIDLUyQmFMSVdOE/rKTHDZTbhH7WIxpevSOvS+BnttLoWsp/dd4j4BCoGDfDubbxS0Z49+s0euuYAuufRRXbbSELoPMNxkMwht+nBd8+uL5euk2A2CQwRd4toDlh75cX0YVXmRKHXaaE9HiaUuyY3dyd28xBrdisOzxC0BMlW25MhNEEyqTRHd+154MkIoejjbZcx4x53P9NwqcYViotpyGHvmJ9v9dF8OL4N6mGLAmjm9ulZoDmKmF1ZPlnGBy5q5viOassO0fTvStIMaU+8mTitmfsB5SJ6DaGKV/9uwJdrxjh14xkZy6kJCUtdSRI/Zff+strRSZHpqeCDSq9oYygY8Lm6z9JC0VpVlpofQIr1LFcocy9iOYiJWbl4jP44ipyhJbmLVPKR1qtYFAQ7lVyCDotoix3JGdbXTPYIKuOsCF0U/Q2u+9s+hyT4DYiPGUvPJR+JoumkvQ9ks+loLPf20idB+orzC6j4K8pXtkssmmhcpprRswXvUve8viapgoxfrTahOAOUwsbZrLLD7AFiT5DaZX50be4bx6NAQAnjHHtEqZWkspiUf0wqY+3FBMHxAIk07woiWLX+yJrxum8dWU/ajA=
+    secure: faUUf5rLRRGnYayOfOVRFUvBRKroOZJpq4rlypCxn8iPVh7ongX7Sd8b6bnA1vG3n0meMd86HW1V+7fbmLKsZSf4Su1/LcPbwgw5dEVcZ3NIySXVDvpxOz9Ye0W8dhy7KKhA5vSKVIVc/cdZcPEwqcDEmHRgXO7LB6586zSCh02xj3Qo2XUPaJJTWFR1DK3Wl5rpEU0yI+WJUiFFVjGcVifSUY9BvnrYrs+7RyeRG1o2SQ1t6g+2fr5wEBlpVjC3S3mRfwsz92m59tVrZ39fFU22XYPlMTLaB5fPLXbllme2hXtOSb1twEQ54hUnXav5MpnhJ65xCZfbRcJr06y0JO2i/Aj39zTqMu6GyeTQ9aitJazrnHG3t9afRUltB02bBH94Nip00v0EmcVQ27CxPQ36NaLRORFQGnqvqh8IYjyH1wIh/LrAGqnBv8Yb7+0srYaU++2YbEONJNvWAHWDlBmlKXFMw8P5gShhR/XSbbjUZnio/j2cHaOY0OxNJWVUISdRBveHgqM2Yegsv7a6UGVn6LSO/6HoRGQMPzf1hCNk3zjZLwPWEYwOJKsU3QAkBigKYmEi86JZTPTAA5CYlrAuEpDQDZJzJJDkRkBIMW3IoGcqrSv3heFnuvSMNhpDR0hytysA8RNf4H8yvBxS5XZqZosfZ06Kem7OEHFLwu0=
   skip_cleanup: true
-  file: lncm-workdir/lncm-box-v0.50.img.zip
+  file: 'lncm-workdir/lncm-box-v0.5.0.img.zip'
   on:
+    repo: lncm/pi-factory
     branch: v0.5
   draft: true
