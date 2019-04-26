@@ -113,7 +113,7 @@ start() {
 #    install_python_deps
     install_apk_deps
     install_pip
-    install_noma_requirements
+    #install_noma_requirements
     install_noma
     #build_noma
     run_noma
