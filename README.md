@@ -142,7 +142,7 @@ For convenience, we also support `vagrant` to automate setting up your developme
 
 ### MacOS instructions:
 
-Install dependencies ([Homebrew](https://brew.sh, virtualbox, vagrant):
+Install dependencies ([homebrew](https://brew.sh), virtualbox, vagrant):
 ```sh
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew cask install virtualbox
