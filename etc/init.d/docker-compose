@@ -30,7 +30,7 @@ start() {
   fi
   
   # Docker compose
-  if [ ! -f /home/lncm/compose ]; then
+  if [ ! -d /home/lncm/compose ]; then
     echo "Error: docker compose directory not found!"
     exit 1
   fi
