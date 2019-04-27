@@ -12,7 +12,7 @@ start() {
 
   echo "Logging to: /var/log/box-install.log"
   # This script will only run once, for persistent installation to SD
-  ./home/lncm/box-install.sh > /var/log/box-install.log 2>&1
+  ./home/lncm/box-install.sh 2>&1 | tee /var/log/box-install.log
 
   eend $?
 }
