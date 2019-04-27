@@ -20,11 +20,22 @@ This repository lets you build a _bitcoin lightning_ box for [Raspberry Pi](http
 * `Alpine Linux`, a security-oriented, lightweight Linux distribution based on musl *libc* and `Busybox`
 * Containerization of most components including `nginx`, `iotwifi`, `invoicer`, `bitcoind`, `lnd`
 * *Stateless OS* - the microSD card image can be replaced with a newer version *without loss of user data*
-* [Noma](https://github.com/lncm/noma), our convenient CLI *node management* tool also provides a *Python API*
 * Simple `shell`, `Python` scripts and `Go` backends enable easy auditing and provide a small *attack surface*
 * `Docker` & `docker-compose` make updates easier and orchestration painless
 * [Future] the microSD card can be mounted in read-only mode for zero-wear operation
 * [Future] Redundant storage persistence using RAID 
+
+
+### LNCM components
+
+* [invoicer](https://github.com/lncm/invoicer): lightweight `bitcoind` and `LND` backend in Go.
+* [invoicer-ui](https://github.com/lncm/invoicer-ui): Point of Sale for Bitcoin and Lightning in React.
+* [iotwifi-ui](https://github.com/lncm/iotwifi-ui): Wi-Fi connection wizard in React.
+* [noma](https://github.com/lncm/noma): CLI node management utility and API in Python.
+* [docker-bitcoind](https://github.com/lncm/docker-bitcoind): arm & amd64 support
+* [docker-berkeleydb](https://github.com/lncm/docker-berkeleydb): arm & amd64 support
+* [docker-lnd](https://github.com/lncm/docker-lnd): arm & amd64 support
+
 
 Hardware Requirements
 ---------------------
