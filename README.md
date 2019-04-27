@@ -3,7 +3,7 @@ Pi-Factory
 
 ### _Create your own bitcoin lightning box!_
 
-This repository lets you build a _bitcoin lightning_ box for [Raspberry Pi](https://www.raspberrypi.org) versions 0-3B+ based on [Alpine](https://alpinelinux.org) Linux.
+This repository lets you build a _bitcoin lightning_ box for [Raspberry Pi](https://www.raspberrypi.org) 3 Model B & 3B+ based on [Alpine](https://alpinelinux.org) Linux.
 
 **Work in progress.** While stable enough for development, this software is subject to change, some of which may be breaking changes.
 **Warning!** *Do not put money at stake that you are not willing to lose!*
