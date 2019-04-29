@@ -168,7 +168,7 @@ Bug reports, pull-requests and suggestions are very welcome!
 In the Wild
 -----------
 
-There are two public [installations](nodes.lncm.io) of this lightning box in Chiang Mai, Thailand acting as Bitcoin and Lightning points of sale in combination with a tablet.
+There are two public [installations](http://nodes.lncm.io) of this lightning box in Chiang Mai, Thailand acting as Bitcoin and Lightning points of sale in combination with a tablet.
 
 Please do let us know about your own or those you spot!
 
