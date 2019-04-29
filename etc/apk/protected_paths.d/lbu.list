@@ -22,3 +22,4 @@
 +home/lncm/seed.txt
 +home/lncm/box-install.sh
 +home/lncm/box-postinstall.sh
++home/lncm/invoicer/invoicer.conf
