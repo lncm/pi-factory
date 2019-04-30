@@ -16,32 +16,32 @@ CACHE=cache.tar.gz
 MNT=/mnt/lncm
 
 if [ "$(id -u)" -ne "0" ]; then
-    echo "This script must be run as root"
-    exit 1
+	echo "This script must be run as root"
+	exit 1
 fi
 
 cmd_exists() {
-  $(command -v ${1} 2>&1 1>/dev/null;)
-  ret=$?
-  echo $ret
-  return $ret
+	$(command -v ${1} 2>&1 1>/dev/null)
+	ret=$?
+	echo $ret
+	return $ret
 }
 
-if  [ "$(cmd_exists apk)" -eq "0" ]; then
-  echo "Found Alpine-based system, installing dependencies"
-  apk add parted zip unzip
+if [ "$(cmd_exists apk)" -eq "0" ]; then
+	echo "Found Alpine-based system, installing dependencies"
+	apk add parted zip unzip
 fi
 
 if [ "$(cmd_exists apt-get)" -eq "0" ]; then
-  echo "Found Debian-based system, installing dependencies"
-  apt-get install -y parted zip unzip
+	echo "Found Debian-based system, installing dependencies"
+	apt-get install -y parted zip unzip
 fi
 
 check_deps() {
-  cmd_exists parted >/dev/null || exit 1
-  cmd_exists zip >/dev/null || exit 1
-  cmd_exists unzip >/dev/null || exit 1
-  echo "Found required dependencies"
+	cmd_exists parted >/dev/null || exit 1
+	cmd_exists zip >/dev/null || exit 1
+	cmd_exists unzip >/dev/null || exit 1
+	echo "Found required dependencies"
 }
 
 echo "Building ${IMG}"
@@ -49,93 +49,93 @@ echo "Using ${ALP} as base distribution"
 
 echo 'Check for existing wpa_supplicant.automatic.conf'
 if [ -f ./wpa_supplicant.automatic.conf ]; then
-    echo "WPA supplicant automatic file exists, bootstrapping the network configuration"
-    cp ./etc/wpa_supplicant/wpa_supplicant.conf ./etc/wpa_supplicant/wpa_supplicant.conf.bak
-    cp ./wpa_supplicant.automatic.conf etc/wpa_supplicant/wpa_supplicant.conf
+	echo "WPA supplicant automatic file exists, bootstrapping the network configuration"
+	cp ./etc/wpa_supplicant/wpa_supplicant.conf ./etc/wpa_supplicant/wpa_supplicant.conf.bak
+	cp ./wpa_supplicant.automatic.conf etc/wpa_supplicant/wpa_supplicant.conf
 fi
 
 echo 'Check for authorized_keys.automatic'
 if [ -f ./authorized_keys.automatic ]; then
-    echo "Authorized keys file exists, bootstrapping the ssh authorized keys file"
-    if [ ! -d ./home/lncm/.ssh ]; then
-        mkdir -p ./home/lncm/.ssh
-    fi
-    cp ./authorized_keys.automatic ./home/lncm/.ssh/authorized_keys
-    echo "Reconfiguring SSHD to not allow for passwords"
-    cp ./etc/ssh/sshd_config ./etc/ssh/sshd_config.bak
-    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' ./etc/ssh/sshd_config
+	echo "Authorized keys file exists, bootstrapping the ssh authorized keys file"
+	if [ ! -d ./home/lncm/.ssh ]; then
+		mkdir -p ./home/lncm/.ssh
+	fi
+	cp ./authorized_keys.automatic ./home/lncm/.ssh/authorized_keys
+	echo "Reconfiguring SSHD to not allow for passwords"
+	cp ./etc/ssh/sshd_config ./etc/ssh/sshd_config.bak
+	sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' ./etc/ssh/sshd_config
 fi
 
 echo 'Generate fresh box.apkovl.tar.gz from source'
 sh make_apkovl.sh
 # Cleanup files we created
 if [ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]; then
-    echo 'Restore old WPA Supplicant after making apkovl (and deleting the backup file)'
-    cp ./etc/wpa_supplicant/wpa_supplicant.conf.bak ./etc/wpa_supplicant/wpa_supplicant.conf
-    rm ./etc/wpa_supplicant/wpa_supplicant.conf.bak
+	echo 'Restore old WPA Supplicant after making apkovl (and deleting the backup file)'
+	cp ./etc/wpa_supplicant/wpa_supplicant.conf.bak ./etc/wpa_supplicant/wpa_supplicant.conf
+	rm ./etc/wpa_supplicant/wpa_supplicant.conf.bak
 fi
 
 fetch_wifi() {
-    echo "Checking for wifi manager"
-    mkdir -p home/lncm/public_html/wifi
-    if [ ! -f home/lncm/public_html/wifi/index.html ]; then
-      echo "Fetch wifi manager"
-      wget -O home/lncm/public_html/wifi/index.html --no-verbose \
-	      https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html || exit
-    fi
+	echo "Checking for wifi manager"
+	mkdir -p home/lncm/public_html/wifi
+	if [ ! -f home/lncm/public_html/wifi/index.html ]; then
+		echo "Fetch wifi manager"
+		wget -O home/lncm/public_html/wifi/index.html --no-verbose \
+			https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html || exit
+	fi
 }
 fetch_wifi
 
 # Cleanup authorized_keys
 if [ -d ./home/lncm/.ssh ]; then
-    echo "Remove .ssh directory"
-    rm -fr ./home/lncm/.ssh
+	echo "Remove .ssh directory"
+	rm -fr ./home/lncm/.ssh
 fi
 
 if [ -f ./etc/ssh/sshd_config.bak ]; then
-    echo "Restoring sshd_config to be equal with last commit"
-    cp ./etc/ssh/sshd_config.bak ./etc/ssh/sshd_config
-    rm ./etc/ssh/sshd_config.bak
+	echo "Restoring sshd_config to be equal with last commit"
+	cp ./etc/ssh/sshd_config.bak ./etc/ssh/sshd_config
+	rm ./etc/ssh/sshd_config.bak
 fi
 
 mkdir -p lncm-workdir
 cd lncm-workdir || exit
 
 if ! [ -f ${ALP} ]; then
-  echo "${ALP} not found, fetching..."
-  wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
+	echo "${ALP} not found, fetching..."
+	wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
 fi
 
 if ! [ -f ${IOT} ]; then
-  echo "${IOT} not found, fetching..."
-  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
+	echo "${IOT} not found, fetching..."
+	wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
 fi
 
 if ! [ -f ${FIX} ]; then
- echo "${FIX} not found, fetching..."
- wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
+	echo "${FIX} not found, fetching..."
+	wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
 fi
 
 if ! [ -f ${CACHE} ]; then
-  echo "${CACHE} not found, fetching..."
-  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
+	echo "${CACHE} not found, fetching..."
+	wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
 fi
 
 if ! [ -f ${NGINX} ]; then
-  echo "${NGINX} not found, fetching..."
-  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${NGINX}
+	echo "${NGINX} not found, fetching..."
+	wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${NGINX}
 fi
 
 echo "Create and mount 256MB image"
-dd if=/dev/zero of=${IMG} bs=1M count=256 && \
-    DEV=$(losetup -f) && \
-    losetup -f ${IMG} && \
-    echo "Create 256MB FAT32 partition and filesystem" && \
-    parted -s "${DEV}" mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
-    mkfs.vfat "${DEV}"p1 -IF 32
+dd if=/dev/zero of=${IMG} bs=1M count=256 &&
+	DEV=$(losetup -f) &&
+	losetup -f ${IMG} &&
+	echo "Create 256MB FAT32 partition and filesystem" &&
+	parted -s "${DEV}" mklabel msdos mkpart p fat32 2048s 100% set 1 boot on &&
+	mkfs.vfat "${DEV}"p1 -IF 32
 
 if ! [ -d ${MNT} ]; then
-  mkdir ${MNT}
+	mkdir ${MNT}
 fi
 
 echo "Mount FAT partition"

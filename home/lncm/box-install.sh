@@ -16,191 +16,191 @@ SD=mmcblk0
 START=268M
 
 check_installed() {
-  if [ -f /media/${SD}p1/installed ]; then
-    #  installed
-    echo 0
-    return 0
-  else
-    # not installed
-    echo 1
-    return 1
-  fi
+	if [ -f /media/${SD}p1/installed ]; then
+		#  installed
+		echo 0
+		return 0
+	else
+		# not installed
+		echo 1
+		return 1
+	fi
 }
 
 install_apk() {
-  echo "Install $1"
-  while [ -z "$( apk -e info $1 )" ]; do
-    /sbin/apk add $1
-  done
+	echo "Install $1"
+	while [ -z "$(apk -e info $1)" ]; do
+		/sbin/apk add $1
+	done
 }
 
 mnt_rw() {
-  echo "Re-mount FAT partition read/write"
-  /bin/mount -o remount,rw /dev/"${SD}"p1 /media/"${SD}"p1
+	echo "Re-mount FAT partition read/write"
+	/bin/mount -o remount,rw /dev/"${SD}"p1 /media/"${SD}"p1
 }
 
 mnt_ro() {
-  echo "Re-mount FAT partition read-only"
-  /bin/mount -o remount,ro /dev/"${SD}p1" /media/"${SD}"p1
+	echo "Re-mount FAT partition read-only"
+	/bin/mount -o remount,ro /dev/"${SD}p1" /media/"${SD}"p1
 }
 
 install_tools() {
-  echo "Add partitioning and filesystem tools"
-  /sbin/setup-apkcache /media/mmcblk0p1/cache
-  install_apk parted
-  install_apk e2fsprogs
+	echo "Add partitioning and filesystem tools"
+	/sbin/setup-apkcache /media/mmcblk0p1/cache
+	install_apk parted
+	install_apk e2fsprogs
 }
 
 partition_sd() {
-  echo "Create second primary partition"
-  /usr/sbin/parted -s /dev/$SD mkpart p ext4 $START 100%
+	echo "Create second primary partition"
+	/usr/sbin/parted -s /dev/$SD mkpart p ext4 $START 100%
 }
 
 create_ext4() {
-  echo "Create and mount ext4 filesystem"
-  /sbin/mkfs.ext4 -F /dev/${SD}p2 && \
-  /bin/echo "/dev/${SD}p2 /media/sd ext4 noatime 0 0" >> /etc/fstab && \
-  /bin/mkdir /media/sd && \
-  /bin/mount /media/sd
+	echo "Create and mount ext4 filesystem"
+	/sbin/mkfs.ext4 -F /dev/${SD}p2 &&
+		/bin/echo "/dev/${SD}p2 /media/sd ext4 noatime 0 0" >>/etc/fstab &&
+		/bin/mkdir /media/sd &&
+		/bin/mount /media/sd
 }
 
 check_mounted() {
-  echo "Check if ext4 partition on SD is mounted"
-  if [ ! -d /media/sd/lost+found ]; then
-    echo "Error: ${SD}p2 partition doesn't seem to be mounted"
-    exit 1
-  fi
+	echo "Check if ext4 partition on SD is mounted"
+	if [ ! -d /media/sd/lost+found ]; then
+		echo "Error: ${SD}p2 partition doesn't seem to be mounted"
+		exit 1
+	fi
 }
 
 persist_state() {
-  echo "Persist state to apkovl"
-  /sbin/lbu package /media/"${SD}"p1/"${APK}" || exit
+	echo "Persist state to apkovl"
+	/sbin/lbu package /media/"${SD}"p1/"${APK}" || exit
 }
 
 install_sd() {
-  echo "Install to /media/sd and apply apkovl" && \
-  /sbin/setup-disk -o /media/mmcblk0p1/box.apkovl.tar.gz /media/sd || exit
-  if [ ! -d /media/sd/etc ]; then
-    echo "Setup disk did not seem to create anything! Exiting"
-    exit 1
-  fi
+	echo "Install to /media/sd and apply apkovl" &&
+		/sbin/setup-disk -o /media/mmcblk0p1/box.apkovl.tar.gz /media/sd || exit
+	if [ ! -d /media/sd/etc ]; then
+		echo "Setup disk did not seem to create anything! Exiting"
+		exit 1
+	fi
 }
 
 add_fat() {
-  echo "Add FAT partition to new fstab"
-  /bin/echo "/dev/mmcblk0p1 /media/mmcblk0p1 vfat defaults 0 0" >> /media/sd/etc/fstab
+	echo "Add FAT partition to new fstab"
+	/bin/echo "/dev/mmcblk0p1 /media/mmcblk0p1 vfat defaults 0 0" >>/media/sd/etc/fstab
 }
 
 clean_devs() {
-  echo "Remove unused devices and mountpoints"
-  /bin/sed -i '/cdrom/d' /media/sd/etc/fstab && \
-  /bin/rmdir /media/sd/media/cdrom
-  /bin/sed -i '/usbdisk/d' /media/sd/etc/fstab && \
-  /bin/rmdir /media/sd/media/usb
-  /bin/rmdir /media/sd/media/floppy
+	echo "Remove unused devices and mountpoints"
+	/bin/sed -i '/cdrom/d' /media/sd/etc/fstab &&
+		/bin/rmdir /media/sd/media/cdrom
+	/bin/sed -i '/usbdisk/d' /media/sd/etc/fstab &&
+		/bin/rmdir /media/sd/media/usb
+	/bin/rmdir /media/sd/media/floppy
 }
 
 setup_user() {
-  echo "Create lncm home dir if necessary"
-  /bin/mkdir -p /media/sd/home/lncm
-  echo "Set user permissions"
-  /bin/chown lncm:lncm /media/sd/home/lncm
+	echo "Create lncm home dir if necessary"
+	/bin/mkdir -p /media/sd/home/lncm
+	echo "Set user permissions"
+	/bin/chown lncm:lncm /media/sd/home/lncm
 }
 
 install_boot() {
-  # Boot installation
-  echo "Re-mount FAT partition read/write"
-  /bin/mount -o remount,rw /dev/${SD}p1 /media/${SD}p1 && \
-  echo "Prepend root partition to boot command" && \
-  /bin/sed -e 's/^/root=\/dev\/mmcblk0p2 /' -i /media/${SD}p1/cmdline.txt && \
-  echo "Backup old boot files" && \
-  /bin/mkdir /media/mmcblk0p1/boot_backup && \
-  /bin/mv /media/mmcblk0p1/boot/* /media/mmcblk0p1/boot_backup/
+	# Boot installation
+	echo "Re-mount FAT partition read/write"
+	/bin/mount -o remount,rw /dev/${SD}p1 /media/${SD}p1 &&
+		echo "Prepend root partition to boot command" &&
+		/bin/sed -e 's/^/root=\/dev\/mmcblk0p2 /' -i /media/${SD}p1/cmdline.txt &&
+		echo "Backup old boot files" &&
+		/bin/mkdir /media/mmcblk0p1/boot_backup &&
+		/bin/mv /media/mmcblk0p1/boot/* /media/mmcblk0p1/boot_backup/
 
-  if [ -d /media/sd/boot ]; then
-    echo "Remove old boot files on fat partition" && \
-    /bin/rm -rf /media/mmcblk0p1/boot/* && \
-    /bin/rm /media/sd/boot/boot && \
-    echo "Copy new boot files to fat partition" && \
-    /bin/cp /media/sd/boot/* /media/mmcblk0p1/boot/ && \
-    echo "Delete new boot dir" && \
-    /bin/rm -rf /media/sd/boot && \
-    echo "Link boot to fat partition" && \
-    cd /media/sd && \
-    /bin/ln -s /media/mmcblk0p1 boot
-  else
-    echo "Error: boot directory on ${SD}p2 missing"
-    exit 1
-  fi
+	if [ -d /media/sd/boot ]; then
+		echo "Remove old boot files on fat partition" &&
+			/bin/rm -rf /media/mmcblk0p1/boot/* &&
+			/bin/rm /media/sd/boot/boot &&
+			echo "Copy new boot files to fat partition" &&
+			/bin/cp /media/sd/boot/* /media/mmcblk0p1/boot/ &&
+			echo "Delete new boot dir" &&
+			/bin/rm -rf /media/sd/boot &&
+			echo "Link boot to fat partition" &&
+			cd /media/sd &&
+			/bin/ln -s /media/mmcblk0p1 boot
+	else
+		echo "Error: boot directory on ${SD}p2 missing"
+		exit 1
+	fi
 }
 
 mark_sd() {
-  echo "Mark SD card with installed version"
-  /bin/echo "$VER" > /media/${SD}p1/installed
-  /bin/echo "Copying rc.log to persistent store for debugging"
-  /bin/cp /var/log/rc.log /media/${SD}p1
+	echo "Mark SD card with installed version"
+	/bin/echo "$VER" >/media/${SD}p1/installed
+	/bin/echo "Copying rc.log to persistent store for debugging"
+	/bin/cp /var/log/rc.log /media/${SD}p1
 }
 
 create_swap() {
-  echo "Create and install swap file"
-  /bin/dd if=/dev/zero of=/media/sd/var/cache/swap bs=1M count=1024 && \
-  /bin/chown 600 /media/sd/var/cache/swap && \
-  /sbin/mkswap /media/sd/var/cache/swap && \
-  /sbin/swapon /media/sd/var/cache/swap && \
-  /bin/echo "/var/cache/swap none swap sw,pri=10 0 0" >> /media/sd/etc/fstab && \
-  echo "Enable swap at boot"
-  cd /media/sd/etc/runlevels/boot || exit
-  /bin/ln -s /etc/init.d/swap swap
+	echo "Create and install swap file"
+	/bin/dd if=/dev/zero of=/media/sd/var/cache/swap bs=1M count=1024 &&
+		/bin/chown 600 /media/sd/var/cache/swap &&
+		/sbin/mkswap /media/sd/var/cache/swap &&
+		/sbin/swapon /media/sd/var/cache/swap &&
+		/bin/echo "/var/cache/swap none swap sw,pri=10 0 0" >>/media/sd/etc/fstab &&
+		echo "Enable swap at boot"
+	cd /media/sd/etc/runlevels/boot || exit
+	/bin/ln -s /etc/init.d/swap swap
 }
 
 enable_post() {
-  echo "Enable post-installation script at boot"
-  cd /media/sd/etc/runlevels/default || exit
-  /bin/ln -s /etc/init.d/lncm-post lncm-post
+	echo "Enable post-installation script at boot"
+	cd /media/sd/etc/runlevels/default || exit
+	/bin/ln -s /etc/init.d/lncm-post lncm-post
 }
 
 disable_install() {
-  echo "Deactivate LNCM installation script"
-  /sbin/rc-update del lncm default || exit
-  /bin/rm /media/sd/etc/runlevels/default/lncm || exit
+	echo "Deactivate LNCM installation script"
+	/sbin/rc-update del lncm default || exit
+	/bin/rm /media/sd/etc/runlevels/default/lncm || exit
 }
 
 reboot_now() {
-  echo "Rebooting..."
-  /sbin/reboot
+	echo "Rebooting..."
+	/sbin/reboot
 }
 
 main() {
-  is_installed=$(check_installed)
+	is_installed=$(check_installed)
 
-  if [ "$is_installed" -eq "0" ]; then
-    echo "Already installed, skipping."
-    exit 1
-  fi
+	if [ "$is_installed" -eq "0" ]; then
+		echo "Already installed, skipping."
+		exit 1
+	fi
 
-  install_tools
-  partition_sd
-  create_ext4
-  check_mounted
-  mnt_rw
-  persist_state
-  install_sd
-  add_fat
-  clean_devs
-  setup_user
-  install_boot
-  mark_sd
-  #create_swap # disable sd card swap
-  enable_post
-  disable_install
-  persist_state
-  mnt_ro
+	install_tools
+	partition_sd
+	create_ext4
+	check_mounted
+	mnt_rw
+	persist_state
+	install_sd
+	add_fat
+	clean_devs
+	setup_user
+	install_boot
+	mark_sd
+	#create_swap # disable sd card swap
+	enable_post
+	disable_install
+	persist_state
+	mnt_ro
 
-  is_installed=$(check_installed)
+	is_installed=$(check_installed)
 
-  if [ "${is_installed}" -eq "0" ]; then
-    reboot_now
-  fi
+	if [ "${is_installed}" -eq "0" ]; then
+		reboot_now
+	fi
 }
 
 main
