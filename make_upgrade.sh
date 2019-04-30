@@ -15,8 +15,8 @@ MNT=/mnt/lncm
 DEV=/dev/mmcblk0p1
 
 if [ "$(id -u)" -ne "0" ]; then
-    echo "This script must be run as root"
-    exit 1
+	echo "This script must be run as root"
+	exit 1
 fi
 
 # cmd_exists() {
@@ -48,70 +48,70 @@ echo "Using ${ALP} as base distribution"
 
 echo 'Check for existing wpa_supplicant.automatic.conf'
 if [ -f ./wpa_supplicant.automatic.conf ]; then
-    echo "WPA supplicant automatic file exists, bootstrapping the network configuration"
-    cp ./etc/wpa_supplicant/wpa_supplicant.conf ./etc/wpa_supplicant/wpa_supplicant.conf.bak
-    cp ./wpa_supplicant.automatic.conf etc/wpa_supplicant/wpa_supplicant.conf
+	echo "WPA supplicant automatic file exists, bootstrapping the network configuration"
+	cp ./etc/wpa_supplicant/wpa_supplicant.conf ./etc/wpa_supplicant/wpa_supplicant.conf.bak
+	cp ./wpa_supplicant.automatic.conf etc/wpa_supplicant/wpa_supplicant.conf
 fi
 
 echo 'Check for authorized_keys.automatic'
 if [ -f ./authorized_keys.automatic ]; then
-    echo "Authorized keys file exists, bootstrapping the ssh authorized keys file"
-    if [ ! -d ./home/lncm/.ssh ]; then
-        mkdir -p ./home/lncm/.ssh
-    fi
-    cp ./authorized_keys.automatic ./home/lncm/.ssh/authorized_keys
-    echo "Reconfiguring SSHD to not allow for passwords"
-    cp ./etc/ssh/sshd_config ./etc/ssh/sshd_config.bak
-    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' ./etc/ssh/sshd_config
+	echo "Authorized keys file exists, bootstrapping the ssh authorized keys file"
+	if [ ! -d ./home/lncm/.ssh ]; then
+		mkdir -p ./home/lncm/.ssh
+	fi
+	cp ./authorized_keys.automatic ./home/lncm/.ssh/authorized_keys
+	echo "Reconfiguring SSHD to not allow for passwords"
+	cp ./etc/ssh/sshd_config ./etc/ssh/sshd_config.bak
+	sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' ./etc/ssh/sshd_config
 fi
 
 echo 'Generate fresh box.apkovl.tar.gz from source'
 sh make_apkovl.sh
 # Cleanup files we created
 if [ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]; then
-    echo 'Restore old WPA Supplicant after making apkovl (and deleting the backup file)'
-    cp ./etc/wpa_supplicant/wpa_supplicant.conf.bak ./etc/wpa_supplicant/wpa_supplicant.conf
-    rm ./etc/wpa_supplicant/wpa_supplicant.conf.bak
+	echo 'Restore old WPA Supplicant after making apkovl (and deleting the backup file)'
+	cp ./etc/wpa_supplicant/wpa_supplicant.conf.bak ./etc/wpa_supplicant/wpa_supplicant.conf
+	rm ./etc/wpa_supplicant/wpa_supplicant.conf.bak
 fi
 
 # Cleanup authorized_keys
 if [ -d ./home/lncm/.ssh ]; then
-    echo "Remove .ssh directory"
-    rm -fr ./home/lncm/.ssh
+	echo "Remove .ssh directory"
+	rm -fr ./home/lncm/.ssh
 fi
 
 if [ -f ./etc/ssh/sshd_config.bak ]; then
-    echo "Restoring sshd_config to be equal with last commit"
-    cp ./etc/ssh/sshd_config.bak ./etc/ssh/sshd_config
-    rm ./etc/ssh/sshd_config.bak
+	echo "Restoring sshd_config to be equal with last commit"
+	cp ./etc/ssh/sshd_config.bak ./etc/ssh/sshd_config
+	rm ./etc/ssh/sshd_config.bak
 fi
 
 mkdir -p lncm-workdir
 cd lncm-workdir || exit
 
 if ! [ -f ${ALP} ]; then
-  echo "${ALP} not found, fetching..."
-  wget http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
+	echo "${ALP} not found, fetching..."
+	wget http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
 fi
 
 if ! [ -f ${IOT} ]; then
-  echo "${IOT} not found, fetching..."
-  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
+	echo "${IOT} not found, fetching..."
+	wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
 fi
 
 if ! [ -f ${FIX} ]; then
- echo "${FIX} not found, fetching..."
- wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
+	echo "${FIX} not found, fetching..."
+	wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
 fi
 
 if ! [ -f ${CACHE} ]; then
-  echo "${CACHE} not found, fetching..."
-  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
+	echo "${CACHE} not found, fetching..."
+	wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
 fi
 
 if ! [ -f ${NGINX} ]; then
-  echo "${NGINX} not found, fetching..."
-  wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${NGINX}
+	echo "${NGINX} not found, fetching..."
+	wget https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${NGINX}
 fi
 
 echo "Unmount"

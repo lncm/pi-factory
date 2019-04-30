@@ -16,29 +16,29 @@ mkdir -p ${WORKDIR}
 cd ${WORKDIR} || exit
 
 if [ ! -f ${FIRMWARE} ]; then
-  echo "brcm firmware not found, fetching..."
-  wget $FIRMWARE_URL/$FIRMWARE
+	echo "brcm firmware not found, fetching..."
+	wget $FIRMWARE_URL/$FIRMWARE
 fi
 
 cmd_exists() {
-  $(command -v ${1} 2>&1 1>/dev/null;)
-  echo $?
+	$(command -v ${1} 2>&1 1>/dev/null)
+	echo $?
 }
 
 if [ "$(cmd_exists apk)" -eq "0" ]; then
-  apk update && apk add squashfs-tools unzip
+	apk update && apk add squashfs-tools unzip
 fi
 
 if [ "$(cmd_exists apt)" -eq "0" ]; then
-  apt update && apt install squashfs-tools unzip
+	apt update && apt install squashfs-tools unzip
 fi
 
 rm -rf brcmfmac*
 unzip brcm-firmware.zip
 
 if ! [ -f ${ALP} ]; then
-  echo "${ALP} not found, fetching..."
-  wget http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
+	echo "${ALP} not found, fetching..."
+	wget http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
 fi
 
 rm -rf alp-distro

@@ -12,13 +12,13 @@ WORKDIR=/home/lncm/pi-factory/lncm-workdir
 OUTPUT=cache.tar.gz
 
 cmd_exists() {
-  $(command -v ${1} 2>&1 1>/dev/null;)
-  echo $?
+	$(command -v ${1} 2>&1 1>/dev/null)
+	echo $?
 }
 
-if  [ ! "$(cmd_exists apk)" -eq "0" ]; then
-  echo "Not an Alpine-based system, aborting"
-  exit 1
+if [ ! "$(cmd_exists apk)" -eq "0" ]; then
+	echo "Not an Alpine-based system, aborting"
+	exit 1
 fi
 
 mkdir -p ${WORKDIR}
@@ -37,13 +37,13 @@ echo "Making backup of ${WORLD}"
 cp -v ${WORLD} ${WORLD}.backup
 
 echo "Creating new minimal ${WORLD}"
-echo -e "alpine-base" > ${WORLD}
-echo -e "avahi" >> ${WORLD}
-echo -e "dbus" >> ${WORLD}
-echo -e "docker" >> ${WORLD}
-echo -e "openssh" >> ${WORLD}
-echo -e "wireless-tools" >> ${WORLD}
-echo -e "wpa_supplicant" >> ${WORLD}
+echo -e "alpine-base" >${WORLD}
+echo -e "avahi" >>${WORLD}
+echo -e "dbus" >>${WORLD}
+echo -e "docker" >>${WORLD}
+echo -e "openssh" >>${WORLD}
+echo -e "wireless-tools" >>${WORLD}
+echo -e "wpa_supplicant" >>${WORLD}
 
 mkdir -p ${WORKDIR}/cache
 
@@ -51,8 +51,8 @@ echo "Setting apk cache to ${WORKDIR}/cache"
 setup-apkcache ${WORKDIR}/cache
 
 echo "Syncing cache"
-apk update && \
-apk cache sync -v --no-cache
+apk update &&
+	apk cache sync -v --no-cache
 
 # Disables adding resource-forks on MacOS
 export COPYFILE_DISABLE=true
