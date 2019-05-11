@@ -1,0 +1,21 @@
+disable_splash=1
+boot_delay=0
+gpu_mem=16
+hdmi_blanking=1
+[pi0]
+kernel=boot/vmlinuz-rpi
+initramfs boot/initramfs-rpi
+[pi1]
+kernel=boot/vmlinuz-rpi
+initramfs boot/initramfs-rpi
+[pi2]
+kernel=boot/vmlinuz-rpi2
+initramfs boot/initramfs-rpi2
+[pi3]
+kernel=boot/vmlinuz-rpi2
+initramfs boot/initramfs-rpi2
+[pi3+]
+kernel=boot/vmlinuz-rpi2
+initramfs boot/initramfs-rpi2
+[all]
+include usercfg.txt

@@ -159,6 +159,9 @@ tar -xzf ${FIX} -C ${MNT}/boot/ --no-same-owner
 echo "Copy latest box.apkovl tarball"
 cp ../box.apkovl.tar.gz ${MNT}
 
+echo "Copy boot options in config.txt"
+cp ../config.txt ${MNT}
+
 echo "Flush writes to disk"
 sync
 
