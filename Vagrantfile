@@ -11,7 +11,9 @@ Vagrant.configure("2") do |config|
         || exit 1
     chmod +x alpine-chroot-install
     apt-get install qemu-user-binfmt -y
-    ./alpine-chroot-install -b v3.9 -a armhf -m https://mirror.xtom.com.hk/alpine/
-    /alpine/enter-chroot file $(which file)
+    ./alpine-chroot-install -b v3.9 -a aarch64 -m https://mirror.xtom.com.hk/alpine/
+    cp /vagrant/build-chroot.sh .
+    chmod +x build-chroot.sh
+    /alpine/enter-chroot ./build-chroot.sh
   SHELL
 end
