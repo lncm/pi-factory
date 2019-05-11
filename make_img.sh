@@ -6,12 +6,13 @@
 
 OUTPUT_VERSION=v0.5.0
 DOWNLOAD_VERSION=v0.4.1
-ALP=alpine-rpi-3.8.2-armhf.tar.gz
-REL=v3.8
+ALP=alpine-rpi-3.9.4-armhf.tar.gz
+VER=3.9.4
+REL=v3.9
 IMG=lncm-box-${OUTPUT_VERSION}.img
 IOT=iotwifi.tar.gz
 NGINX=nginx.tar.gz
-CACHE=cache.tar.gz
+CACHE=cache-${VER}.tar.gz
 MNT=/mnt/lncm
 
 if [ "$(id -u)" -ne "0" ]; then
