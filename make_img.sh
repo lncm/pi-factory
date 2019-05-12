@@ -6,13 +6,13 @@
 
 OUTPUT_VERSION=v0.5.0
 DOWNLOAD_VERSION=v0.4.1
-ALP=alpine-rpi-3.8.2-armhf.tar.gz
-REL=v3.8
+ALP=alpine-rpi-3.9.4-armhf.tar.gz
+VER=3.9.4
+REL=v3.9
 IMG=lncm-box-${OUTPUT_VERSION}.img
 IOT=iotwifi.tar.gz
 NGINX=nginx.tar.gz
-FIX=modloop-rpi2.tar.gz
-CACHE=cache.tar.gz
+CACHE=cache-${VER}.tar.gz
 MNT=/mnt/lncm
 
 if [ "$(id -u)" -ne "0" ]; then
@@ -111,11 +111,6 @@ if ! [ -f ${IOT} ]; then
   wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
 fi
 
-if ! [ -f ${FIX} ]; then
- echo "${FIX} not found, fetching..."
- wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
-fi
-
 if ! [ -f ${CACHE} ]; then
   echo "${CACHE} not found, fetching..."
   wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
@@ -153,11 +148,11 @@ tar -xzf ${NGINX} -C ${MNT}/ --no-same-owner
 echo "Extract cache dir for docker and avahi"
 tar -xzf ${CACHE} -C ${MNT}/ --no-same-owner
 
-echo "Patch RPi3 WiFi"
-tar -xzf ${FIX} -C ${MNT}/boot/ --no-same-owner
-
 echo "Copy latest box.apkovl tarball"
 cp ../box.apkovl.tar.gz ${MNT}
+
+echo "Copy boot options in config.txt"
+cp ../config.txt ${MNT}
 
 echo "Flush writes to disk"
 sync
