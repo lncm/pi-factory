@@ -1,6 +1,6 @@
 disable_splash=1
 boot_delay=0
-gpu_mem=16
+gpu_mem=32
 hdmi_blanking=1
 [pi0]
 kernel=boot/vmlinuz-rpi
