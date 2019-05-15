@@ -37,7 +37,7 @@ start() {
     /sbin/apk add python3 curl jq
 
     /usr/bin/pip3 install --upgrade pip && \
-    /usr/bin/pip3 install docker-compose
+    /usr/bin/pip3 install docker-compose==1.23.2
   }
   
   install_toml() {
