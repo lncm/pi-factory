@@ -27,11 +27,54 @@ check_installed() {
   fi
 }
 
+start_iotwifi() {
+  echo "Starting iotwifi container"
+	docker load --input /media/mmcblk0p1/iotwifi.tar.gz && \
+	docker run --name=iotwifi -d --restart=unless-stopped --privileged --net host \
+		-v /etc/iotwifi:/cfg \
+    -v /etc/wpa_supplicant:/etc/wpa_supplicant \
+		cjimti/iotwifi
+}
+
+start_nginx() {
+  echo "Starting nginx container"
+	docker load --input /media/mmcblk0p1/nginx.tar.gz && \
+	docker run --name=nginx -d --restart=unless-stopped --net host \
+    -v /etc/nginx:/etc/nginx \
+    -v /var/log/nginx:/var/log/nginx \
+    -v /home/lncm/public_html:/www \
+		nginx:1.14.2-alpine
+}
+
+check_docker() {
+  if [ -f "/run/docker.pid" ]; then
+    echo "Detected dockerd, starting containers"
+    start_iotwifi
+    start_nginx
+  else
+    sleep 1
+    check_docker
+  fi
+}
+
+ensure_services() {
+  echo "Ensuring daemons are running"
+  service --nodeps dbus start
+  service --nodeps avahi-daemon start
+  service --nodeps cgroups start
+  service --nodeps docker start
+}
+
 install_apk() {
   echo "Install $1"
   while [ -z "$( apk -e info $1 )" ]; do
     /sbin/apk add $1
   done
+}
+
+install_all_apk() {
+  echo "Install all packages in microSD cache dir"
+  /sbin/apk add --allow-untrusted --no-network /media/mmcblk0p1/cache/*.apk
 }
 
 mnt_rw() {
@@ -178,6 +221,9 @@ main() {
     exit 1
   fi
 
+  install_all_apk
+  ensure_services
+  check_docker
   install_tools
   partition_sd
   create_ext4
