@@ -4,6 +4,7 @@ services:
     image: lncm/bitcoind:0.18.0-linux-arm
     volumes:
       - /media/archive/archive/bitcoin/:/root/.bitcoin/
+    entrypoint: bitcoind -zmqpubrawblock=tcp://0.0.0.0:28332 -zmqpubrawtx=tcp://0.0.0.0:28333
     network_mode: host
 
   lnd:
