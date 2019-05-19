@@ -50,7 +50,15 @@ stop() {
   ebegin "Stopping docker compose"
   
   # Invoke either Noma or Mana
-  /usr/bin/noma stop || /usr/local/sbin/mana stop && \
+  if [[ -f /usr/bin/noma ]]; then
+    /usr/bin/noma stop
+  else
+    # Invoke Mana if noma doesn't exist
+    if [[ -f /usr/local/sbin/mana ]]; then
+      /usr/local/sbin/mana stop
+    fi
+  fi 
+  # If neither noma or mana exists just kill docker-compose
   cd /home/lncm/compose || exit 1
   docker-compose down
 
