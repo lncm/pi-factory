@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   bitcoind:
-    image: lncm/bitcoind:0.17.1
+    image: lncm/bitcoind:0.18.0-linux-arm
     volumes:
       - /media/archive/archive/bitcoin/:/root/.bitcoin/
     network_mode: host
