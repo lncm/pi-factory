@@ -9,6 +9,7 @@ services:
       - "8333"
       - "28332"
       - "28333"
+    entrypoint: bitcoind -zmqpubrawblock=tcp://0.0.0.0:28332 -zmqpubrawtx=tcp://0.0.0.0:28333
     networks:
       localnet:
         ipv4_address: 172.16.88.2
