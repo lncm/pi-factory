@@ -49,7 +49,8 @@ start() {
 stop() {
   ebegin "Stopping docker compose"
   
-  /usr/bin/noma stop && \
+  # Invoke either Noma or Mana
+  /usr/bin/noma stop || /usr/local/sbin/mana stop && \
   cd /home/lncm/compose || exit 1
   docker-compose down
 
