@@ -16,6 +16,9 @@ home/lncm/seed.txt
 
 alpine-rpi-*-armhf.tar.gz
 
+# Ignore README in LNCM directory
+home/lncm/README.*
+
 # Don't commit LNCM variant build stuff
 lncm-box-*.tar.gz
 *.img
