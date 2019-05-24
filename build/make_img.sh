@@ -67,7 +67,7 @@ if [ -f ./authorized_keys.automatic ]; then
 fi
 
 echo 'Generate fresh box.apkovl.tar.gz from source'
-sh make_apkovl.sh
+sh ./build/make_apkovl.sh
 # Cleanup files we created
 if [ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]; then
     echo 'Restore old WPA Supplicant after making apkovl (and deleting the backup file)'
