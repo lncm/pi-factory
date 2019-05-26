@@ -13,7 +13,7 @@ start() {
 
   echo "Logging to: /var/log/box-postinstall.log"
   # This script will only run once, to complete post-installation
-  ./home/lncm/box-postinstall.sh 2>&1 | tee /var/log/box-postinstall.log
+  ./home/lncm/box-postinstall.sh 2>&1 | tee /var/log/box-postinstall.log &
 
   eend $?
 }
