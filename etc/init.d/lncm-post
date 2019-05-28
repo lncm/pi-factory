@@ -42,7 +42,7 @@ start() {
   
   install_toml() {
     # Install TOTML parsing library (https://github.com/uiri/toml) so that we can write to the invoicer config files nicely
-    /usr/bin/pip3 install pip install toml
+    /usr/bin/pip3 install pip install toml==0.10.0
   }
 
   usb_setup() {
@@ -94,9 +94,11 @@ start() {
       GENERATEDPW="$(cat /media/important/important/rpcpass.txt)"
 
       # Configure bitcoind
+      echo "Configuring bitcoind..."
       /bin/sed -i "s/GENERATEDRPCAUTH/$RPCAUTHLINE/g;"  /home/lncm/bitcoin/bitcoin.conf
 
       # Configure LND
+      echo "Configuring LND..."
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/lnd.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/tor/lnd.conf
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/lnd/clearnet/lnd.conf
@@ -104,7 +106,8 @@ start() {
       /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/tor/lnd.conf
       /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/lnd/clearnet/lnd.conf
 
-      # Write to docker compose      
+      # Write to docker compose
+      echo "Configuring docker-compose..."
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/docker-compose.yml
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/tor/docker-compose.yml
       /bin/sed -i "s/RANDOMUSER/lncm/g;"  /home/lncm/compose/clearnet/docker-compose.yml
@@ -113,7 +116,8 @@ start() {
       /bin/sed -i "s/RANDOMPASS/$GENERATEDPW/g;"  /home/lncm/compose/clearnet/docker-compose.yml
       
       # Configure invoicer
-      /usr/local/sbin/lncm-configinvoicer.py lncm $RANDOMPASS   
+      echo "Configuring invoicer..."
+      /usr/bin/python3 /usr/local/sbin/lncm-configinvoicer.py lncm $RANDOMPASS || exit 1
       
     else
       echo "Error generating RPC configuration"
@@ -227,8 +231,7 @@ start() {
       /bin/mkdir -p /media/important/important/invoicer
     fi
     cd /media/important/important/invoicer
-    wget https://raw.githubusercontent.com/lncm/invoicer/0.4.0/invoicer.example.conf
-    mv invoicer.example.conf invoicer.conf  
+    wget https://raw.githubusercontent.com/lncm/invoicer/0.4.0/invoicer.example.conf -O /media/important/important/invoicer/invoicer.conf
   }
 
   fetch_invoicerui() {
