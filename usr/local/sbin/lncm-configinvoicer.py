@@ -38,7 +38,7 @@ def writerpcvalues(configfile='', bitcoindusername='', bitcoindpassword=''):
     if os.path.exists(configfile):
         # write config file
         invoicer_config_dict = toml.load(configfile)
-        invoicer_config_dict['port'] = '8088'
+        invoicer_config_dict['port'] = 8088
         invoicer_config_dict['log-file'] = '/logs/invoicer.logs'
         invoicer_config_dict['static-dir'] = '/static/'
         invoicer_config_dict['bitcoind']['user'] = bitcoindusername
