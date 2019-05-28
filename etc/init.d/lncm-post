@@ -185,7 +185,6 @@ start() {
   config_nginx() {
     if [[ ! -d /media/important/important/nginx ]]; then
       echo "Creating nginx folders"
-      /bin/mkdir -p /media/important/important/nginx
       /bin/mkdir -p /media/important/important/nginx/conf.d
     fi
     if [[ ! -d /media/important/important/nginx/conf.d ]]; then
