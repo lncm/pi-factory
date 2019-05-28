@@ -42,7 +42,8 @@ start() {
   
   install_toml() {
     # Install TOTML parsing library (https://github.com/uiri/toml) so that we can write to the invoicer config files nicely
-    /usr/bin/pip3 install pip install toml==0.10.0
+    echo "Install TOML PIP3 Library"
+    /usr/bin/pip3 install toml==0.10.0
   }
 
   usb_setup() {
