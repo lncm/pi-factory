@@ -8,10 +8,27 @@ depend() {
 
 start() {
 	sleep 2 && \
-	docker load --input /media/mmcblk0p1/nginx.tar.gz && \
-	docker run --name=nginx -d --restart=unless-stopped --net host \
-      -v /etc/nginx:/etc/nginx \
-      -v /var/log/nginx:/var/log/nginx \
-      -v /home/lncm/public_html:/www \
-		nginx:1.14.2-alpine
+	docker load --input /media/mmcblk0p1/nginx.tar.gz
+
+	# Lets see which config file to use
+	if [[ ! -d /media/important/important/nginx ]]; then
+		# Old location
+		# nginx doesn't exist in /media/important/important so use the location on filesystem
+
+		docker run --name=nginx -d --restart=unless-stopped --net host \
+		-v /etc/nginx:/etc/nginx \
+		-v /var/log/nginx:/var/log/nginx \
+		-v /home/lncm/public_html:/www \
+			nginx:1.14.2-alpine	
+	else
+		# Location on persistent store
+		docker run --name=nginx -d --restart=unless-stopped --net host \
+		-v /media/important/important/nginx:/etc/nginx \
+		-v /var/log/nginx:/var/log/nginx \
+		-v /home/lncm/public_html:/www \
+			nginx:1.14.2-alpine
+		# Store an empty file so we can script that we are using the important mount rather than filesystem
+		touch /media/important/important/using-nginx-important-mount
+		# TODO: Delete or Move old nginx location (or just leave it alone)
+	fi
 }
