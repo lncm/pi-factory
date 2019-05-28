@@ -1,9 +1,11 @@
 version: '3.7'
 services:
   bitcoind:
-    image: lncm/bitcoind:0.17.1
+    image: lncm/bitcoind:0.18.0-linux-arm
+    entrypoint: bitcoind -zmqpubrawblock=tcp://0.0.0.0:28332 -zmqpubrawtx=tcp://0.0.0.0:28333
     volumes:
       - /media/archive/archive/bitcoin/:/root/.bitcoin/
+    restart: always
     network_mode: host
 
   lnd:
@@ -20,21 +22,13 @@ services:
     network_mode: host
 
   invoicer:
-    image: lncm/invoicer:0.1.1
+    image: lncm/invoicer:0.4.0
     volumes:
+      - /media/important/important/invoicer:/root/.lncm
       - /media/important/important/lnd:/lnd
       - /home/lncm/public_html:/static
+      - /media/volatile/volatile/invoicer:/logs
     depends_on:
       - lnd
     restart: on-failure
-    environment:
-      - LNDHOST=localhost
-      - LNDPORT=10009
-      - PORT=8088
-      - GRPC_GO_RETRY=on
-      - BTCHOST=localhost
-      - BTCRPCUSER=RANDOMUSER
-      - BTCRPCPASS=RANDOMPASS
-      - INVOICER_HOSTPORT=invoicer:defaultpassw0rd@localhost:8088
-      - STATICDIR=/static/
     network_mode: host
