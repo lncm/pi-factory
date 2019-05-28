@@ -1,17 +1,40 @@
 #!/usr/bin/env python3
 
 '''
+Invoicer configuration Script
+
+Copyright © 2018-2019 LNCM Contributors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
 How to use
 
 Dependencies
 sudo pip3 install toml
+
+Executing
+./lncm-configinvoicer.py <rpcusername> <rpcpassword>
+
+Todo
+Make it write anything to the config file. For now just the basics
 '''
 
 import os, sys
 import toml
 from pathlib import Path
 
-def read(configfile='', bitcoindusername='', bitcoindpassword=''):
+def writerpcvalues(configfile='', bitcoindusername='', bitcoindpassword=''):
     if os.path.exists(configfile):
         # write config file
         invoicer_config_dict = toml.load(configfile)
@@ -42,7 +65,7 @@ def read(configfile='', bitcoindusername='', bitcoindpassword=''):
 
 if __name__ == '__main__':
     if len(sys.argv) == 3:
-        read('/media/important/important/invoicer.conf', sys.argv[1], sys.argv[2])
+        writerpcvalues('/media/important/important/invoicer/invoicer.conf', sys.argv[1], sys.argv[2])
     else:
         print('Need more arguments')
         print('Usage: ' + sys.argv[0] + ' <rpcusername> <rpcpassword>')
