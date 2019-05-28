@@ -118,7 +118,7 @@ start() {
       
       # Configure invoicer
       echo "Configuring invoicer..."
-      /usr/bin/python3 /usr/local/sbin/lncm-configinvoicer.py lncm $RANDOMPASS || exit 1
+      /usr/local/sbin/lncm-configinvoicer.py "lncm" "$GENERATEDPW" || exit 1
       
     else
       echo "Error generating RPC configuration"
@@ -141,11 +141,11 @@ start() {
   setup_tor() {
     CHECKTOR_HOSTNAME=1
     # Check to see if Tor generated directory exists
-    while [ ! -d /var/lib/tor/lightning ] && [ $CHECKTOR_HOSTNAME -lt 10 ];
+    while [ ! -d /var/lib/tor/lnd-v3 ] && [ $CHECKTOR_HOSTNAME -lt 10 ];
     do
       echo "Tor generated directory doesn't exist yet.. waiting";
       CHECKTOR_HOSTNAME=$((CHECKTOR_HOSTNAME+1))
-      sleep 1;
+      sleep 2;
     done
 
     # Now check to see if hostname exists
@@ -163,7 +163,7 @@ start() {
     if [ -f /media/archive/archive/bitcoin/bitcoin.conf ]; then
       echo "bitcoin.conf exists, making backup and replacing"
       /bin/cp /media/archive/archive/bitcoin/bitcoin.conf /media/archive/archive/bitcoin/bitcoin.conf.backup &&
-      /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/archive/archive/bitcoin/bitcoin/bitcoin.conf
+      /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/archive/archive/bitcoin/bitcoin.conf
     else
       echo "bitcoind.conf does not exist, creating"
       /bin/cp -f /home/lncm/bitcoin/bitcoin.conf /media/archive/archive/bitcoin/bitcoin.conf
