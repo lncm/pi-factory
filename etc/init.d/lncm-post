@@ -41,9 +41,10 @@ start() {
   }
   
   install_noma() {
-    echo "Install Noma in dependencies"
+    echo "Install Noma dependencies in case user wants to install it"
     /sbin/apk add py3-psutil
-    /usr/bin/pip3 install noma==0.4.5
+    #Uncomment noma for now because noma stop seems to be broken
+    #/usr/bin/pip3 install noma==0.4.5
   }
 
   install_toml() {
