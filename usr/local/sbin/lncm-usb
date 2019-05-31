@@ -156,8 +156,6 @@ setup_volatile() {
     echo "Enabling swap at runlevel so it starts up"
     cd /etc/runlevels/boot && \
     /bin/ln -s /etc/init.d/swap swap
-    # add to defaults
-    /sbin/rc-update add swap
   else
     echo 'Warning: "volatile" usb does not seem to be ext4 formatted'
     echo "/dev/${MEDIUM} will not be added to /etc/fstab"
