@@ -8,6 +8,8 @@ depend() {
 
 start() {
 	sleep 2 && \
+    docker stop nginx && \
+    docker rm nginx && \
 	docker load --input /media/mmcblk0p1/nginx.tar.gz
 
 	# Lets see which config file to use
