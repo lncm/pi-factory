@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   bitcoind:
-    image: lncm/bitcoind:0.18.0-linux-arm
+    image: lncm/bitcoind:0.18.0
     entrypoint: bitcoind -zmqpubrawblock=tcp://0.0.0.0:28332 -zmqpubrawtx=tcp://0.0.0.0:28333
     volumes:
       - /media/archive/archive/bitcoin/:/root/.bitcoin/
@@ -9,7 +9,7 @@ services:
     network_mode: host
 
   lnd:
-    image: lncm/lnd:0.6-linux-arm
+    image: lncm/lnd:0.6
     volumes:
       - /media/volatile/volatile/lnd/logs:/root/.lnd/logs
       - /media/important/important/lnd/data:/root/.lnd/data
