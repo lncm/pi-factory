@@ -129,6 +129,27 @@ The Raspberry Pi lightning box provides it's own WiFi hotspot to ease access and
 - **IP address**: 192.168.27.1
 - **hostname**: box.local
 
+### WiFi hotspot
+
+The box provides it's own WiFi hotspot to ease access and configuration.
+
+- **WiFi name** (SSID): "LNCM-Box"
+- **WiFi password**: "lncm box"
+- **IP address**: 192.168.27.1
+- **hostname**: box.local
+
+#### Advanced configuration
+
+If the wifi configuration manager does not work (currently there is an issue where the wifi manager is not getting downloaded), you may SSH in and invoke the following command.
+
+```bash
+curl -w "\n" -d '{"ssid":"YOUR-SSID-NAME", "psk":"YOUR-PASSWORD"}' \
+    -H "Content-Type: application/json" \
+    -X POST http://192.168.27.1:8080/connect
+```
+
+Alternatively, when building the image you can create a ```wpa_supplicant.automatic.conf``` file with all your wifi passwords.
+
 Documentation
 -------------
 [Read the Docs](https://pi-factory.readthedocs.io/en/latest/?badge=latest)
