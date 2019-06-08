@@ -6,6 +6,8 @@ depend() {
 
 start() {
 	sleep 2 && \
+    docker rm iotwifi && \
+    docker stop iotwifi && \
 	docker load --input /media/mmcblk0p1/iotwifi.tar.gz && \
 	docker run --name=iotwifi -d --restart=unless-stopped --privileged --net host \
 		-v /etc/iotwifi:/cfg \
