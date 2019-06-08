@@ -11,7 +11,9 @@ machine-id
 # Automatic bootstrap files. For bootstrapping a wpa_supplicant and authorized_keys so that we don't have to keep doing it.
 /wpa_supplicant.automatic.conf
 /authorized_keys.automatic
-# For importing seeds
+/seed.automatic.txt
+
+# For importing seeds (don't commit these)
 home/lncm/seed.txt
 
 alpine-rpi-*-armhf.tar.gz

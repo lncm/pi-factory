@@ -66,6 +66,12 @@ if [ -f ./authorized_keys.automatic ]; then
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' ./etc/ssh/sshd_config
 fi
 
+echo 'Check for seed'
+if [ -f ./seed.automatic.txt ]; then
+    echo "Seed file exists, boostrapping the seed into the installation"
+    cp ./seed.automatic.txt ./home/lncm/seed.txt
+fi
+
 echo 'Generate fresh box.apkovl.tar.gz from source'
 sh make_apkovl.sh
 # Cleanup files we created
@@ -89,6 +95,12 @@ fetch_wifi() {
 if [ -d ./home/lncm/.ssh ]; then
     echo "Remove .ssh directory"
     rm -fr ./home/lncm/.ssh
+fi
+
+# Cleanup seed from home/lncm
+if [ -f ./home/lncm/seed.txt ]; then
+    echo "Remove seed.txt from installation so everything is equal to last commit"
+    rm ./home/lncm/seed.txt
 fi
 
 if [ -f ./etc/ssh/sshd_config.bak ]; then
