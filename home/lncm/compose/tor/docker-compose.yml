@@ -9,7 +9,7 @@ services:
     network_mode: host
 
   lnd:
-    image: lncm/lnd:v0.7.0
+    image: lncm/lnd:0.7.1-neutrino-wt
     volumes:
       - /media/volatile/volatile/lnd/logs:/root/.lnd/logs
       - /media/important/important/lnd/data:/root/.lnd/data
