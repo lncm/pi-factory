@@ -22,7 +22,7 @@ services:
     network_mode: host
 
   invoicer:
-    image: lncm/invoicer:0.4.0
+    image: lncm/invoicer:0.5.1
     volumes:
       - /media/important/important/invoicer:/root/.lncm
       - /media/important/important/lnd:/lnd
