@@ -8,6 +8,7 @@
 +etc/init.d/portainer
 +etc/init.d/sshd
 +etc/init.d/nginx
++etc/init.d/wpa_supplicant.alt
 +home/lncm/bitcoin
 +home/lncm/litecoin
 +home/lncm/lnd
