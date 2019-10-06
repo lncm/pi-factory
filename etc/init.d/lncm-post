@@ -148,7 +148,7 @@ start() {
   setup_tor() {
     CHECKTOR_HOSTNAME=1
     # Check to see if Tor generated directory exists
-    while [ ! -d /var/lib/tor/lnd-v3 ] && [ $CHECKTOR_HOSTNAME -lt 10 ];
+    while [ ! -d /var/lib/tor/ssh-v3 ] && [ $CHECKTOR_HOSTNAME -lt 10 ];
     do
       echo "Tor generated directory doesn't exist yet.. waiting";
       CHECKTOR_HOSTNAME=$((CHECKTOR_HOSTNAME+1))
@@ -304,7 +304,8 @@ start() {
     #generate_rpc
     install_tor
     enable_tor
-    setup_tor
+    #setup_tor
+    
     # Copy into path
     #config_bitcoind
     #config_lnd
