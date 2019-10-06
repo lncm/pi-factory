@@ -33,7 +33,7 @@ start() {
   install_python3() {
     echo "Install Python 3 and upgrade PIP"
     /sbin/apk update && \
-    /sbin/apk add python3 curl jq
+    /sbin/apk add python3 python3-dev curl jq
     
     /usr/bin/pip3 install --upgrade pip 
   }
@@ -304,8 +304,8 @@ start() {
     fi
 
     move_cache
-    install_python3
     install_alpine_sdk
+    install_python3
     #install_compose
     #install_toml
     #install_noma
