@@ -144,7 +144,7 @@ start() {
   create_swap() {
     echo "Create and install swap file"
     /bin/dd if=/dev/zero of=/media/sd/var/cache/swap bs=1M count=1024 && \
-    /bin/chown 600 /media/sd/var/cache/swap && \
+    /bin/chmod 600 /media/sd/var/cache/swap && \
     /sbin/mkswap /media/sd/var/cache/swap && \
     /sbin/swapon /media/sd/var/cache/swap && \
     /bin/echo "/var/cache/swap none swap sw,pri=10 0 0" >> /media/sd/etc/fstab && \
