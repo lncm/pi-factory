@@ -38,6 +38,11 @@ start() {
     /usr/bin/pip3 install --upgrade pip 
   }
 
+  install_alpine_sdk() {
+    echo "Install alpine devtools (used for building)"
+    /sbin/apk add alpine-sdk
+  }
+
   install_compose() {
     echo "Install docker-compose and dependencies"
     # jq for help with parsing JSON
@@ -300,6 +305,7 @@ start() {
 
     move_cache
     install_python3
+    install_alpine_sdk
     #install_compose
     #install_toml
     #install_noma
