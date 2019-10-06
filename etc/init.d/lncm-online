@@ -20,7 +20,7 @@ start() {
   ONLINE=1
   COUNT=0
 
-  while [ $ONLINE -eq 1 ] || [ $COUNT -lt 10 ]
+  while [ $ONLINE -eq 1 ] && [ $COUNT -lt 10 ]
   do
       echo "Checking for internet connection for 10 seconds..."
       net_check
