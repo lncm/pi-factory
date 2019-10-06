@@ -24,7 +24,7 @@ start() {
   do
       echo "Checking for internet connection for 10 seconds..."
       net_check
-      COUNT=$((count + 1))
+      COUNT=$((COUNT + 1))
       sleep 1
   done
 
