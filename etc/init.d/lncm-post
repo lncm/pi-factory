@@ -279,11 +279,6 @@ start() {
     /usr/bin/crontab /home/lncm/crontab
   }
 
-  persist_state() {
-    echo "Backup apkovl.tar.gz to Root"
-    /sbin/lbu package /box.apkovl.tar.gz
-  }
-
   disable_post() {
     echo "Remove lncm-post from boot"
     /sbin/rc-update del lncm-post default
@@ -329,7 +324,6 @@ start() {
     #install_crontab
     disable_post
     #enable_compose
-    persist_state
   }
 
   main
