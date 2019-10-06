@@ -29,6 +29,14 @@ start() {
     fi
     /sbin/setup-apkcache /var/cache/apk
   }
+  
+  install_python3() {
+    echo "Install Python 3 and upgrade PIP"
+    /sbin/apk update && \
+    /sbin/apk add python3 curl jq
+    
+    /usr/bin/pip3 install --upgrade pip 
+  }
 
   install_compose() {
     echo "Install docker-compose and dependencies"
@@ -291,6 +299,7 @@ start() {
     fi
 
     move_cache
+    install_python3
     #install_compose
     #install_toml
     #install_noma
