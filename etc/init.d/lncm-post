@@ -267,8 +267,8 @@ start() {
   }
 
   persist_state() {
-    echo "Backup apkovl.tar.gz to USB storage"
-    /sbin/lbu package /media/important/important/box.apkovl.tar.gz
+    echo "Backup apkovl.tar.gz to Root"
+    /sbin/lbu package /box.apkovl.tar.gz
   }
 
   disable_post() {
