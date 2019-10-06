@@ -4,15 +4,19 @@
 # 256MB bootable FAT32L partition with official Alpine linux and lncm-box
 # Make sure "parted", "dosfstools" and "zip" are installed
 
-OUTPUT_VERSION=v0.4.1
+# For Outputing an image
+OUTPUT_VERSION=v0.5.0
+# For Libraries
 DOWNLOAD_VERSION=v0.4.1
-ALP=alpine-rpi-3.8.2-armhf.tar.gz
-REL=v3.8
+
+# For fetching Alpine
+ALP=alpine-rpi-3.10.2-aarch64.tar.gz
+ARCH=aarch64
+# Which alpine release directory
+REL=v3.10
+
 IMG=lncm-box-${OUTPUT_VERSION}.img
-IOT=iotwifi.tar.gz
-NGINX=nginx.tar.gz
-FIX=modloop-rpi2.tar.gz
-CACHE=cache.tar.gz
+CACHE=cache-3.10-aarch64.tar.gz
 MNT=/mnt/lncm
 
 if [ "$(id -u)" -ne "0" ]; then
@@ -81,16 +85,6 @@ if [ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]; then
     rm ./etc/wpa_supplicant/wpa_supplicant.conf.bak
 fi
 
-fetch_wifi() {
-    echo "Checking for wifi manager"
-    mkdir -p home/lncm/public_html/wifi
-    if [ ! -f home/lncm/public_html/wifi/index.html ]; then
-      echo "Fetch wifi manager"
-      wget -O home/lncm/public_html/wifi/index.html --no-verbose \
-	      https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html || exit
-    fi
-}
-
 # Cleanup authorized_keys
 if [ -d ./home/lncm/.ssh ]; then
     echo "Remove .ssh directory"
@@ -114,27 +108,12 @@ cd lncm-workdir || exit
 
 if ! [ -f ${ALP} ]; then
   echo "${ALP} not found, fetching..."
-  wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
-fi
-
-if ! [ -f ${IOT} ]; then
-  echo "${IOT} not found, fetching..."
-  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
-fi
-
-if ! [ -f ${FIX} ]; then
- echo "${FIX} not found, fetching..."
- wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
+  wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/${ARCH}/${ALP} || echo "Error fetching alpine"
 fi
 
 if ! [ -f ${CACHE} ]; then
   echo "${CACHE} not found, fetching..."
-  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
-fi
-
-if ! [ -f ${NGINX} ]; then
-  echo "${NGINX} not found, fetching..."
-  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${NGINX}
+  wget --no-verbose https://gitlab.com/nolim1t/aarch64-alpine-apkvol/raw/834fa018f8ea518f6dee60ffd2967fc5d4b36ec0/${CACHE} || echo "Error fetching cache"
 fi
 
 echo "Create and mount 256MB image"
@@ -153,22 +132,13 @@ echo "Mount FAT partition"
 mount "${DEV}"p1 "${MNT}"
 
 echo "Extract alpine distribution"
-tar -xzf ${ALP} -C ${MNT}/ --no-same-owner
-
-echo "Extract iotwifi container"
-tar -xzf ${IOT} -C ${MNT}/ --no-same-owner
-
-echo "Extract nginx container"
-tar -xzf ${NGINX} -C ${MNT}/ --no-same-owner
+tar -xzf ${ALP} -C ${MNT}/ --no-same-owner || echo "Can't extract alpine"
 
 echo "Extract cache dir for docker and avahi"
-tar -xzf ${CACHE} -C ${MNT}/ --no-same-owner
-
-echo "Patch RPi3 WiFi"
-tar -xzf ${FIX} -C ${MNT}/boot/ --no-same-owner
+tar -xzf ${CACHE} -C ${MNT}/ --no-same-owner || echo "Can't extract cache"
 
 echo "Copy latest box.apkovl tarball"
-cp ../box.apkovl.tar.gz ${MNT}
+cp ../box.apkovl.tar.gz ${MNT} || echo "Can't extract alpine box"
 
 echo "Flush writes to disk"
 sync
