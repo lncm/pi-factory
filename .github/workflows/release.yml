@@ -16,4 +16,4 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         gzip: false
-        files: "*.zip"
+        files: *.zip
