@@ -1,0 +1,23 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run Make Image Script
+      run: ./make_img.sh
+    - name: Github Release
+      uses: meeDamian/github-release@v1.0.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        gzip: false
+        files: >
+          *.zip
