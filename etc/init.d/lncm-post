@@ -291,28 +291,28 @@ start() {
     fi
 
     move_cache
-    install_compose
-    install_toml
-    install_noma
-    usb_setup
-    verify_usb
+    #install_compose
+    #install_toml
+    #install_noma
+    #usb_setup
+    #verify_usb
     # Fetch invoicer into path
-    fetch_invoicerconfig
-    fetch_rpcauth
-    check_rpc
+    #fetch_invoicerconfig
+    #fetch_rpcauth
+    #check_rpc
     # Configure invoicer, and services stage
-    generate_rpc
+    #generate_rpc
     install_tor
     enable_tor
     setup_tor
     # Copy into path
-    config_bitcoind
-    config_lnd
-    config_nginx
-    fetch_invoicerui
-    install_crontab
+    #config_bitcoind
+    #config_lnd
+    #config_nginx
+    #fetch_invoicerui
+    #install_crontab
     disable_post
-    enable_compose
+    #enable_compose
     persist_state
   }
 

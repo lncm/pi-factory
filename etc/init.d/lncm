@@ -12,7 +12,7 @@ start() {
   # This script will only run once, for persistent installation to SD
 
   # LNCM version
-  VER="v0.4.1"
+  VER="v0.5.0"
 
   # apkovl
   APK=box.apkovl.tar.gz
@@ -190,7 +190,7 @@ start() {
     setup_user
     install_boot
     mark_sd
-    #create_swap # disable sd card swap
+    create_swap
     enable_post
     disable_install
     persist_state
