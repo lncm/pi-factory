@@ -40,7 +40,7 @@ start() {
 
   install_alpine_sdk() {
     echo "Install alpine devtools (used for building)"
-    /sbin/apk add alpine-sdk
+    /sbin/apk add alpine-sdk linux-headers libffi-dev
   }
 
   install_compose() {
