@@ -8,7 +8,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     
     steps:
     - uses: actions/checkout@v1
@@ -19,5 +19,4 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         gzip: false
-        files: >
-          *.zip
+        files: "*.zip"
