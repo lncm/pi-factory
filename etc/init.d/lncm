@@ -102,8 +102,8 @@ start() {
   setup_user() {
     echo "Create lncm home dir if necessary"
     /bin/mkdir -p /media/sd/home/lncm
-    echo "Set user permissions"
-    /bin/chown lncm:lncm /media/sd/home/lncm
+    echo "Fix user permissions"
+    /bin/chown -R lncm:lncm /media/sd/home/lncm
   }
 
   install_boot() {
