@@ -9,6 +9,7 @@
 +etc/init.d/noma
 +etc/init.d/sshd
 +etc/init.d/wpa_supplicant
++home/lncm/.ssh
 +home/lncm/bitcoin
 +home/lncm/litecoin
 +home/lncm/lnd
