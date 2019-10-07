@@ -151,11 +151,13 @@ zip -r ${IMG}.zip ${IMG}
 
 # Setup 32 bit
 if [ -f ${ALP32} ]; then
-   dd if=/dev/zero of=${IMG32} bs=1M count=256
-   DEV32=$(losetup -f)	
-   losetup -f ${IMG32}
-   echo "Preparing 32 bit arm image"
+   dd if=/dev/zero of=${IMG32} bs=1M count=256 && \
+   DEV32=$(losetup -f) && \
+   losetup -f ${IMG32} && \
+   parted -s "${DEV32}" mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
+   echo "Preparing 32 bit arm image" && \
    mkfs.vfat "${DEV32}"p1 -IF 32
+
    echo "Mount FAT partition"
    mount "${DEV32}"p1 "${MNT}"
    echo "Extract alpine distribution and copy to 32 bit"
