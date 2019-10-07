@@ -17,5 +17,5 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         gzip: false
-        files: lncm-workdir/lncm-box-v*.img
+        files: lncm-workdir/lncm-box-v*.img.zip
 
