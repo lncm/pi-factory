@@ -29,6 +29,41 @@ start() {
     fi
     /sbin/setup-apkcache /var/cache/apk
   }
+  
+  install_python3() {
+    echo "Install Python 3 and upgrade PIP"
+    /sbin/apk update && \
+    /sbin/apk add python3 python3-dev
+    
+    /usr/bin/pip3 install --upgrade pip 
+  }
+
+  install_utils() {
+    echo "Installing utils (avahi/dbus/curl/jq)"
+    /sbin/apk update && \
+    /sbin/apk add dbus avahi curl jq docker
+  }
+
+  config_avahi() {
+    echo "Configuring Avahi"
+    /sbin/rc-update add dbus boot || echo "Unable to add dbus to boot runlevels"
+    /sbin/rc-update add avahi-daemon boot || echo "Unable to add avahi to boot runlevels"
+    echo "Starting DBUS and AVAHI"
+    /etc/init.d/dbus start || echo "Failed to start dbus"
+    /etc/init.d/avahi-daemon start || echo "Failed to start avahi"
+  }
+
+  config_docker() {
+    echo "Configuring docker"
+    /sbin/rc-update add docker default
+    echo "Starting docker"
+    /etc/init.d/docker start || echo "Failed to start docker"
+  }
+
+  install_alpine_sdk() {
+    echo "Install alpine devtools (used for building)"
+    /sbin/apk add alpine-sdk linux-headers libffi-dev
+  }
 
   install_compose() {
     echo "Install docker-compose and dependencies"
@@ -44,7 +79,7 @@ start() {
     echo "Install Noma dependencies in case user wants to install it"
     /sbin/apk add py3-psutil
     #Uncomment noma for now because noma stop seems to be broken
-    #/usr/bin/pip3 install noma==0.4.5
+    /usr/bin/pip3 install noma==0.5.0
   }
 
   install_toml() {
@@ -148,7 +183,7 @@ start() {
   setup_tor() {
     CHECKTOR_HOSTNAME=1
     # Check to see if Tor generated directory exists
-    while [ ! -d /var/lib/tor/lnd-v3 ] && [ $CHECKTOR_HOSTNAME -lt 10 ];
+    while [ ! -d /var/lib/tor/ssh-v3 ] && [ $CHECKTOR_HOSTNAME -lt 10 ];
     do
       echo "Tor generated directory doesn't exist yet.. waiting";
       CHECKTOR_HOSTNAME=$((CHECKTOR_HOSTNAME+1))
@@ -266,11 +301,6 @@ start() {
     /usr/bin/crontab /home/lncm/crontab
   }
 
-  persist_state() {
-    echo "Backup apkovl.tar.gz to USB storage"
-    /sbin/lbu package /media/important/important/box.apkovl.tar.gz
-  }
-
   disable_post() {
     echo "Remove lncm-post from boot"
     /sbin/rc-update del lncm-post default
@@ -291,29 +321,14 @@ start() {
     fi
 
     move_cache
-    install_compose
-    install_toml
-    install_noma
-    usb_setup
-    verify_usb
-    # Fetch invoicer into path
-    fetch_invoicerconfig
-    fetch_rpcauth
-    check_rpc
-    # Configure invoicer, and services stage
-    generate_rpc
+    install_utils
+    config_docker
+    config_avahi
+    install_alpine_sdk
+    install_python3
     install_tor
     enable_tor
-    setup_tor
-    # Copy into path
-    config_bitcoind
-    config_lnd
-    config_nginx
-    fetch_invoicerui
-    install_crontab
     disable_post
-    enable_compose
-    persist_state
   }
 
   main

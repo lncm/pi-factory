@@ -18,17 +18,23 @@ start() {
   }
 
   ONLINE=1
+  COUNT=0
 
-  while [ $ONLINE -eq 1 ]
+  while [ $ONLINE -eq 1 ] && [ $COUNT -lt 10 ]
   do
-      echo "Checking for internet connection..."
+      echo "Checking for internet connection for 10 seconds..."
       net_check
+      COUNT=$((COUNT + 1))
       sleep 1
   done
 
   if [ $ONLINE -eq 0 ]; then
     echo "Connected to internet"
     exit 0
+  else
+    echo "Not connected to internet.. please update wpa_supplicant"
+    echo "and then reboot to continue the setup process"
+    exit 1
   fi
 
   eend $?

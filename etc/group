@@ -48,5 +48,6 @@ nogroup:x:65533:
 nobody:x:65534:
 avahi:x:86:avahi
 messagebus:x:101:messagebus
-docker:x:102:
+docker:x:102:lncm
 lncm:x:1001:
+chrony:x:101:chrony

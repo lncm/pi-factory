@@ -1,12 +1,11 @@
 auto lo
 iface lo inet loopback
 
-auto wlan0
-iface wlan0 inet dhcp
-	hostname box
-	udhcpc_opts --timeout=1 --retries=1
-
 auto eth0
 iface eth0 inet dhcp
 	hostname box
-	udhcpc_opts --timeout=1 --retries=1
+
+auto wlan0
+iface wlan0 inet dhcp
+	hostname box
+

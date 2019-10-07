@@ -4,15 +4,20 @@
 # 256MB bootable FAT32L partition with official Alpine linux and lncm-box
 # Make sure "parted", "dosfstools" and "zip" are installed
 
-OUTPUT_VERSION=v0.4.1
-DOWNLOAD_VERSION=v0.4.1
-ALP=alpine-rpi-3.8.2-armhf.tar.gz
-REL=v3.8
+# For Outputing an image
+OUTPUT_VERSION=v0.5.0
+
+# For fetching Alpine
+ARCH=aarch64
+ARCH32=armhf
+ALP=alpine-rpi-3.10.2-${ARCH}.tar.gz
+ALP32=alpine-rpi-3.10.2-${ARCH32}.tar.gz
+
+# Which alpine release directory
+REL=v3.10
+
 IMG=lncm-box-${OUTPUT_VERSION}.img
-IOT=iotwifi.tar.gz
-NGINX=nginx.tar.gz
-FIX=modloop-rpi2.tar.gz
-CACHE=cache.tar.gz
+IMG32=lncm-box-${OUTPUT_VERSION}-armhf.img
 MNT=/mnt/lncm
 
 if [ "$(id -u)" -ne "0" ]; then
@@ -44,8 +49,8 @@ check_deps() {
   echo "Found required dependencies"
 }
 
-echo "Building ${IMG}"
-echo "Using ${ALP} as base distribution"
+echo "Building ${IMG} and ${IMG32}"
+echo "Using ${ALP} and ${ALP32} as base distribution"
 
 echo 'Check for existing wpa_supplicant.automatic.conf'
 if [ -f ./wpa_supplicant.automatic.conf ]; then
@@ -81,16 +86,6 @@ if [ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]; then
     rm ./etc/wpa_supplicant/wpa_supplicant.conf.bak
 fi
 
-fetch_wifi() {
-    echo "Checking for wifi manager"
-    mkdir -p home/lncm/public_html/wifi
-    if [ ! -f home/lncm/public_html/wifi/index.html ]; then
-      echo "Fetch wifi manager"
-      wget -O home/lncm/public_html/wifi/index.html --no-verbose \
-	      https://raw.githubusercontent.com/lncm/iotwifi-ui/master/dist/index.html || exit
-    fi
-}
-
 # Cleanup authorized_keys
 if [ -d ./home/lncm/.ssh ]; then
     echo "Remove .ssh directory"
@@ -114,27 +109,12 @@ cd lncm-workdir || exit
 
 if ! [ -f ${ALP} ]; then
   echo "${ALP} not found, fetching..."
-  wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/armhf/${ALP}
+  wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/${ARCH}/${ALP} || echo "Error fetching alpine"
 fi
 
-if ! [ -f ${IOT} ]; then
-  echo "${IOT} not found, fetching..."
-  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${IOT}
-fi
-
-if ! [ -f ${FIX} ]; then
- echo "${FIX} not found, fetching..."
- wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${FIX}
-fi
-
-if ! [ -f ${CACHE} ]; then
-  echo "${CACHE} not found, fetching..."
-  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${CACHE}
-fi
-
-if ! [ -f ${NGINX} ]; then
-  echo "${NGINX} not found, fetching..."
-  wget --no-verbose https://github.com/lncm/pi-factory/releases/download/${DOWNLOAD_VERSION}/${NGINX}
+if ! [ -f ${ALP32} ]; then
+  echo "${ALP32} not found, fetching..."
+  wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/${ARCH32}/${ALP32} || echo "Error fetching alpine"
 fi
 
 echo "Create and mount 256MB image"
@@ -153,22 +133,10 @@ echo "Mount FAT partition"
 mount "${DEV}"p1 "${MNT}"
 
 echo "Extract alpine distribution"
-tar -xzf ${ALP} -C ${MNT}/ --no-same-owner
-
-echo "Extract iotwifi container"
-tar -xzf ${IOT} -C ${MNT}/ --no-same-owner
-
-echo "Extract nginx container"
-tar -xzf ${NGINX} -C ${MNT}/ --no-same-owner
-
-echo "Extract cache dir for docker and avahi"
-tar -xzf ${CACHE} -C ${MNT}/ --no-same-owner
-
-echo "Patch RPi3 WiFi"
-tar -xzf ${FIX} -C ${MNT}/boot/ --no-same-owner
+tar -xzf ${ALP} -C ${MNT}/ --no-same-owner || echo "Can't extract alpine"
 
 echo "Copy latest box.apkovl tarball"
-cp ../box.apkovl.tar.gz ${MNT}
+cp ../box.apkovl.tar.gz ${MNT} || echo "Can't extract alpine box"
 
 echo "Flush writes to disk"
 sync
@@ -181,5 +149,27 @@ echo "Compress img as zip"
 
 zip -r ${IMG}.zip ${IMG}
 
+# Setup 32 bit
+if [ -f ${ALP32} ]; then
+   dd if=/dev/zero of=${IMG32} bs=1M count=256 && \
+   DEV32=$(losetup -f) && \
+   losetup -f ${IMG32} && \
+   parted -s "${DEV32}" mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
+   echo "Preparing 32 bit arm image" && \
+   mkfs.vfat "${DEV32}"p1 -IF 32
+
+   echo "Mount FAT partition"
+   mount "${DEV32}"p1 "${MNT}"
+   echo "Extract alpine distribution and copy to 32 bit"
+   tar -xzf ${ALP32} -C ${MNT}/ --no-same-owner || echo "Cant extract alpine"
+   cp ../box.apkovl.tar.gz ${MNT} || echo "Cant extract alpine box"
+   sync
+   umount ${MNT}
+   losetup -d "${DEV32}"
+   zip -r ${IMG32}.zip ${IMG32}
+fi
+
 echo "Done!"
 echo "You may flash your ${IMG}.zip using Etcher or dd the ${IMG}"
+echo "or you may flash your ${IMG32}.zip using Etcher or dd the ${IMG32}"
+

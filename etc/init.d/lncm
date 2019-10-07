@@ -12,7 +12,7 @@ start() {
   # This script will only run once, for persistent installation to SD
 
   # LNCM version
-  VER="v0.4.1"
+  VER="v0.5.0"
 
   # apkovl
   APK=box.apkovl.tar.gz
@@ -47,7 +47,6 @@ start() {
 
   install_tools() {
     echo "Add partitioning and filesystem tools"
-    /sbin/setup-apkcache /media/mmcblk0p1/cache && \
     /sbin/apk add parted e2fsprogs
   }
 
@@ -103,8 +102,8 @@ start() {
   setup_user() {
     echo "Create lncm home dir if necessary"
     /bin/mkdir -p /media/sd/home/lncm
-    echo "Set user permissions"
-    /bin/chown lncm:lncm /media/sd/home/lncm
+    echo "Fix user permissions"
+    /bin/chown -R lncm:lncm /media/sd/home/lncm
   }
 
   install_boot() {
@@ -190,7 +189,7 @@ start() {
     setup_user
     install_boot
     mark_sd
-    #create_swap # disable sd card swap
+    create_swap
     enable_post
     disable_install
     persist_state

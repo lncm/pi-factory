@@ -2,6 +2,9 @@
 
 /.idea
 
+# Don't commit .vagrant
+.vagrant
+
 # Alpine sensitive stuff: Docker key
 key.json
 
@@ -24,9 +27,11 @@ home/lncm/README.*
 # Don't commit LNCM variant build stuff
 lncm-box-*.tar.gz
 *.img
+lncm-box-*.img.zip
 
 # Don't commit work dir
 lncm-workdir/
 
 # Don't apkvol
 *.apkovl.tar.gz
+
