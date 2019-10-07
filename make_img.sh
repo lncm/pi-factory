@@ -14,7 +14,6 @@ ARCH=aarch64
 REL=v3.10
 
 IMG=lncm-box-${OUTPUT_VERSION}.img
-CACHE=cache-3.10-aarch64.tar.gz
 MNT=/mnt/lncm
 
 if [ "$(id -u)" -ne "0" ]; then
@@ -109,11 +108,6 @@ if ! [ -f ${ALP} ]; then
   wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/${ARCH}/${ALP} || echo "Error fetching alpine"
 fi
 
-if ! [ -f ${CACHE} ]; then
-  echo "${CACHE} not found, fetching..."
-  wget --no-verbose https://gitlab.com/nolim1t/aarch64-alpine-apkvol/raw/834fa018f8ea518f6dee60ffd2967fc5d4b36ec0/${CACHE} || echo "Error fetching cache"
-fi
-
 echo "Create and mount 256MB image"
 dd if=/dev/zero of=${IMG} bs=1M count=256 && \
     DEV=$(losetup -f) && \
@@ -131,9 +125,6 @@ mount "${DEV}"p1 "${MNT}"
 
 echo "Extract alpine distribution"
 tar -xzf ${ALP} -C ${MNT}/ --no-same-owner || echo "Can't extract alpine"
-
-echo "Extract cache dir for docker and avahi"
-tar -xzf ${CACHE} -C ${MNT}/ --no-same-owner || echo "Can't extract cache"
 
 echo "Copy latest box.apkovl tarball"
 cp ../box.apkovl.tar.gz ${MNT} || echo "Can't extract alpine box"

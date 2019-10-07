@@ -47,7 +47,6 @@ start() {
 
   install_tools() {
     echo "Add partitioning and filesystem tools"
-    /sbin/setup-apkcache /media/mmcblk0p1/cache && \
     /sbin/apk add parted e2fsprogs
   }
 

@@ -39,8 +39,25 @@ start() {
   }
 
   install_utils() {
+    echo "Installing utils (avahi/dbus/curl/jq)"
     /sbin/apk update && \
-    /sbin/apk add curl jq
+    /sbin/apk add dbus avahi curl jq docker
+  }
+
+  config_avahi() {
+    echo "Configuring Avahi"
+    /sbin/rc-update add dbus boot || echo "Unable to add dbus to boot runlevels"
+    /sbin/rc-update add avahi-daemon boot || echo "Unable to add avahi to boot runlevels"
+    echo "Starting DBUS and AVAHI"
+    /etc/init.d/dbus start || echo "Failed to start dbus"
+    /etc/init.d/avahi-daemon start || echo "Failed to start avahi"
+  }
+
+  config_docker() {
+    echo "Configuring docker"
+    /sbin/rc-update add docker default
+    echo "Starting docker"
+    /etc/init.d/docker start || echo "Failed to start docker"
   }
 
   install_alpine_sdk() {
@@ -304,32 +321,14 @@ start() {
     fi
 
     move_cache
-    install_alpine_sdk
     install_utils
+    config_docker
+    config_avahi
+    install_alpine_sdk
     install_python3
-    #install_compose
-    #install_toml
-    #install_noma
-    #usb_setup
-    #verify_usb
-    # Fetch invoicer into path
-    #fetch_invoicerconfig
-    #fetch_rpcauth
-    #check_rpc
-    # Configure invoicer, and services stage
-    #generate_rpc
     install_tor
     enable_tor
-    #setup_tor
-    
-    # Copy into path
-    #config_bitcoind
-    #config_lnd
-    #config_nginx
-    #fetch_invoicerui
-    #install_crontab
     disable_post
-    #enable_compose
   }
 
   main

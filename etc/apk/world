@@ -1,11 +1,7 @@
 alpine-base
-dbus
 avahi
 chrony
-docker
 openssh
 openssl
 wireless-tools
 wpa_supplicant
-e2fsprogs
-parted
