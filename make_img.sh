@@ -6,8 +6,6 @@
 
 # For Outputing an image
 OUTPUT_VERSION=v0.5.0
-# For Libraries
-DOWNLOAD_VERSION=v0.4.1
 
 # For fetching Alpine
 ALP=alpine-rpi-3.10.2-aarch64.tar.gz
