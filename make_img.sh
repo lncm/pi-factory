@@ -8,12 +8,16 @@
 OUTPUT_VERSION=v0.5.0
 
 # For fetching Alpine
-ALP=alpine-rpi-3.10.2-aarch64.tar.gz
 ARCH=aarch64
+ARCH32=armhf
+ALP=alpine-rpi-3.10.2-${ARCH}.tar.gz
+ALP32=alpine-rpi-3.10.2-${ARCH32}.tar.gz
+
 # Which alpine release directory
 REL=v3.10
 
 IMG=lncm-box-${OUTPUT_VERSION}.img
+IMG32=lncm-box-${OUTPUT_VERSION}-armhf.img
 MNT=/mnt/lncm
 
 if [ "$(id -u)" -ne "0" ]; then
@@ -45,8 +49,8 @@ check_deps() {
   echo "Found required dependencies"
 }
 
-echo "Building ${IMG}"
-echo "Using ${ALP} as base distribution"
+echo "Building ${IMG} and ${IMG32}"
+echo "Using ${ALP} and ${ALP32} as base distribution"
 
 echo 'Check for existing wpa_supplicant.automatic.conf'
 if [ -f ./wpa_supplicant.automatic.conf ]; then
@@ -108,6 +112,11 @@ if ! [ -f ${ALP} ]; then
   wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/${ARCH}/${ALP} || echo "Error fetching alpine"
 fi
 
+if ! [ -f ${ALP32} ]; then
+  echo "${ALP32} not found, fetching..."
+  wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/${ARCH32}/${ALP32} || echo "Error fetching alpine"
+fi
+
 echo "Create and mount 256MB image"
 dd if=/dev/zero of=${IMG} bs=1M count=256 && \
     DEV=$(losetup -f) && \
@@ -140,5 +149,25 @@ echo "Compress img as zip"
 
 zip -r ${IMG}.zip ${IMG}
 
+# Setup 32 bit
+if [ -f ${ALP32} ]; then
+   dd if=/dev/zero of=${IMG32} bs=1M count=256
+   DEV32=$(losetup -f)	
+   losetup -f ${IMG32}
+   echo "Preparing 32 bit arm image"
+   mkfs.vfat "${DEV32}"p1 -IF 32
+   echo "Mount FAT partition"
+   mount "${DEV32}"p1 "${MNT}"
+   echo "Extract alpine distribution and copy to 32 bit"
+   tar -xzf ${ALP32} -C ${MNT}/ --no-same-owner || echo "Cant extract alpine"
+   cp ../box.apkovl.tar.gz ${MNT} || echo "Cant extract alpine box"
+   sync
+   umount ${MNT}
+   losetup -d "${DEV32}"
+   zip -r ${IMG32}.zip ${IMG32}
+fi
+
 echo "Done!"
 echo "You may flash your ${IMG}.zip using Etcher or dd the ${IMG}"
+echo "or you may flash your ${IMG32}.zip using Etcher or dd the ${IMG32}"
+
