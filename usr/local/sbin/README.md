@@ -2,34 +2,22 @@
 
 This directory contains scripts responsible for various functions of The Box.
 
-## `check-invoicer-status`
+## lncm-getinfo
 
-Checks `invoicer`'s status and restarts it when necessary.
+Sample API call for LND's Web APIs
 
+## make_cache.sh
 
-## `lncm-unlock.py`
+Utility to make a cache file for alpine
 
-A simple python script that unlocks lnd 
+## make_container.sh
 
-> **TODO_0:** rename the script to be more descriptive (lnd-unlock?)
+Utility for making a docker tarball out of a container?
 
-> **TODO_1:** move the script to be called after `lnd` starts and not in cron 
+## make_modloop.sh
 
-> **TODO_2:** Is python really the best choice here?
+Utility for generating a modloop file
 
+## make_updgrade.sh
 
-## `lncm-usb` & `lncm-usb.py`
-
-I think it's the same function (detecting attached USB devices and using them best), but written twice. Once in `sh` and
-once in `python`.
-
-> **TODO_0:** make sure if above is correct
-
-> **TODO_1:** document how the decision is made
- 
- 
-## `mana`
-
-CLI management utility for the box.
-
-> **TODO:** document
+Utility for upgrading the box (may need re-work)

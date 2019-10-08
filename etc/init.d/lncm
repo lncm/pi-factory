@@ -141,15 +141,19 @@ start() {
   }
 
   create_swap() {
-    echo "Create and install swap file"
-    /bin/dd if=/dev/zero of=/media/sd/var/cache/swap bs=1M count=1024 && \
-    /bin/chmod 600 /media/sd/var/cache/swap && \
-    /sbin/mkswap /media/sd/var/cache/swap && \
-    /sbin/swapon /media/sd/var/cache/swap && \
-    /bin/echo "/var/cache/swap none swap sw,pri=10 0 0" >> /media/sd/etc/fstab && \
-    echo "Enable swap at boot"
-    cd /media/sd/etc/runlevels/boot || exit
-    /bin/ln -s /etc/init.d/swap swap
+    if ! [ -f /media/${SD}p1/noswap ]; then
+      echo "Create and install swap file"
+      /bin/dd if=/dev/zero of=/media/sd/var/cache/swap bs=1M count=1024 && \
+      /bin/chmod 600 /media/sd/var/cache/swap && \
+      /sbin/mkswap /media/sd/var/cache/swap && \
+      /sbin/swapon /media/sd/var/cache/swap && \
+      /bin/echo "/var/cache/swap none swap sw,pri=10 0 0" >> /media/sd/etc/fstab && \
+      echo "Enable swap at boot"
+      cd /media/sd/etc/runlevels/boot || exit
+      /bin/ln -s /etc/init.d/swap swap
+    else
+      echo "'noswap' file detected inside the FAT partition, skipping swap install"
+    fi
   }
 
   enable_post() {
@@ -171,12 +175,12 @@ start() {
 
   main() {
     is_installed=$(check_installed)
-    
+
     if [ "$is_installed" -eq "0" ]; then
       echo "Already installed, skipping."
       exit 1
     fi
-    
+
     install_tools
     partition_sd
     create_ext4
@@ -194,9 +198,9 @@ start() {
     disable_install
     persist_state
     mnt_ro
-    
+
     is_installed=$(check_installed)
-    
+
     if [ "${is_installed}" -eq "0" ]; then
       reboot_now
     fi
