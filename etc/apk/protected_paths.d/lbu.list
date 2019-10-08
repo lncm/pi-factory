@@ -14,3 +14,8 @@
 +etc/ssh/sshd_config
 +usr/local/sbin
 +usr/local/sbin/lncm-getinfo.py
++usr/local/sbin/make_modloop.sh
++usr/local/sbin/make_cache.sh
++usr/local/sbin/make_container.sh
++usr/local/sbin/make_modloop.sh
++usr/local/sbin/make_upgrade.sh
