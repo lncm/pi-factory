@@ -89,7 +89,15 @@ Access
 
 When building the image yourself you can create a ```wpa_supplicant.automatic.conf``` file with all your wifi passwords.
 
-You may disable swap generation by touching a file in the FAT partition called "noswap". This needs to be done the first time.
+You may disable several stuff by placing a file inside the FAT partition.
+
+Filename | Description
+------------ | -------------
+noswap | disables SWAP generation (not recommended unless you know what you are doing!)
+noavahi | disables install for avahi-daemon / mdns discovery (not recommended unless you know what you are doing!)
+nodocker | disables Docker installation
+nopython | Disables python3 installation
+notor | Disables tor installation
 
 Documentation
 -------------
