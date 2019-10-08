@@ -22,7 +22,7 @@ Hardware Requirements
 
 * **Raspberry Pi**
     * Recommended: model 3B+
-    * Optional: case, heatsink, LAN cable
+    * Optional: case, heatsink, LAN cable, HDMI cable and monitor (for troubleshooting and issue tracking), Keyboard (to use for troubleshooting and issue tracking)
 
 
 * **microSD** card
