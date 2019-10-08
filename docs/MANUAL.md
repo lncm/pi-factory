@@ -1,27 +1,22 @@
 Welcome to Pi-Factory's documentation!
 ======================================
 
-Pi-Factory builds Alpine Linux images with *armhf* architecture ready for booting on any Raspberry Pi.
-
-Most of the user interaction is done thru our `noma` CLI tool
-
-For example:
-
-    noma info
+Pi-Factory builds Alpine Linux images with **aarch64** and **armhf** architecture ready for booting on any Raspberry Pi.
 
 ## Customization & Settings
 
 These options apply to creating your own images for burning to microSD card.
 
-#### LND Auto-unlock script
+Before running, **make_img.sh** or **make_apkovl.sh** you may wish to etch your wifi settings into the box so it will complete its setup smoothly. To do this, create a file called ```wpa_supplicant.automatic.conf``` and place the following in there:
 
-Before running, **make_img.sh** or **make_apkovl.sh**
+```
+network={
+	ssid="Your Wifi SSID goes here"
+	key_mgmt=WPA-PSK
+	psk="YOUR Password goes here"
+}
+```
 
-If you wish to import your own seed, put the seed into seed.txt at ```home/lncm/seed.txt```
-
-**Note** For the seed file, one word should exist on each line.
-
-If you wish to save the password, do a ```touch home/lncm/save_password``` (This option is on by default)
 
 #### Security
 
@@ -30,8 +25,6 @@ If you wish to disable passwords altogether (highly recommended, especially vs t
 Passwords should be disabled when you create a new image.
 
 For those who still are using password authentication it is recommended that you change both root and lncm users with the ```passwd``` utility.
-
-Also, renaming the hotspot and changing the password is another thing that you need to do - the file is  ```/etc/iotwifi/wificfg.json``` as the password is public.
 
 #### Networking
 
@@ -45,15 +38,8 @@ Or, run `setup-interfaces` if you have access to a running box.
 
 In order to ship correct WiFi configuration, edit settings in `etc/wpa_supplicant/wpa_supplicant.conf`, run `make_apkovl.sh` and copy **box.apkovl.tar.gz** to SD card root directory (FAT partition).
 
-##### IotWiFi Configuration
+Alternatively you may copy wpa_supplicant.conf to the FAT partition of the box (can be done at any time). The box will boot up and copy this file into the correct place and OVERWRITE any changes.
 
-After connecting to _"LNCM-Box"_ WiFi on your computer you can tell the box to connect to your own home WiFi network by issuing the following command:
-
-```bash
-curl -w "\n" -d '{"ssid":"YOUR-SSID-NAME", "psk":"YOUR-PASSWORD"}' \
-    -H "Content-Type: application/json" \
-    -X POST http://192.168.27.1:8080/connect
-```
 ### Alpine specific
 
 Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related to system administration.
@@ -62,7 +48,7 @@ Alpine [wiki](https://wiki.alpinelinux.org/) holds further information related t
 
 *Initially the system is mounted read-only!*
 
-**Important note:** Alpine will not persist user changes upon reboot until it is installed and restarted. 
+**Important note:** Alpine will not persist user changes upon reboot until it is installed and restarted.
 
 Use `lbu commit` to persist changes. Add `-v` to see what is being committed.
 
@@ -70,17 +56,17 @@ Use `lbu commit` to persist changes. Add `-v` to see what is being committed.
 
 **Note:** By default `lbu commit` only applies to *some* directories.
 
+After setup is fully complete, the system will be a full persistant system
+
 #### Package management
 
-- `apk update` Update repositories 
+- `apk update` Update repositories
 - `apk upgrade` Upgrade packages
-- `apk add` Install package 
-- `apk del` Uninstall package 
+- `apk add` Install package
+- `apk del` Uninstall package
 
 #### Init system
 
-- `rc-update add docker boot` Start docker at boot
-- `rc-update del docker boot` Remove docker from boot
 - `rc-update` show startup services
 
 Installation of LNCM specific components belongs in `etc/init.d/lncm`. The script is [OpenRC](https://wiki.gentoo.org/wiki/OpenRC) compatible and must be executable, without a file name extension.
@@ -88,8 +74,6 @@ Installation of LNCM specific components belongs in `etc/init.d/lncm`. The scrip
 `etc/apk/world` contains all apk packages to be installed by LNCM's install script.
 
 - `service -l` list available services
-- `service docker start` start docker now
-- `service docker stop` stop docker now
 
 The boot sequence is logged to `/var/log/rc.log` by default.
 
@@ -99,10 +83,11 @@ More information in OpenRC [user guide](https://github.com/OpenRC/openrc/blob/ma
 
 There are various configuration tools included to help you customize to your needs:
 
-- `setup-hostname` 
-- `setup-timezone` 
-- `setup-keymap` 
-- `setup-dns`
+- `setup-hostname` (change the hostname)
+- `setup-timezone` (change the timezone)
+- `setup-keymap`
+- `setup-dns` (change the DNS)
+- `setup-alpine` (Go through ALL the setup scripts. Useful if you choose to setup networking manually)
 
 ## Advanced
 
@@ -144,9 +129,9 @@ Follow the steps outlined in `make_img.sh` to create your own image or SD card.
 `lbu pkg /path/to/tar.gz` will produce a tarball of current system state.
 
 #### *Important notes for distributing fresh apkovl:*
- 
+
 **Remove unique and security sensitive files**
- 
+
 `rm etc/machine-id`
 
 `rm etc/docker/key.json`
@@ -156,4 +141,3 @@ Follow the steps outlined in `make_img.sh` to create your own image or SD card.
 Rewrite `/etc/resolv.conf` to be network independent.
 
 Be mindful of passwords you set.
-
