@@ -89,7 +89,7 @@ Access
 
 When building the image yourself you can create a ```wpa_supplicant.automatic.conf``` file with all your wifi passwords.
 
-You may disable several stuff by placing an empty file inside the FAT partition.
+You may disable several stuff by placing an empty file inside the FAT partition. This should be done **before first boot**
 
 Filename | Description
 ------------ | -------------
