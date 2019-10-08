@@ -151,6 +151,14 @@ Bug reports, pull-requests and suggestions are very welcome!
 - [Source Code](https://github.com/lncm/pi-factory)
 - [Contributing Guidelines](https://github.com/lncm/pi-factory/blob/master/CONTRIBUTING.md)
 
+
+Verifying Builds
+----------
+
+You may run ```git tag -v RELEASENAME``` on any signed tags.
+
+- [@nolim1t](https://github.com/nolim1t): [PGP](https://nolim1t.co/key/pgpkey.asc.txt)
+
 License
 -------
 
