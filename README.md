@@ -89,14 +89,14 @@ Access
 
 When building the image yourself you can create a ```wpa_supplicant.automatic.conf``` file with all your wifi passwords.
 
-You may disable several stuff by placing a file inside the FAT partition.
+You may disable several stuff by placing an empty file inside the FAT partition.
 
 Filename | Description
 ------------ | -------------
 noswap | disables SWAP generation (not recommended unless you know what you are doing!)
 noavahi | disables install for avahi-daemon / mdns discovery (not recommended unless you know what you are doing!)
 nodocker | disables Docker installation
-nopython | Disables python3 installation 
+nopython | Disables python3 installation
 notor | Disables tor installation
 
 
