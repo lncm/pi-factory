@@ -44,7 +44,7 @@ Instructions
 ------------
 
 1. Download [Etcher](https://www.balena.io/etcher/)
-2. Download one of the above files
+2. Download the image from the [Releases page](https://github.com/lncm/pi-factory/releases) or simply clone the ```https://github.com/lncm/pi-factory.git``` repository on github
 3. Insert SD Card and open up Etcher
 4. Etch one of the images onto the SD card
 5. Remount the SD card and create a file called ```wpa_supplicant.conf```
