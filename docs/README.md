@@ -89,6 +89,8 @@ Access
 
 When building the image yourself you can create a ```wpa_supplicant.automatic.conf``` file with all your wifi passwords.
 
+You may disable swap generation by touching a file in the FAT partition called "noswap". This needs to be done the first time.
+
 Documentation
 -------------
 [Read the Docs](https://pi-factory.readthedocs.io/en/latest/?badge=latest)
