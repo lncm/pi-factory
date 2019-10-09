@@ -5,3 +5,10 @@ DataDirectory /var/lib/tor
 ControlPort 9051
 #HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
 #CookieAuthentication 1
+
+# Hidden Services
+
+# SSH Server
+HiddenServiceDir /var/lib/tor/sshd/
+HiddenServiceVersion 3
+HiddenServicePort 22 127.0.0.1:22
