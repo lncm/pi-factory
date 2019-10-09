@@ -91,13 +91,11 @@ When building the image yourself you can create a ```wpa_supplicant.automatic.co
 
 You may disable several stuff by placing an empty file inside the FAT partition. This should be done **before first boot**
 
-Filename | Description
------------- | -------------
-noswap | disables SWAP generation (not recommended unless you know what you are doing!)
-noavahi | disables install for avahi-daemon / mdns discovery (not recommended unless you know what you are doing!)
-nodocker | disables Docker installation
-nopython | Disables python3 installation
-notor | Disables tor installation
+- *noswap* : disables SWAP generation (not recommended unless you know what you are doing!)
+- *noavahi* : disables install for avahi-daemon / mdns discovery (not recommended unless you know what you are doing!)
+- *nodocker* : disables Docker installation
+- *nopython* : Disables python3 installation
+- *notor* : Disables tor installation
 
 Documentation
 -------------
