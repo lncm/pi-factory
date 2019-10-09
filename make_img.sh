@@ -4,18 +4,14 @@
 # 256MB bootable FAT32L partition with official Alpine linux and lncm-box
 # Make sure "parted", "dosfstools" and "zip" are installed
 
-# For Outputing an image
-OUTPUT_VERSION=v0.5.2
+OUTPUT_VERSION=v0.5.2 # For Outputing an image
+REL=v3.10 # Which alpine release directory
 
 # For fetching Alpine
 ARCH=aarch64
 ARCH32=armhf
 ALP=alpine-rpi-3.10.2-${ARCH}.tar.gz
 ALP32=alpine-rpi-3.10.2-${ARCH32}.tar.gz
-
-# Which alpine release directory
-REL=v3.10
-
 IMG=lncm-box-${OUTPUT_VERSION}.img
 IMG32=lncm-box-${OUTPUT_VERSION}-armhf.img
 MNT=/mnt/lncm
@@ -52,6 +48,7 @@ check_deps() {
 echo "Building ${IMG} and ${IMG32}"
 echo "Using ${ALP} and ${ALP32} as base distribution"
 
+### Step 1: Generating apkovl
 echo 'Check for existing wpa_supplicant.automatic.conf'
 if [ -f ./wpa_supplicant.automatic.conf ]; then
     echo "WPA supplicant automatic file exists, bootstrapping the network configuration"
@@ -69,9 +66,10 @@ if [ -f ./authorized_keys.automatic ]; then
     echo "Reconfiguring SSHD to not allow for passwords"
     cp ./etc/ssh/sshd_config ./etc/ssh/sshd_config.bak
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' ./etc/ssh/sshd_config
+    sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' ./etc/ssh/sshd_config
 fi
 
-echo 'Check for seed'
+echo 'Check for bootstrapped seed'
 if [ -f ./seed.automatic.txt ]; then
     echo "Seed file exists, boostrapping the seed into the installation"
     cp ./seed.automatic.txt ./home/lncm/seed.txt
@@ -79,7 +77,8 @@ fi
 
 echo 'Generate fresh box.apkovl.tar.gz from source'
 sh make_apkovl.sh
-# Cleanup files we created
+
+### Step 2: Cleanup some of the files that we modified
 if [ -f ./etc/wpa_supplicant/wpa_supplicant.conf.bak ]; then
     echo 'Restore old WPA Supplicant after making apkovl (and deleting the backup file)'
     cp ./etc/wpa_supplicant/wpa_supplicant.conf.bak ./etc/wpa_supplicant/wpa_supplicant.conf
@@ -104,6 +103,7 @@ if [ -f ./etc/ssh/sshd_config.bak ]; then
     rm ./etc/ssh/sshd_config.bak
 fi
 
+### Step 3: Create Workdir, fetch sources
 mkdir -p lncm-workdir
 cd lncm-workdir || exit
 
@@ -117,59 +117,51 @@ if ! [ -f ${ALP32} ]; then
   wget --no-verbose http://dl-cdn.alpinelinux.org/alpine/${REL}/releases/${ARCH32}/${ALP32} || echo "Error fetching alpine"
 fi
 
-echo "Create and mount 256MB image"
-dd if=/dev/zero of=${IMG} bs=1M count=256 && \
-    DEV=$(losetup -f) && \
-    losetup -f ${IMG} && \
-    echo "Create 256MB FAT32 partition and filesystem" && \
-    parted -s "${DEV}" mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
-    mkfs.vfat "${DEV}"p1 -IF 32
+### Step 4: Create and format image for the list in the FOR loop
+for IMGVAR in $IMG $IMG32
+do
+  echo "Create and mount 256MB image (${IMGVAR})"
+  dd if=/dev/zero of=${IMGVAR} bs=1M count=256 && \
+      DEV=$(losetup -f) && \
+      losetup -f ${IMGVAR} && \
+      echo "Create 256MB FAT32 partition and filesystem" && \
+      parted -s "${DEV}" mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
+      mkfs.vfat "${DEV}"p1 -IF 32
 
-if ! [ -d ${MNT} ]; then
-  mkdir ${MNT}
-fi
+  if ! [ -d ${MNT} ]; then
+    mkdir ${MNT}
+  fi
 
-echo "Mount FAT partition"
-mount "${DEV}"p1 "${MNT}"
+  echo "Mount FAT partition"
+  mount "${DEV}"p1 "${MNT}"
 
-echo "Extract alpine distribution"
-tar -xzf ${ALP} -C ${MNT}/ --no-same-owner || echo "Can't extract alpine"
+  echo "Extract alpine distribution"
+  # Depends on which image of course
+  if [ "${IMGVAR}" = "${IMG32}" ]; then
+    echo "Extracting armhf Alpine"
+    tar -xzf ${ALP32} -C ${MNT}/ --no-same-owner || echo "Can't extract alpine"
+  else
+    echo "Extracting Alpine aarch64"
+    tar -xzf ${ALP} -C ${MNT}/ --no-same-owner || echo "Can't extract alpine"
+  fi
 
-echo "Copy latest box.apkovl tarball"
-cp ../box.apkovl.tar.gz ${MNT} || echo "Can't extract alpine box"
+  echo "Copy latest box.apkovl tarball"
+  # Extract the same config
+  cp ../box.apkovl.tar.gz ${MNT} || echo "Can't extract alpine box"
 
-echo "Flush writes to disk"
-sync
+  echo "Flush writes to disk"
+  sync
 
-echo "Unmount"
-umount ${MNT}
+  # Cleanup
+  echo "Unmount"
+  umount ${MNT}
+  losetup -d "${DEV}"
+  echo "Compress img as zip"
+  # Make a zip file
+  zip -r ${IMGVAR}.zip ${IMGVAR}
+done
 
-losetup -d "${DEV}"
-echo "Compress img as zip"
-
-zip -r ${IMG}.zip ${IMG}
-
-# Setup 32 bit
-if [ -f ${ALP32} ]; then
-   dd if=/dev/zero of=${IMG32} bs=1M count=256 && \
-   DEV32=$(losetup -f) && \
-   losetup -f ${IMG32} && \
-   parted -s "${DEV32}" mklabel msdos mkpart p fat32 2048s 100% set 1 boot on && \
-   echo "Preparing 32 bit arm image" && \
-   mkfs.vfat "${DEV32}"p1 -IF 32
-
-   echo "Mount FAT partition"
-   mount "${DEV32}"p1 "${MNT}"
-   echo "Extract alpine distribution and copy to 32 bit"
-   tar -xzf ${ALP32} -C ${MNT}/ --no-same-owner || echo "Cant extract alpine"
-   cp ../box.apkovl.tar.gz ${MNT} || echo "Cant extract alpine box"
-   sync
-   umount ${MNT}
-   losetup -d "${DEV32}"
-   zip -r ${IMG32}.zip ${IMG32}
-fi
-
+# All done!
 echo "Done!"
 echo "You may flash your ${IMG}.zip using Etcher or dd the ${IMG}"
 echo "or you may flash your ${IMG32}.zip using Etcher or dd the ${IMG32}"
-
