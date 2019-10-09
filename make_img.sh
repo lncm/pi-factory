@@ -5,7 +5,7 @@
 # Make sure "parted", "dosfstools" and "zip" are installed
 
 # For Outputing an image
-OUTPUT_VERSION=v0.5.0
+OUTPUT_VERSION=v0.5.2
 
 # For fetching Alpine
 ARCH=aarch64
