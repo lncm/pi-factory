@@ -12,8 +12,8 @@ ARCH=aarch64
 ARCH32=armhf
 ALP=alpine-rpi-3.10.2-${ARCH}.tar.gz
 ALP32=alpine-rpi-3.10.2-${ARCH32}.tar.gz
-IMG=lncm-box-${OUTPUT_VERSION}.img
-IMG32=lncm-box-${OUTPUT_VERSION}-armhf.img
+IMG=lncm-box-${OUTPUT_VERSION}-${ARCH}.img
+IMG32=lncm-box-${OUTPUT_VERSION}-${ARCH32}.img
 MNT=/mnt/lncm
 
 if [ "$(id -u)" -ne "0" ]; then
