@@ -3,12 +3,14 @@
 +etc/init.d/lncm-post
 +etc/init.d/lncm-online
 +etc/init.d/docker-compose
++etc/init.d/check-authorized-keys
 +etc/tor/torrc
 +etc/init.d/avahi-daemon
 +etc/init.d/wpa_supplicant
 +etc/init.d/noma
 +etc/init.d/sshd
 +etc/init.d/wpa_supplicant
++etc/runlevels/default/check-authorized-keys
 +home/lncm/.ssh
 +home/lncm/.ssh/authorized_key
 +etc/ssh/sshd_config
