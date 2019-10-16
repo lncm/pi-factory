@@ -7,6 +7,12 @@ depend() {
   after sshd ntpd
 }
 
+disable_password_auth()
+{
+  echo "Updating sshd_config to disable password authentication"
+  sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+}
+
 check_authorizedkeys_exists()
 {
 if [[ -f /media/mmcblk0p1/authorized_keys ]]; then
@@ -20,6 +26,8 @@ if [[ -f /media/mmcblk0p1/authorized_keys ]]; then
     echo "Remounting FAT to remove authorized_keys from there"
     rm /media/mmcblk0p1/authorized_keys
     mount -o ro,remount /media/mmcblk0p1
+    # Disable password authentication
+    disable_password_auth
 else
     echo "authorized_keys file does not exist! Skipping check.."
 fi
