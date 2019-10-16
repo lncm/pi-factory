@@ -18,7 +18,7 @@ check_config_exists()
 		rm /media/mmcblk0p1/wpa_supplicant.conf
 		mount -o ro,remount /media/mmcblk0p1
 	else
-		echo "File doesnt exist"
+		echo "WPA supplicant file in FAT parition doesnt exist.. Skipping"
 	fi
 }
 
