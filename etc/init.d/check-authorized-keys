@@ -22,9 +22,14 @@ if [[ -f /media/mmcblk0p1/authorized_keys ]]; then
     mount -o ro,remount /media/mmcblk0p1
 else
     echo "authorized_keys file does not exist! Skipping check.."
-fi 
+fi
 }
 
 start() {
-  check_authorizedkeys_exists
+  if [ -f /media/mmcblk0p1/installed ]; then
+    echo "LNCM is installed proceeding with this script checks"
+    check_authorizedkeys_exists
+  else
+    echo "LNCM not installed yet. This script will not run"
+  fi
 }
