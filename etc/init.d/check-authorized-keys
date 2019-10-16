@@ -1,0 +1,30 @@
+#!/sbin/openrc-run
+# Copyright (c) 2009 Roy Marples <roy@marples.name>
+# All rights reserved. Released under the 2-clause BSD license.
+
+depend() {
+  need sshd
+  after sshd ntpd
+}
+
+check_authorizedkeys_exists()
+{
+if [[ -f /media/mmcblk0p1/authorized_keys ]]; then
+    echo "authorized_keys exists.. copying over to lncm"
+    mkdir -p /home/lncm/.ssh
+    cp /media/mmcblk0p1/authorized_keys /home/lncm/.ssh
+    chown -R lncm.lncm /home/lncm/.ssh
+    chmod 700 /home/lncm/.ssh
+    chmod 600 /home/lncm/.ssh/authorized_keys
+    mount -o rw,remount /media/mmcblk0p1
+    echo "Remounting FAT to remove authorized_keys from there"
+    rm /media/mmcblk0p1/authorized_keys
+    mount -o ro,remount /media/mmcblk0p1
+else
+    echo "authorized_keys file does not exist! Skipping check.."
+fi 
+}
+
+start() {
+  check_authorizedkeys_exists
+}
