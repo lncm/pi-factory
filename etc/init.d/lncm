@@ -164,6 +164,7 @@ start() {
 
   disable_install() {
     echo "Deactivate LNCM installation script"
+    /sbin/rc-update del lncm-online boot || exit
     /sbin/rc-update del lncm default || exit
     /bin/rm /media/sd/etc/runlevels/default/lncm || exit
   }
