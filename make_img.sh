@@ -54,6 +54,7 @@ if [ -f ./wpa_supplicant.automatic.conf ]; then
     echo "WPA supplicant automatic file exists, bootstrapping the network configuration"
     cp ./etc/wpa_supplicant/wpa_supplicant.conf ./etc/wpa_supplicant/wpa_supplicant.conf.bak
     cp ./wpa_supplicant.automatic.conf etc/wpa_supplicant/wpa_supplicant.conf
+    chmod 600 etc/wpa_supplicant/wpa_supplicant.conf
 fi
 
 echo 'Check for authorized_keys.automatic'

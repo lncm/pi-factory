@@ -13,7 +13,8 @@ check_config_exists()
 	if [[ -f /media/mmcblk0p1/wpa_supplicant.conf ]]; then
 		echo "File exists; copying WPA supplicant file across"
 		cp /media/mmcblk0p1/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
-		chmod 644 /etc/wpa_supplicant/wpa_supplicant.conf
+		chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf
+		chown root.root /etc/wpa_supplicant/wpa_supplicant.conf
 		mount -o rw,remount /media/mmcblk0p1
 		rm /media/mmcblk0p1/wpa_supplicant.conf
 		mount -o ro,remount /media/mmcblk0p1
