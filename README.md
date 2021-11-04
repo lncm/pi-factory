@@ -116,12 +116,12 @@ For convenience, we also support `vagrant` to automate setting up your developme
 ### MacOS instructions:
 
 Install dependencies ([homebrew](https://brew.sh), virtualbox, vagrant):
+
 ```sh
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew cask install virtualbox
-brew cask install vagrant
-git clone pi-factory
-cd pi-factory
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install) && \
+brew install --cask virtualbox vagrant && \
+git clone https://github.com/lncm/pi-factory.git && \
+cd pi-factory		
 ```
 
 Create VM and generate image:
