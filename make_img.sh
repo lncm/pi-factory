@@ -4,14 +4,15 @@
 # 256MB bootable FAT32L partition with official Alpine linux and lncm-box
 # Make sure "parted", "dosfstools" and "zip" are installed
 
-OUTPUT_VERSION=v0.5.2 # For Outputing an image
-REL=v3.10 # Which alpine release directory
+OUTPUT_VERSION=v0.5.3 # For Outputing an image
+REL=v3.11 # Which alpine release directory (Grab from https://www.alpinelinux.org/downloads/)
+
 
 # For fetching Alpine
 ARCH=aarch64
 ARCH32=armhf
-ALP=alpine-rpi-3.10.2-${ARCH}.tar.gz
-ALP32=alpine-rpi-3.10.2-${ARCH32}.tar.gz
+ALP=alpine-rpi-3.11.3-${ARCH}.tar.gz
+ALP32=alpine-rpi-3.11.3-${ARCH32}.tar.gz
 IMG=lncm-box-${OUTPUT_VERSION}-${ARCH}.img
 IMG32=lncm-box-${OUTPUT_VERSION}-${ARCH32}.img
 MNT=/mnt/lncm
@@ -54,6 +55,7 @@ if [ -f ./wpa_supplicant.automatic.conf ]; then
     echo "WPA supplicant automatic file exists, bootstrapping the network configuration"
     cp ./etc/wpa_supplicant/wpa_supplicant.conf ./etc/wpa_supplicant/wpa_supplicant.conf.bak
     cp ./wpa_supplicant.automatic.conf etc/wpa_supplicant/wpa_supplicant.conf
+    chmod 600 etc/wpa_supplicant/wpa_supplicant.conf
 fi
 
 echo 'Check for authorized_keys.automatic'
